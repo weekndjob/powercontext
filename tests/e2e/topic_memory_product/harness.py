@@ -357,15 +357,15 @@ def _generation_schema(payload: Mapping[str, object]) -> Mapping[str, object]:
                 return cast(Mapping[str, object], parameters)
     rendered_messages = json.dumps(payload.get("messages"), ensure_ascii=False)
     stage_schemas = (
-        TopicMemoryProbeOutput,
-        TopicMemoryGlobalOutput,
-        TopicMemoryPlannerOutput,
-        TopicMemoryEvolveOutput,
-        TopicMemoryTemporaryOutput,
-        TopicMemoryReconcileOutput,
+        ("Identify up to 20 durable topic probes", TopicMemoryProbeOutput),
+        ("Evolve the whole Window into at most 20 topics", TopicMemoryGlobalOutput),
+        ("Plan historical matches for each Topic probe", TopicMemoryPlannerOutput),
+        ("Evolve one Topic probe against its candidate set", TopicMemoryEvolveOutput),
+        ("Draft temporary Topics for unresolved evidence", TopicMemoryTemporaryOutput),
+        ("Reconcile Topic proposals into one publication set", TopicMemoryReconcileOutput),
     )
-    for output_type in stage_schemas:
-        if output_type.__name__ in rendered_messages:
+    for marker, output_type in stage_schemas:
+        if marker in rendered_messages:
             return cast(Mapping[str, object], output_type.model_json_schema())
     raise ValueError("generation request omitted a machine-readable output schema")
 
@@ -1092,7 +1092,7 @@ def run_e2(  # noqa: C901
     fallback_server = None
     unavailable_embedding_server = None
     fallback_capture = _EmbeddingFallbackCapture()
-    search_logger = logging.getLogger("powercontext.builtin.runtime")
+    search_logger = logging.getLogger("powercontext.builtin.runtime.application")
     search_logger.addHandler(fallback_capture)
     temporary_openai_key = False
     result: dict[str, object] | None = None

@@ -55,7 +55,6 @@ from powercontext.builtin.artifacts.experience.prompts import (
 from powercontext.builtin.artifacts.experience.search import (
     ExperienceSearchHit,
     ExperienceSearchOutcome,
-    ExperienceSearchRequest,
     experience_search_text,
     experience_searchable_text,
     render_experience,
@@ -88,7 +87,6 @@ __all__ = [
     "ExperienceIncubationOutput",
     "ExperienceSearchHit",
     "ExperienceSearchOutcome",
-    "ExperienceSearchRequest",
     "FailureRecord",
     "FailureSignature",
     "FailureVerification",

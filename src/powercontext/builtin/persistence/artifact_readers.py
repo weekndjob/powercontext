@@ -23,6 +23,7 @@ import rfc8785
 from pydantic import JsonValue, TypeAdapter, ValidationError
 from typing_extensions import override
 
+from powercontext.artifacts import ArtifactRef
 from powercontext.builtin.artifacts.topic_memory import TopicMemory, TopicMemoryBrowseCursor, TopicMemoryCurrentItem
 from powercontext.builtin.persistence.artifacts import ArtifactRepository
 from powercontext.builtin.persistence.cursor_codec import SignedCursorCodec
@@ -82,10 +83,23 @@ class TopicMemoryArtifactListReader(ArtifactListReader):
 
         async with self._database.transaction() as connection:
             browsed = await self._topics.browse_current(
-                connection, scope_id, limit=limit + 1, after=after, tag_filter=tag_filter
+                connection, scope_id, limit=limit, after=after, tag_filter=tag_filter
             )
-            has_more = len(browsed) > limit
-            browsed = browsed[:limit]
+            has_more = False
+            if browsed:
+                has_more = (
+                    bool(
+                        await self._topics.browse_current(
+                            connection,
+                            scope_id,
+                            limit=1,
+                            after=_browse_cursor(browsed[-1]),
+                            tag_filter=tag_filter,
+                        )
+                    )
+                    if len(browsed) == limit
+                    else False
+                )
             artifacts = await self._artifacts.get_many(
                 connection,
                 scope_id,
@@ -96,7 +110,7 @@ class TopicMemoryArtifactListReader(ArtifactListReader):
             )
 
         next_cursor = (
-            cursor_codec.encode(expected_cursor, _browse_cursor(browsed[-1]).model_dump_json())
+            cursor_codec.encode(expected_cursor, _browse_cursor(items[-1]).model_dump_json())
             if has_more and items
             else None
         )
@@ -112,11 +126,19 @@ def _decode_after(value: str) -> TopicMemoryBrowseCursor | None:
         raise InvalidCursorError from None
 
 
-def _browse_cursor(value: TopicMemoryCurrentItem) -> TopicMemoryBrowseCursor:
+def _browse_cursor(value: TopicMemoryCurrentItem | ArtifactCollectionItem) -> TopicMemoryBrowseCursor:
+    if isinstance(value, TopicMemoryCurrentItem):
+        artifact_ref = value.artifact_ref
+        published_at = value.published_at
+    else:
+        if value.published_at is None:
+            raise InvalidCursorError
+        artifact_ref = ArtifactRef(family=value.family, artifact_id=value.artifact_id, revision=value.revision)
+        published_at = value.published_at
     return TopicMemoryBrowseCursor(
-        published_at=value.published_at,
-        artifact_id=value.artifact_ref.artifact_id,
-        revision=value.artifact_ref.revision,
+        published_at=published_at,
+        artifact_id=artifact_ref.artifact_id,
+        revision=artifact_ref.revision,
     )
 
 

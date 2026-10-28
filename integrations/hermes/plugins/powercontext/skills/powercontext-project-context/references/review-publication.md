@@ -1,5 +1,3 @@
-
-<!-- POWERCONTEXT-GUIDANCE:START -->
 # Review and publication
 
 ## Experiences, Skills, and review
@@ -25,4 +23,3 @@ Use /pc for operational actions and review decisions:
 
 Candidate approval/rejection/revision are human `/pc review` commands, not provider tools. Do not invent provider
 operation names or use `/pc call` to bypass that boundary. Present suggested changes for the authorized human decision.
-<!-- POWERCONTEXT-GUIDANCE:END -->

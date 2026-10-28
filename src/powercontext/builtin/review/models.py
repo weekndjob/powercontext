@@ -17,12 +17,11 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Generic, Literal, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel, Field, StrictInt, field_validator, model_validator
 
-from powercontext.artifacts import ArtifactRef
-from powercontext.artifacts.models import _reject_legacy_memory_citations
+from powercontext.artifacts import ArtifactRef, MemoryCitation
 from powercontext.builtin.evidence.models import ResolvedEvidence
 from powercontext.limits import MAX_ARTIFACT_ID_LENGTH
 from powercontext.sources import SourceRef
@@ -43,25 +42,9 @@ class CandidateStatus(StrEnum):
     REJECTED = "rejected"
 
 
-class CandidateAudit(BaseModel):
-    """Server-owned provenance pinned to one immutable Dream proposal version."""
-
-    origin: Literal["dream"] = "dream"
-    operation: str
-    dream_run_id: str
-    spec_version: str
-    proposal_digest: str
-    evidence_manifest_ref: str
-    validation_policy_digest: str
-    proposal_fingerprint: str | None = None
-
-
-class Candidate(BaseModel, Generic[ProposalT]):
+class ArtifactCandidate(BaseModel, Generic[ProposalT]):
     """One current Candidate head with its immutable proposal version."""
 
-    _reject_legacy_citations = model_validator(mode="before")(_reject_legacy_memory_citations)
-
-    candidate_kind: Literal["artifact"] = "artifact"
     candidate_id: str = Field(min_length=1, max_length=MAX_ARTIFACT_ID_LENGTH)
     version: StrictInt = Field(ge=1)
     family: str
@@ -69,11 +52,11 @@ class Candidate(BaseModel, Generic[ProposalT]):
     proposal: ProposalT
     sources: tuple[SourceRef, ...] = Field(default=(), max_length=MAX_CANDIDATE_EVIDENCE)
     artifacts: tuple[ArtifactRef, ...] = Field(default=(), max_length=MAX_CANDIDATE_EVIDENCE)
+    memory_citations: tuple[MemoryCitation, ...] = Field(default=(), max_length=MAX_CANDIDATE_EVIDENCE)
     target: ArtifactRef | None = None
     reason: str | None = Field(default=None, min_length=1, max_length=MAX_CANDIDATE_REASON_LENGTH)
     result_artifact: ArtifactRef | None = None
     decision_reason: str | None = Field(default=None, min_length=1, max_length=MAX_CANDIDATE_REASON_LENGTH)
-    audit: CandidateAudit | None = None
 
     @field_validator("candidate_id", "family", "reason", "decision_reason")
     @classmethod
@@ -84,12 +67,14 @@ class Candidate(BaseModel, Generic[ProposalT]):
 
     @model_validator(mode="after")
     def validate_evidence(self):
-        if not self.sources and not self.artifacts:
+        if not self.sources and not self.artifacts and not self.memory_citations:
             raise ValueError("Candidate evidence must include a Source or Artifact reference")  # noqa: TRY003
-        if len(self.sources) + len(self.artifacts) > MAX_CANDIDATE_EVIDENCE:
+        if len(self.sources) + len(self.artifacts) + len(self.memory_citations) > MAX_CANDIDATE_EVIDENCE:
             raise ValueError(f"Candidate evidence must not exceed {MAX_CANDIDATE_EVIDENCE} references")  # noqa: TRY003
         if self.target is not None and self.target.family != self.family:
             raise ValueError("Candidate target must belong to the proposed family")  # noqa: TRY003
+        if self.memory_citations and self.family != "experience":
+            raise ValueError("only Experience Candidates accept Memory citations")  # noqa: TRY003
         return self
 
     @model_validator(mode="after")
@@ -107,26 +92,10 @@ class Candidate(BaseModel, Generic[ProposalT]):
         return self
 
 
-class CandidatePage(BaseModel, Generic[ProposalT]):
+class ArtifactCandidatePage(BaseModel, Generic[ProposalT]):
     """A stable, cursor-based Review Inbox page."""
 
-    candidates: tuple[Candidate[ProposalT], ...]
-    next_cursor: str | None = None
-
-
-class CandidateCatalogItem(BaseModel):
-    """Inbox identity and version metadata, without a proposal or evidence body."""
-
-    candidate_id: str
-    candidate_kind: Literal["artifact", "tag"]
-    family: str
-    version: int
-    status: CandidateStatus
-    reason: str | None = None
-
-
-class CandidateCatalogPage(BaseModel):
-    candidates: tuple[CandidateCatalogItem, ...]
+    candidates: tuple[ArtifactCandidate[ProposalT], ...]
     next_cursor: str | None = None
 
 
@@ -144,7 +113,7 @@ __all__ = [
     "MAX_CANDIDATE_EVIDENCE",
     "MAX_CANDIDATE_PAGE_SIZE",
     "MAX_CANDIDATE_REASON_LENGTH",
-    "Candidate",
-    "CandidatePage",
+    "ArtifactCandidate",
+    "ArtifactCandidatePage",
     "CandidateStatus",
 ]

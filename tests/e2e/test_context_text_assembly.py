@@ -22,6 +22,7 @@ from contextlib import asynccontextmanager
 import httpx
 import pytest
 
+from powercontext.builtin.artifacts.memory import MemoryService
 from powercontext.builtin.artifacts.topic_memory import (
     TopicMemoryContent,
     TopicMemoryDraft,
@@ -31,18 +32,18 @@ from powercontext.builtin.artifacts.topic_memory import (
 from powercontext.builtin.persistence.sqlite import SQLiteConfig
 from powercontext.builtin.runtime import BuiltinConfig, InvalidRuntimeRequestError, open_builtin_contexts
 from powercontext.builtin.runtime import PrepareContextRequest as RuntimePrepareContextRequest
-from powercontext.builtin.runtime.atomic_memory import ScopedAtomicMemory
 from powercontext.client import PowerContextClient
 from powercontext.http import (
-    ApproveCandidateRequest,
+    ApproveArtifactCandidateRequest,
     CaptureContentSourceRequest,
     CreateScopeRequest,
     ExperienceProposal,
+    GetMemoryEntryRequest,
     MemorySearchMode,
     PrepareContextRequest,
     ProposeExperienceRequest,
     RememberMemoryRequest,
-    ReplaceArtifactRequest,
+    ReviseMemoryEntryRequest,
     SearchMemoryRequest,
 )
 from powercontext.server.factory import create_server_app
@@ -117,7 +118,7 @@ def test_quoted_operator_queries_preserve_identifiers_in_search_and_prepared_con
             )
             prepared = await client.prepare_context(PrepareContextRequest(scope_id=scope.scope_id, query=query))
 
-            assert [hit.memory.text for hit in found.hits] == [operators]
+            assert [hit.text for hit in found.hits] == [operators]
             assert prepared.content is not None
             assert operators in prepared.content
             assert arithmetic not in prepared.content
@@ -182,8 +183,8 @@ def test_client_assembles_approved_evidence_and_preserves_exact_memory_versions(
                     text="Regenerate the OpenAPI client before contract tests.",
                 )
             )
-            assert len(remembered.records) == 1
-            citation = remembered.records[0].artifact
+            assert remembered.entry is not None
+            citation = remembered.entry.citation
             source = await client.capture_content_source(
                 CaptureContentSourceRequest(
                     scope_id=scope_id,
@@ -219,8 +220,8 @@ def test_client_assembles_approved_evidence_and_preserves_exact_memory_versions(
             pending = await client.prepare_context(request)
             assert pending.content is not None
             assert "## Experience" not in pending.content
-            await client.approve_candidate(
-                ApproveCandidateRequest(
+            await client.approve_artifact_candidate(
+                ApproveArtifactCandidateRequest(
                     scope_id=scope_id,
                     candidate_id=candidate.candidate_id,
                     expected_version=candidate.version,
@@ -235,27 +236,19 @@ def test_client_assembles_approved_evidence_and_preserves_exact_memory_versions(
             assert "Prefers concise Chinese explanations." in prepared.content
             assert 'Artifact: family="profile", id="profile", revision=1' in prepared.content
             assert prepared.content.index("## Experience") < prepared.content.index("## Memory")
-            assert (
-                f'Artifact: family="atomic-memory", id="{citation.artifact_id}", revision={citation.revision}'
-                in prepared.content
-            )
+            assert citation.entry_version_id in prepared.content
             assert prepared.content_bytes == len(prepared.content.encode("utf-8")) <= request.max_bytes
 
-            head = await transport.get(f"/v1/scopes/{scope_id}/artifacts/atomic-memory/{citation.artifact_id}")
-            head.raise_for_status()
-            await client.replace_artifact(
-                scope_id,
-                citation.family,
-                citation.artifact_id,
-                ReplaceArtifactRequest.model_validate({
-                    "content": {"kind": "constraint", "text": "OpenAPI validation now also includes generated JS."}
-                }),
-                expected_etag=head.headers["ETag"],
+            await client.revise_memory_entry(
+                ReviseMemoryEntryRequest(
+                    scope_id=scope_id,
+                    citation=citation,
+                    kind="constraint",
+                    text="OpenAPI validation now also includes generated JS.",
+                )
             )
-            exact = await client.get_artifact_revision(
-                scope_id, citation.family, citation.artifact_id, citation.revision
-            )
-            assert exact.content["text"] == remembered.records[0].text
+            exact = await client.get_memory_entry(GetMemoryEntryRequest(scope_id=scope_id, citation=citation))
+            assert exact.text == remembered.entry.text
 
             legacy = await client.prepare_context(PrepareContextRequest(scope_id=scope_id, query="OpenAPI client"))
             assert legacy.content is not None
@@ -285,7 +278,7 @@ def test_client_assembles_approved_evidence_and_preserves_exact_memory_versions(
             async def unavailable_memory(*args, **kwargs):
                 raise RuntimeError("Excluded Memory backend is unavailable")  # noqa: TRY003
 
-            monkeypatch.setattr(ScopedAtomicMemory, "search", unavailable_memory)
+            monkeypatch.setattr(MemoryService, "search", unavailable_memory)
             experience_only = await client.prepare_context(
                 PrepareContextRequest.model_validate({
                     "scope_id": scope_id,
@@ -318,7 +311,7 @@ def test_topic_only_assembly_searches_current_scope_and_skips_other_families(tmp
             async def unavailable(*args, **kwargs):
                 raise RuntimeError("Unselected backend is unavailable")  # noqa: TRY003
 
-            monkeypatch.setattr(ScopedAtomicMemory, "search", unavailable)
+            monkeypatch.setattr(MemoryService, "search", unavailable)
             monkeypatch.setattr(runtime, "_experience_recall", unavailable)
             assert runtime.profiles is not None
             monkeypatch.setattr(runtime.profiles, "latest", unavailable)
@@ -387,7 +380,7 @@ def test_configured_assembly_total_limit_applies_before_recall(tmp_path, monkeyp
             legacy = await client.prepare_context(
                 PrepareContextRequest(scope_id=scope.scope_id, query="OpenAPI assembly")
             )
-            assert legacy.content is not None and legacy.content.count('"artifact_ref"') == 8
+            assert legacy.content is not None and legacy.content.count('"entry_id"') == 8
             sections = [{"family": "profile", "limit": 1}, {"family": "memory", "limit": 1 if max_entries == 1 else 8}]
             request = PrepareContextRequest.model_validate({
                 "scope_id": scope.scope_id,
@@ -398,14 +391,14 @@ def test_configured_assembly_total_limit_applies_before_recall(tmp_path, monkeyp
                 prepared = await client.prepare_context(request)
                 assert prepared.content is not None
                 assert prepared.content.count("Artifact: family=") == 9
-                assert prepared.content.count('family="atomic-memory"') == 8
+                assert prepared.content.count('family="memory"') == 8
                 assert prepared.content_bytes == len(prepared.content.encode("utf-8")) <= request.max_bytes
             else:
 
                 async def unavailable(*args, **kwargs):
                     raise RuntimeError("Recall must not run for an oversized assembly")  # noqa: TRY003
 
-                monkeypatch.setattr(ScopedAtomicMemory, "search", unavailable)
+                monkeypatch.setattr(MemoryService, "search", unavailable)
                 assert runtime.profiles is not None
                 monkeypatch.setattr(runtime.profiles, "latest", unavailable)
                 rejected = await transport.post("/v1/context/prepare", json=request.model_dump(mode="json"))
@@ -470,7 +463,7 @@ def test_excluded_recall_source_failure_does_not_affect_selected_memory(tmp_path
             async def no_memory(*args, **kwargs):
                 raise RuntimeError("Excluded Memory backend is unavailable")  # noqa: TRY003
 
-            monkeypatch.setattr(ScopedAtomicMemory, "search", no_memory)
+            monkeypatch.setattr(MemoryService, "search", no_memory)
             empty = await transport.post(
                 "/v1/context/prepare",
                 json={
@@ -512,7 +505,7 @@ def test_profile_selection_reads_only_current_and_direct_scopes_without_search(t
             async def unavailable(*args, **kwargs):
                 raise RuntimeError("Unselected search backend is unavailable")  # noqa: TRY003
 
-            monkeypatch.setattr(ScopedAtomicMemory, "search", unavailable)
+            monkeypatch.setattr(MemoryService, "search", unavailable)
             monkeypatch.setattr(runtime, "_experience_recall", unavailable)
             monkeypatch.setattr(runtime, "_topic_memory_search", unavailable)
             assert runtime.profiles is not None
@@ -573,7 +566,7 @@ def test_prepare_profile_uses_committed_head_across_review_and_replacement(tmp_p
             assert pending.status_code == 200 and pending.json()["status"] == "review_pending"
             assert (await client.prepare_context(request)).status == "empty"
             approved = await transport.post(
-                "/v1/candidates/approve",
+                "/v1/artifact-candidates/approve",
                 json={
                     "scope_id": scope.scope_id,
                     "candidate_id": pending.json()["candidate_id"],

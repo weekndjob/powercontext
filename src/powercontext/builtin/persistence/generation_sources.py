@@ -37,14 +37,12 @@ class GenerationSourceAccess:
         scope_id: str,
         refs: Sequence[SourceRef],
         /,
-        *,
-        allow_working_notes: bool = False,
     ) -> tuple[StoredSource, ...]:
         """Resolve explicit references, rejecting the whole request if any is ineligible."""
 
         rows = await self._repository.get_many(connection, scope_id, refs)
         for row in rows:
-            require_source_eligible(row.ref, row.value, allow_working_notes=allow_working_notes)
+            require_source_eligible(row.ref, row.value)
         return rows
 
     async def list_window_for_generation(

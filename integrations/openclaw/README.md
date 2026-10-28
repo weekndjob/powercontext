@@ -59,33 +59,13 @@ Recalled content is labelled as untrusted historical evidence; current system in
 the user's request always take precedence.
 
 Explicit memory reads bypass preparation. Search calls `/v1/memory/search`, limits the query to 8192 characters, and
-clamps the requested result limit to 1–50 (default 10). Results read `hits[].memory` with its real Atomic
-Artifact reference, content, state, and state version. The host's `score` and `minScore` use the RRF score divided by
-`matched-channel-count / 61`, clamped to 0–1; this is a relative rank measure, not confidence or semantic similarity.
-Response `matched_by` values are `text` and `vector`; the request still uses `fts` or `auto` mode.
-Get reads the exact generic Artifact revision and returns at most 120 lines and 12,000 characters per read.
-Paths encode Atomic references (`{family: "atomic-memory", artifact_id, revision}`, with `state_version` when known);
-any other path is rejected locally before a request is sent.
-
-Store returns real Atomic records and an encoded snapshot path. Revise requires the captured content revision,
-reads the current content ETag, and sends it in `If-Match`; a content conflict requires inspection before retrying.
-Manual content edits use content revision CAS and do not include lifecycle state CAS. The compatibility tool
-`powercontext_memory_retire` performs reversible forgetting with the captured Artifact reference and `state_version`.
+clamps the requested result limit to 1–50 (default 10). Get calls `/v1/memory/entries/get` and returns at most 120
+lines and 12,000 characters per read.
 
 Eligible user prompts from direct/private sessions are captured separately as Content Sources with a deterministic
 source id, so repeated captures are idempotent. Group, channel, and incognito sessions are excluded. The plugin never
 synchronizes the complete OpenClaw transcript. Recall, capture, and boundary flushing fail open: an unavailable
 Server, timeout, redirect, or invalid response leaves the prompt unchanged and never blocks ordinary work.
-
-The public `before_compaction` hook provides best-effort checkpointing. Capture and flush use one resolved Scope,
-the deterministic Source ID uses the public `runId` for `agent_end` and a streaming canonical hash of the complete
-JSON-shaped payload for the less frequent `before_compaction` event, and acknowledgement requires a
-valid `current_cursor` at or beyond the captured Source position. Cursor lag and `remaining_work` are retried up to
-`flushMaxCalls` (default `4`, range `1`–`16`) within a one-second boundary budget that starts when the flush is queued, with `timeoutMs` retained as the
-per-request ceiling. Unacknowledged accepted positions remain pending for `session_end`, `gateway_stop`, or Server
-scheduling. Closing work skips ahead of queued pre-compaction work, while queue waiting counts against each event's
-boundary budget. A queued boundary that exhausts its budget emits a content-free `deadline_exceeded` diagnostic and
-retains pending positions. OpenClaw continues compaction after hook failures, so this is not a required checkpoint mode.
 
 The plugin exposes five tools: `powercontext_memory_search`, `powercontext_memory_get`,
 `powercontext_memory_store`, `powercontext_memory_revise`, and `powercontext_memory_retire`. Mutating tools

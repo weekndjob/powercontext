@@ -45,6 +45,11 @@ const sourceReference = Type.Object({
   name: Type.String({ minLength: 1, maxLength: 128 }),
   source_id: Type.String({ minLength: 1, maxLength: 256 }),
 }, { additionalProperties: false });
+const memoryCitation = Type.Object({
+  memory_ref: artifactReference,
+  entry_id: Type.String({ minLength: 1, maxLength: 128, pattern: "^[\\x21-\\x7E]+$" }),
+  entry_version_id: Type.String({ minLength: 1, maxLength: 128, pattern: "^[\\x21-\\x7E]+$" }),
+}, { additionalProperties: false });
 const handoffCitation = Type.Union([
   Type.Object({
     kind: Type.Literal("source"),
@@ -53,6 +58,10 @@ const handoffCitation = Type.Union([
   Type.Object({
     kind: Type.Literal("artifact"),
     artifact_ref: artifactReference,
+  }, { additionalProperties: false }),
+  Type.Object({
+    kind: Type.Literal("memory"),
+    memory_citation: memoryCitation,
   }, { additionalProperties: false }),
 ]);
 const workClaim = Type.Object({

@@ -145,11 +145,15 @@ describe("PowerContext tools", () => {
       agentId: "main",
       sessionKey: "agent:main:telegram:direct:user-1",
     } as OpenClawPluginToolContext;
-    const citation = encodeCitation({ family: "atomic-memory", artifact_id: "artifact-1", revision: 1 });
+    const citation = encodeCitation({
+      memory_ref: { family: "memory", artifact_id: "artifact-1", revision: 1 },
+      entry_id: "entry-1",
+      entry_version_id: "version-1",
+    });
     const config = () => resolvePowerContextConfig(undefined, { endpoint: "https://powercontext.test" });
     const domainClient = (status: number) => ({
       async post() {
-        throw new PowerContextRequestError("/v1/scope-bindings/resolve", "domain error", status);
+        throw new PowerContextRequestError("/v1/memory/entries/get", "domain error", status);
       },
     }) as unknown as PowerContextClient;
 
@@ -161,14 +165,11 @@ describe("PowerContext tools", () => {
     expect(notFound.details).toMatchObject({ path: citation, text: "", status: "not_found", code: "not_found" });
     expect(notFound.details).not.toHaveProperty("unavailable");
 
-    const atomicCitation = encodeCitation({
-      artifact: { family: "atomic-memory", artifact_id: "artifact-1", revision: 1 }, state_version: 0,
-    });
     const conflict = await createMemoryReviseTool(context, {
       client: domainClient(409),
       getConfig: config,
       isPrivateSession: () => true,
-    })!.execute("call-2", { citation: atomicCitation, text: "new text", kind: "fact" });
+    })!.execute("call-2", { citation, text: "new text", kind: "fact" });
     expect(conflict.details).toMatchObject({ status: "conflict", code: "conflict" });
 
     const invalidRequest = await createMemoryStoreTool(context, {
@@ -188,11 +189,8 @@ describe("PowerContext tools", () => {
           return { scope_id: "scp_resolved" } as T;
         }
         return {
-          changed: true,
-          records: [{
-            artifact: { family: "atomic-memory", artifact_id: "artifact-1", revision: 1 },
-            state: "active", state_version: 0, merged_into_id: null, kind: "fact", text: "durable fact",
-          }],
+          memory: { family: "memory", artifact_id: "artifact-1", revision: 1 },
+          entry: null,
         } as T;
       },
     } as unknown as PowerContextClient;
@@ -209,10 +207,7 @@ describe("PowerContext tools", () => {
 
     const result = await createMemoryStoreTool(context, deps)!.execute("call-1", { text: "durable fact" });
 
-    expect(result.details).toMatchObject({
-      status: "stored", changed: true,
-      records: [{ artifact: { family: "atomic-memory", artifact_id: "artifact-1", revision: 1 }, state_version: 0 }],
-    });
+    expect(result.details).toMatchObject({ status: "stored", revision: 1 });
     expect(requests.map((request) => request.path)).toEqual([
       "/v1/scope-bindings/resolve",
       "/v1/memory/remember",

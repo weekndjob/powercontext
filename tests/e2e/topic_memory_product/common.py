@@ -41,7 +41,7 @@ from starlette.middleware import Middleware
 
 from powercontext.builtin.persistence.sqlite import SQLiteConfig
 from powercontext.builtin.runtime import InferenceConfig, RuntimeConfig
-from powercontext.client import PowerContextClient, TransportError
+from powercontext.client import PowerContextClient
 from powercontext.http import (
     CaptureContentSourceRequest,
     FlushTopicMemoryRequest,
@@ -348,7 +348,7 @@ class FakeInference:
             rendered = json.dumps(payload, sort_keys=True, ensure_ascii=False)
             started = time.monotonic()
             stage = "readiness"
-            if "TopicMemoryProbeOutput" in rendered:
+            if "Identify up to 20 durable topic probes" in rendered:
                 stage = "topic_probe"
                 content = json.dumps({
                     "probes": [
@@ -359,7 +359,7 @@ class FakeInference:
                         }
                     ]
                 })
-            elif "TopicMemoryGlobalOutput" in rendered:
+            elif "Evolve the whole Window into at most 20 topics" in rendered:
                 stage = "topic_global"
                 content = json.dumps({
                     "ambiguous": False,
@@ -527,13 +527,7 @@ async def exercise_http_mcp_prepared_chain(  # noqa: C901
             await asyncio.to_thread(generation.wait_for_topic_generation, max(0.0, deadline - time.monotonic()))
             await asyncio.sleep(0.5)
         while time.monotonic() < deadline:
-            try:
-                search = await client.search_topic_memory(
-                    SearchTopicMemoryRequest(scope_id=scope_id, query=query, limit=8)
-                )
-            except TransportError:
-                await asyncio.sleep(0.2)
-                continue
+            search = await client.search_topic_memory(SearchTopicMemoryRequest(scope_id=scope_id, query=query, limit=8))
             if search.hits:
                 break
             observed_empty_after_flush = True

@@ -1,5 +1,3 @@
-
-<!-- POWERCONTEXT-GUIDANCE:START -->
 # Work Handoff
 
 ## Hand off work
@@ -20,4 +18,3 @@ never the `{ok, data}` wrapper. Return `finalize.data` unchanged, including `sch
 For a preview, draft text from current inspected facts without calling any Handoff or Source tool. Do not claim that
 a prepared carrier or durable milestone exists. For an actual transfer, preserve the complete returned carrier,
 including required nullable fields and generation receipts.
-<!-- POWERCONTEXT-GUIDANCE:END -->

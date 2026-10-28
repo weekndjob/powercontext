@@ -31,8 +31,6 @@ from powercontext.server.authz.models import (
     AccessDecision,
     AccessResourceType,
     AccessRole,
-    GroupRef,
-    PrincipalRef,
     ResourceRef,
 )
 from powercontext.server.authz.service import (
@@ -74,46 +72,40 @@ class CasbinAuthorizationProvider:
         self._deployment_id = deployment_id
         self._clock = clock or (lambda: datetime.now(UTC))
 
-    def with_repository(self, repository: AccessRepository) -> CasbinAuthorizationProvider:
-        """Preserve the fixed policy while binding reads to the caller's transaction."""
-
-        return CasbinAuthorizationProvider(repository, deployment_id=self._deployment_id, clock=self._clock)
-
     async def check(self, request: AccessRequest, /) -> AccessDecision:
         return (await self.check_batch((request,)))[0]
 
-    async def prepare_point_decisions(
-        self,
-        principal: PrincipalRef,
-        groups: tuple[GroupRef, ...],
-        resources: Sequence[ResourceRef],
-        *,
-        at: datetime | None = None,
-    ) -> Callable[[AccessRequest], AccessDecision]:
-        """Pin policy relations once and evaluate expiry for every point decision."""
-        observed_at = self._clock() if at is None else at
+    async def check_batch(self, requests: Sequence[AccessRequest], /) -> tuple[AccessDecision, ...]:
+        if not requests:
+            return ()
+        principal = requests[0].subject
+        if any(request.subject != principal for request in requests):
+            raise AccessInvalidRequestError("batch-subject")
         state = await read_decision_state(
             self._repository,
-            (principal, *groups),
-            now=observed_at,
-            binding_resources=resources,
+            (principal, *requests[0].context.subject_groups),
+            now=self._clock(),
             artifact_resources=tuple(
-                resource for resource in resources if resource.type is AccessResourceType.ARTIFACT
+                request.resource for request in requests if request.resource.type is AccessResourceType.ARTIFACT
             ),
         )
-        revision = contextual_policy_revision(state.policy_revision, groups)
-
-        def decide(request: AccessRequest) -> AccessDecision:
+        revision = contextual_policy_revision(state.policy_revision, requests[0].context.subject_groups)
+        bindings = state.bindings
+        decisions: list[AccessDecision] = []
+        for request in requests:
             if request.action is AccessAction.ACCESS_SELF:
-                return AccessDecision(True, "authenticated", revision)
-            now = self._clock() if at is None else at
-            bindings = tuple(binding for binding in state.bindings if binding.active_at(now))
+                decisions.append(AccessDecision(True, "authenticated", revision))
+                continue
             matched = _matching_binding(bindings, request.action, request.resource)
             owner = (
                 state.artifact_owners.get(request.resource.key)
                 if request.resource.type is AccessResourceType.ARTIFACT
                 else None
             )
+            if request.resource.type is AccessResourceType.ARTIFACT and owner is None:
+                reason = "artifact-owner-pending" if matched is not None else "no-matching-policy"
+                decisions.append(AccessDecision(False, reason, revision))
+                continue
             owner_allow = (
                 owner is not None
                 and owner.owner == principal
@@ -126,29 +118,16 @@ class CasbinAuthorizationProvider:
                 deployment_id=self._deployment_id,
             )
             allowed = bool(enforcer.enforce(*_casbin_request(request, self._deployment_id)))
-            return AccessDecision(
-                allowed,
-                "casbin-policy" if allowed else "no-matching-policy",
-                revision,
-                matched_subject=(matched.subject if matched is not None else principal if owner_allow else None),
-                matched_binding_id=None if matched is None else matched.binding_id,
+            decisions.append(
+                AccessDecision(
+                    allowed,
+                    "casbin-policy" if allowed else "no-matching-policy",
+                    revision,
+                    matched_subject=(principal if owner_allow else None if matched is None else matched.subject),
+                    matched_binding_id=None if matched is None else matched.binding_id,
+                )
             )
-
-        return decide
-
-    async def check_batch(self, requests: Sequence[AccessRequest], /) -> tuple[AccessDecision, ...]:
-        if not requests:
-            return ()
-        principal = requests[0].subject
-        if any(request.subject != principal for request in requests):
-            raise AccessInvalidRequestError("batch-subject")
-        decide = await self.prepare_point_decisions(
-            principal,
-            requests[0].context.subject_groups,
-            tuple(request.resource for request in requests),
-            at=self._clock(),
-        )
-        return tuple(decide(request) for request in requests)
+        return tuple(decisions)
 
     async def resolve_resource_filter(self, request: ResourceSearchRequest, /) -> AuthorizedResourceFilter:
         owned_by = (

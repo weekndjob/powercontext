@@ -212,6 +212,18 @@ def test_fresh_local_port_defaults_to_17429() -> None:
     assert state.forwarded_address == ""
 
 
+def test_dashboard_question_explains_authentication_and_keeps_mcp_enabled() -> None:
+    state = Wizard(WizardUI("en"), {}, {})
+
+    result = _run_network(state, "n\n\n")
+
+    assert result.exit_code == 0, result.output
+    assert "authenticated access" in result.output
+    assert "Server token" in result.output
+    assert state.values[SERVER + "DASHBOARD_ENABLED"] == "false"
+    assert state.values[SERVER + "MCP_ENABLED"] == "true"
+
+
 def test_fresh_local_setup_defaults_to_no_authentication() -> None:
     state = Wizard(WizardUI("en"), {}, {})
 
@@ -241,10 +253,10 @@ def test_existing_local_authentication_is_preserved_when_accepting_defaults(dash
     assert state.client[CLIENT + "API_TOKEN"] == "existing-test-token"
 
 
-def test_dashboard_authentication_can_be_enabled() -> None:
+def test_enabling_dashboard_opts_into_authentication() -> None:
     state = Wizard(WizardUI("en"), {}, {})
 
-    result = _run_network(state, "y\n\ny\n")
+    result = _run_network(state, "y\n\n")
 
     assert result.exit_code == 0, result.output
     assert state.values[SERVER + "DASHBOARD_ENABLED"] == "true"

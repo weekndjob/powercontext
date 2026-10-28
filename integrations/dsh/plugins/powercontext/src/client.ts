@@ -110,26 +110,15 @@ export async function readLimitedBody(response: Response, maxBytes = MAX_RESPONS
   return concatBytes(chunks, total)
 }
 
-function decodeError(bytes: Uint8Array): { code?: string; message?: string; details?: Record<string, unknown> } {
+function decodeError(bytes: Uint8Array): { code?: string; message?: string } {
   try {
     const parsed = JSON.parse(Buffer.from(bytes).toString('utf8')) as {
-      error?: { code?: string; message?: string; details?: unknown }
+      error?: { code?: string; message?: string }
     }
-    const details = parsed.error?.details
-    return {
-      code: parsed.error?.code,
-      message: parsed.error?.message,
-      // A details payload is machine-readable evidence the caller needs to act on the
-      // error (a capacity dimension, a rejected source), so it must survive decoding.
-      ...(isPlainObject(details) ? { details } : {}),
-    }
+    return { code: parsed.error?.code, message: parsed.error?.message }
   } catch {
     return {}
   }
-}
-
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
 function queryString(payload: JsonObject | undefined): string {
@@ -259,7 +248,6 @@ export class PowerContextClient {
     spec: OperationSpec, request: PreparedRequest, signal?: AbortSignal, requestTimeoutMs = this.requestTimeoutMs,
   ): RequestInit {
     const headers: Record<string, string> = {
-      'X-PowerContext-Dream-Contract': '2',
       Accept: 'application/json',
       'User-Agent': PLUGIN_USER_AGENT,
       ...request.headers,
@@ -342,7 +330,6 @@ export class PowerContextClient {
       requestId,
       code: decoded.code,
       message: decoded.message,
-      details: decoded.details,
     })
   }
 }

@@ -1,16 +1,14 @@
 {
-  "description": "Bootstrap scoped context, recall relevant memory, and capture the current Codex prompt.",
+  "description": "Recall relevant memory and capture the current Codex prompt as a Source.",
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
             "command": "uv run --frozen --quiet --project \"${PLUGIN_ROOT}\" python \"${PLUGIN_ROOT}/hooks/session_binding.py\"",
             "timeout": 10,
-            "statusMessage": "Loading PowerContext context",
-            "additionalContextLimit": 8192
+            "statusMessage": "Binding PowerContext"
           }
         ]
       }

@@ -1,5 +1,3 @@
-
-<!-- POWERCONTEXT-GUIDANCE:START -->
 # Work Handoff
 
 ## Current-work Handoff input
@@ -45,4 +43,3 @@ with the objective, exact status, observations, checks, produced Artifacts, and
 remaining work. Do not treat every session stop as task completion.
 
 For a preview, use inspected current facts without capture, prepare, or commit. Preserve the complete returned carrier, including required nullable fields and generation receipts.
-<!-- POWERCONTEXT-GUIDANCE:END -->

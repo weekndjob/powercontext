@@ -36,12 +36,11 @@ export type PowerContextClient = ReturnType<typeof createPowerContextClient>;
 
 export function createPowerContextClient(getConfig: () => PowerContextConfig) {
   async function request<T>(
-    method: "GET" | "POST" | "PUT",
+    method: "GET" | "POST",
     path: string,
     body?: Record<string, unknown>,
     signal?: AbortSignal,
-    extraHeaders?: Record<string, string>,
-  ): Promise<{ data: T; etag: string | null }> {
+  ): Promise<T> {
     const config = getConfig();
     if (!config.endpoint) {
       throw new PowerContextRequestError(path, "PowerContext endpoint is not configured");
@@ -60,7 +59,7 @@ export function createPowerContextClient(getConfig: () => PowerContextConfig) {
     }, config.timeoutMs);
     try {
       const token = process.env[config.tokenEnv];
-      const headers: Record<string, string> = { "content-type": "application/json", ...extraHeaders };
+      const headers: Record<string, string> = { "content-type": "application/json" };
       if (token) {
         headers.authorization = `Bearer ${token}`;
       }
@@ -108,7 +107,7 @@ export function createPowerContextClient(getConfig: () => PowerContextConfig) {
             : undefined;
         throw new PowerContextRequestError(path, detail, response.status, code);
       }
-      return { data: payload as T, etag: response.headers.get("etag") };
+      return payload as T;
     } catch (error) {
       if (error instanceof PowerContextRequestError) {
         throw error;
@@ -121,17 +120,11 @@ export function createPowerContextClient(getConfig: () => PowerContextConfig) {
   }
 
   return {
-    getResponse<T>(path: string, signal?: AbortSignal) {
+    get<T>(path: string, signal?: AbortSignal) {
       return request<T>("GET", path, undefined, signal);
     },
-    put<T>(path: string, body: Record<string, unknown>, ifMatch: string, signal?: AbortSignal) {
-      return request<T>("PUT", path, body, signal, { "If-Match": ifMatch }).then((result) => result.data);
-    },
-    get<T>(path: string, signal?: AbortSignal) {
-      return request<T>("GET", path, undefined, signal).then((result) => result.data);
-    },
     post<T>(path: string, body: Record<string, unknown>, signal?: AbortSignal) {
-      return request<T>("POST", path, body, signal).then((result) => result.data);
+      return request<T>("POST", path, body, signal);
     },
   };
 }

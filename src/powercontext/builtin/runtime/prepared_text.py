@@ -52,8 +52,7 @@ def render_context_text(items: Sequence[ContextTextItem], assembly: ContextAssem
 
     parts = ["# PowerContext historical context", TRUST_POLICY, _BEGIN_MARKER]
     for section in assembly.sections:
-        selected_families = {"memory", "atomic-memory"} if section.family == "memory" else {section.family}
-        included = [item for item in items if item.artifact.artifact.family in selected_families]
+        included = [item for item in items if item.artifact.artifact.family == section.family]
         if not included:
             continue
         title = {

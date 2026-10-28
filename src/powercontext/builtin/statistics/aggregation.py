@@ -47,11 +47,14 @@ from powercontext.builtin.statistics.models import (
 
 def aggregate_statistics(
     selection: ScopeSelection,
-    snapshots: tuple[ScopeStatistics, ...],
+    scope_ids: tuple[str, ...],
+    snapshots: tuple[Statistics, ...],
     as_of: datetime,
 ) -> Statistics:
     """Aggregate values that are already bounded to the same reporting period."""
 
+    if len(scope_ids) != len(snapshots):
+        raise ValueError("every selected Scope must have one Statistics snapshot")  # noqa: TRY003
     if not snapshots:
         raise ValueError("Statistics selection must resolve at least one Scope")  # noqa: TRY003
     period = snapshots[0].usage.period
@@ -60,16 +63,27 @@ def aggregate_statistics(
 
     return Statistics(
         selection=selection,
-        scope_ids=tuple(snapshot.scope_id for snapshot in snapshots),
+        scope_ids=scope_ids,
         as_of=as_of,
         inventory=_inventory(snapshots),
         usage=_usage(snapshots),
         recall=_recall(snapshots),
-        by_scope=snapshots,
+        by_scope=tuple(
+            ScopeStatistics(
+                scope_id=scope_id,
+                inventory=snapshot.inventory,
+                usage=snapshot.usage,
+                recall=snapshot.recall,
+                # Recurrence is reported per Scope and never merged: one scope's
+                # streak must not be added to another's.
+                recurrence=snapshot.by_scope[0].recurrence,
+            )
+            for scope_id, snapshot in zip(scope_ids, snapshots, strict=True)
+        ),
     )
 
 
-def _inventory(snapshots: tuple[ScopeStatistics, ...]) -> InventoryStatistics:
+def _inventory(snapshots: tuple[Statistics, ...]) -> InventoryStatistics:
     family_counts: dict[str, int] = defaultdict(int)
     candidate_counts: dict[str, list[int]] = defaultdict(lambda: [0, 0, 0])
     kind_counts: dict[str, list[int]] = defaultdict(lambda: [0, 0])
@@ -127,24 +141,58 @@ def _inventory(snapshots: tuple[ScopeStatistics, ...]) -> InventoryStatistics:
     )
 
 
-def _usage(snapshots: tuple[ScopeStatistics, ...]) -> UsageStatistics:
+def _usage(snapshots: tuple[Statistics, ...]) -> UsageStatistics:
+    period = snapshots[0].usage.period
+    purposes = tuple(
+        purpose
+        for purpose in ModelUsagePurpose
+        if any(any(item.purpose is purpose for item in snapshot.usage.by_purpose) for snapshot in snapshots)
+    )
     return UsageStatistics(
-        period=snapshots[0].usage.period,
+        period=period,
         totals=_model_usage(snapshot.usage.totals for snapshot in snapshots),
-        by_purpose=_purpose_totals(snapshot.usage.by_purpose for snapshot in snapshots),
+        by_purpose=tuple(
+            ModelUsagePurposeBreakdown(
+                purpose=purpose,
+                generation=_usage_value(
+                    _purpose(snapshot.usage.by_purpose, purpose).generation for snapshot in snapshots
+                ),
+                embedding=_usage_value(
+                    _purpose(snapshot.usage.by_purpose, purpose).embedding for snapshot in snapshots
+                ),
+            )
+            for purpose in purposes
+        ),
         daily=tuple(
             ModelUsageDay(
                 date=day.date,
                 generation=_usage_value(snapshot.usage.daily[index].generation for snapshot in snapshots),
                 embedding=_usage_value(snapshot.usage.daily[index].embedding for snapshot in snapshots),
-                by_purpose=_purpose_totals(snapshot.usage.daily[index].by_purpose for snapshot in snapshots),
+                by_purpose=tuple(
+                    ModelUsagePurposeBreakdown(
+                        purpose=purpose,
+                        generation=_usage_value(
+                            _purpose(snapshot.usage.daily[index].by_purpose, purpose).generation
+                            for snapshot in snapshots
+                        ),
+                        embedding=_usage_value(
+                            _purpose(snapshot.usage.daily[index].by_purpose, purpose).embedding
+                            for snapshot in snapshots
+                        ),
+                    )
+                    for purpose in ModelUsagePurpose
+                    if any(
+                        any(item.purpose is purpose for item in snapshot.usage.daily[index].by_purpose)
+                        for snapshot in snapshots
+                    )
+                ),
             )
             for index, day in enumerate(snapshots[0].usage.daily)
         ),
     )
 
 
-def _recall(snapshots: tuple[ScopeStatistics, ...]) -> RecallTokenStatistics:
+def _recall(snapshots: tuple[Statistics, ...]) -> RecallTokenStatistics:
     first = snapshots[0].recall
     if any(snapshot.recall.estimator != first.estimator for snapshot in snapshots):
         raise ValueError("Statistics snapshots must use the same recall estimator")  # noqa: TRY003
@@ -184,23 +232,18 @@ def _optional_sum(values: tuple[ModelUsageValue, ...], getter: Callable[[ModelUs
     return None if any(value is None for value in selected) else sum(value for value in selected if value is not None)
 
 
-def _purpose_totals(
-    groups: Iterable[tuple[ModelUsagePurposeBreakdown, ...]],
-) -> tuple[ModelUsagePurposeBreakdown, ...]:
-    groups = tuple(groups)
-    totals = []
-    for purpose in ModelUsagePurpose:
-        matches = (next((item for item in group if item.purpose is purpose), None) for group in groups)
-        items = tuple(item for item in matches if item is not None)
-        if items:
-            totals.append(
-                ModelUsagePurposeBreakdown(
-                    purpose=purpose,
-                    generation=_usage_value(item.generation for item in items),
-                    embedding=_usage_value(item.embedding for item in items),
-                )
-            )
-    return tuple(totals)
+def _purpose(
+    values: tuple[ModelUsagePurposeBreakdown, ...],
+    purpose: ModelUsagePurpose,
+) -> ModelUsagePurposeBreakdown:
+    return next(
+        (value for value in values if value.purpose is purpose),
+        ModelUsagePurposeBreakdown(
+            purpose=purpose,
+            generation=ModelUsageValue(requests=0, input_tokens=0, output_tokens=0),
+            embedding=ModelUsageValue(requests=0, input_tokens=0, output_tokens=0),
+        ),
+    )
 
 
 def _recall_value(values: Iterable[RecallTokenValue]) -> RecallTokenValue:

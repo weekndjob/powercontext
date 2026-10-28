@@ -38,7 +38,6 @@ const AUTOMATIC_OPERATION_PATHS = new Map([
   ['context_prepare', '/v1/context/prepare'],
   ['capture_source', '/v1/sources/content'],
   ['flush_memory', '/v1/memory/flush'],
-  ['pre_compaction_checkpoint', '/v1/memory/flush'],
 ])
 
 function responseDiagnostic(event: string, outcome: string, error: ServerResponseError): DiagnosticEvent {
@@ -129,9 +128,7 @@ export function createDiagnosticEmitter(
         : {}),
     }
     if (outcome && !['ready', 'ok', 'empty', 'skipped'].includes(outcome)) {
-      const key = [event.event, outcome, event.host, event.lifecycle_event, event.scope_correlation]
-        .filter((value): value is string => typeof value === 'string')
-        .join('\0')
+      const key = outcome
       const timestamp = now()
       const previous = lastEmitted.get(key)
       if (previous !== undefined && timestamp - previous < cooldownMs) return

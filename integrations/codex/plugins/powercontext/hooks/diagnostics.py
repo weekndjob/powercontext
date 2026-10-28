@@ -23,14 +23,7 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
-_FAILURE_OUTCOMES = frozenset({
-    "authentication_failed",
-    "authorization_denied",
-    "delivery_failed",
-    "invalid_response",
-    "server_unavailable",
-    "version_mismatch",
-})
+_FAILURE_OUTCOMES = frozenset({"authentication_failed", "version_mismatch", "server_unavailable", "invalid_response"})
 _COOLDOWN_SECONDS = 60.0
 
 

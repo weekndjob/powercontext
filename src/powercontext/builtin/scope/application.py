@@ -31,7 +31,6 @@ from powercontext.builtin.persistence.cursor_codec import Clock, SignedCursorCod
 from powercontext.builtin.persistence.database import AsyncDatabase
 from powercontext.builtin.scope.errors import (
     ScopeBindingNotFoundError,
-    ScopeBindingTargetMissingError,
     ScopeIdempotencyConflictError,
     ScopeNotFoundError,
     ScopeRelationshipError,
@@ -144,31 +143,6 @@ class ScopeApplication:
                 return await self._repository.get_many(connection, tuple(scope_ids))
             return await self._repository.list(connection)
 
-    async def navigation(self, scope_ids):
-        """Resolve ancestor names without discovering unrelated Scopes or their contents."""
-        items = {}
-        pending = set(scope_ids)
-        async with self._database.transaction(consistent_snapshot=True) as connection:
-            while pending:
-                rows = await self._repository.navigation(connection, tuple(pending))
-                items.update((row["scope_id"], row) for row in rows)
-                missing = pending - items.keys()
-                pending = (
-                    {row["parent_scope_id"] for row in rows if row["parent_scope_id"] is not None}
-                    - items.keys()
-                    - missing
-                )
-        for item in items.values():
-            names = []
-            parent = item["parent_scope_id"]
-            visited = {item["scope_id"]}
-            while parent in items and parent not in visited:
-                visited.add(parent)
-                names.insert(0, items[parent]["title"])
-                parent = items[parent]["parent_scope_id"]
-            item["display_title"] = item["title"] + (" (" + " / ".join(names) + ")" if names else "")
-        return items
-
     async def discover(self, discovery: ScopeDiscovery, /, *, caller: str) -> ScopeDescriptorPage:
         expected: dict[str, JsonValue] = {
             "version": 1,
@@ -216,12 +190,7 @@ class ScopeApplication:
     async def default_scope(self) -> ScopeDescriptor | None:
         async with self._database.transaction() as connection:
             scope_id = await self._repository.default_scope_id(connection)
-            return None if scope_id is None else await self._binding_target(connection, scope_id)
-
-    async def default_scope_id(self) -> str | None:
-        """Resolve the host pointer without expanding or authorizing its target."""
-        async with self._database.transaction() as connection:
-            return await self._repository.default_scope_id(connection)
+            return None if scope_id is None else await self._required(connection, scope_id)
 
     async def set_default(self, scope_id: str, /) -> ScopeDescriptor:
         async with self._write_lock:
@@ -282,13 +251,13 @@ class ScopeApplication:
             for key in binding_keys:
                 binding = await self._repository.binding(connection, key)
                 if binding is not None:
-                    return await self._binding_target(connection, binding.scope_id)
+                    return await self._required(connection, binding.scope_id)
             if not allow_default:
                 raise ScopeBindingNotFoundError
             default_scope_id = await self._repository.default_scope_id(connection)
             if default_scope_id is None:
                 raise ScopeBindingNotFoundError
-            return await self._binding_target(connection, default_scope_id)
+            return await self._required(connection, default_scope_id)
 
     async def resolve_selection(self, selection: ScopeSelection, /) -> tuple[ScopeDescriptor, ...]:
         async with self._database.transaction() as connection:
@@ -311,12 +280,6 @@ class ScopeApplication:
         if scope is None:
             raise ScopeNotFoundError(scope_id)
         return scope
-
-    async def _binding_target(self, connection: AsyncConnection, scope_id: str) -> ScopeDescriptor:
-        try:
-            return await self._required(connection, scope_id)
-        except ScopeNotFoundError as error:
-            raise ScopeBindingTargetMissingError(scope_id) from error
 
     async def _validate_relationships(
         self,

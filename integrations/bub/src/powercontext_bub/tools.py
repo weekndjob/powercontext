@@ -21,7 +21,7 @@ from contextlib import AbstractAsyncContextManager
 from typing import Any, TypedDict, cast
 
 from bub import tool
-from pydantic import BaseModel, Field, SecretStr
+from pydantic import BaseModel, Field
 
 from powercontext.client import PowerContextClient
 from powercontext.http import (
@@ -41,7 +41,6 @@ class ToolSettings(TypedDict):
     explicit_scope_id: str | None
     binding_keys: list[ScopeBindingKey]
     timeout: float
-    api_token: SecretStr | None
     trust_transport_security: bool
     allow_insecure_http: bool
     max_bytes: int
@@ -76,8 +75,7 @@ async def search_memory(param: SearchInput, *, context: Any) -> str:
             {
                 "matched_by": [value.value for value in hit.matched_by],
                 "score": hit.score,
-                "memory": hit.memory.model_dump(mode="json"),
-                "text": hit.memory.text,
+                "text": hit.text,
             }
             for hit in response.hits
         ],
@@ -100,9 +98,9 @@ async def remember_memory(param: RememberInput, *, context: Any) -> str:
             reason=param.reason,
         )
         response = await client.remember_memory(request)
-    if not response.records:
-        return "(PowerContext accepted the request without a memory record)"
-    return "\n".join(f"Remembered {record.kind}: {record.text}" for record in response.records)
+    if response.entry is None:
+        return "(PowerContext accepted the memory without an entry receipt)"
+    return f"Remembered {response.entry.kind}: {response.entry.text}"
 
 
 @tool(context=True, name="powercontext.context")
@@ -132,7 +130,6 @@ def _client(settings: ToolSettings) -> AbstractAsyncContextManager[PowerContextC
     return open_client(
         settings["base_url"],
         timeout=settings["timeout"],
-        api_token=settings["api_token"],
         trust_transport_security=settings["trust_transport_security"],
         allow_insecure_http=settings["allow_insecure_http"],
     )

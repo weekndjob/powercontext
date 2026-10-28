@@ -27,8 +27,12 @@ from powercontext.server.dashboard.markdown import handoff_markdown
 
 def _record(text: str) -> dict[str, Any]:
     citation = {
-        "kind": "artifact",
-        "artifact_ref": {"family": "atomic-memory", "artifact_id": "entry-1", "revision": 9},
+        "kind": "memory",
+        "memory_citation": {
+            "memory_ref": {"family": "memory", "artifact_id": "memory", "revision": 9},
+            "entry_id": "entry-1",
+            "entry_version_id": "version-3",
+        },
     }
     return {
         "scope_id": "scope-中文",
@@ -56,8 +60,9 @@ def test_markdown_preserves_reference_versions_and_blocks_structure_injection():
     assert content in unescape(rendered)
     blocks = [token.content for token in MarkdownIt().parse(result) if token.type == "fence"]
     values = [json.loads(block) for block in blocks]
-    citation = values[1][0]["artifact_ref"]
-    assert citation == {"family": "atomic-memory", "artifact_id": "entry-1", "revision": 9}
+    citation = values[1][0]["memory_citation"]
+    assert citation["memory_ref"]["revision"] == 9
+    assert citation["entry_version_id"] == "version-3"
     html = MarkdownIt("commonmark", {"html": True}).render(result)
     assert "<script>" not in html
     assert "<img" not in html

@@ -28,9 +28,7 @@
 /tests/ @Teingi @PsiACE
 /e2e/ @PsiACE @AlexStocks
 /evaluation/ @PsiACE @frf12
-/evaluation/memory/ @Teingi @Alanxtl
-/evaluation/memory/longmemeval_v2/ @PsiACE @frf12
-/evaluation/performance/ @Teingi @Alanxtl
+/benchmark/ @Teingi @Alanxtl
 
 # Documentation, website, and examples.
 /docs/ @zhanghuidinah @PsiACE

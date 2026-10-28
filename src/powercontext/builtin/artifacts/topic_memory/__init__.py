@@ -40,7 +40,6 @@ from powercontext.builtin.artifacts.topic_memory.models import (
     MAX_TOPIC_MEMORY_SUMMARY_LENGTH,
     MAX_TOPIC_MEMORY_TITLE_LENGTH,
     PublishedTopicMemory,
-    TopicArtifactSearchRequest,
     TopicMemory,
     TopicMemoryBrowseCursor,
     TopicMemoryCapabilities,
@@ -57,7 +56,6 @@ from powercontext.builtin.artifacts.topic_memory.models import (
     TopicMemorySearchRequest,
     TopicMemorySearchResult,
     TopicMemoryUsedSearchMode,
-    TopicSearchAdmission,
 )
 
 TOPIC_MEMORY_SOURCE_WINDOW_BINDING = "topic-memory-source-window"
@@ -78,7 +76,6 @@ __all__ = [
     "TOPIC_MEMORY_CHUNK_TARGET_CHARACTERS",
     "TOPIC_MEMORY_SOURCE_WINDOW_BINDING",
     "PublishedTopicMemory",
-    "TopicArtifactSearchRequest",
     "TopicMemory",
     "TopicMemoryBrowseCursor",
     "TopicMemoryCapabilities",
@@ -99,7 +96,6 @@ __all__ = [
     "TopicMemorySearchResult",
     "TopicMemoryStorageInvariantError",
     "TopicMemoryUsedSearchMode",
-    "TopicSearchAdmission",
     "chunk_topic_memory_detail",
     "fuse_topic_memory_rankings",
     "prepare_topic_memory_projection",

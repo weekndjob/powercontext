@@ -25,11 +25,9 @@ from powercontext.builtin.persistence.sqlite import SQLiteConfig, SQLiteProfile
 from powercontext.builtin.persistence.tables import BUILTIN_TABLES
 
 
-def test_sqlite_startup_upgrades_legacy_skill_publications_idempotently(initialized_sqlite_database) -> None:
-    database = initialized_sqlite_database
+def test_sqlite_startup_upgrades_legacy_skill_publications_idempotently(tmp_path) -> None:
+    database = tmp_path / "legacy-skill-publications.db"
     with sqlite3.connect(database) as connection:
-        connection.execute("DROP TABLE pc_skill_publications")
-        connection.execute("DROP TABLE pc_agent_skill_targets")
         connection.execute(
             """
             CREATE TABLE pc_agent_skill_targets (

@@ -19,7 +19,6 @@ import pytest
 from powercontext.artifacts import ArtifactRef
 from powercontext.builtin.artifacts.skill import SkillContent, build_instruction_skill_package
 from powercontext.builtin.artifacts.skill.distribution import (
-    RemotePublicationGenerationError,
     RemoteSkillLifecycleError,
     RemoteSkillObservation,
     RemoteSkillOperation,
@@ -35,7 +34,6 @@ from powercontext.builtin.persistence.artifact_governance import ArtifactLifecyc
 from powercontext.builtin.persistence.skill_publications import SkillPublicationDesiredState
 from powercontext.builtin.persistence.sqlite import SQLiteConfig
 from powercontext.builtin.runtime import BuiltinConfig, open_builtin_contexts
-from powercontext.builtin.scope import ScopeDraft
 
 
 def _package(instruction: str = "Run the release verification."):
@@ -47,11 +45,6 @@ def _package(instruction: str = "Run the release verification."):
             validation=("The report passes.",),
         )
     )
-
-
-async def _create_scope(contexts, key: str) -> str:
-    scope = await contexts.scopes.create(ScopeDraft(title=key, summary="Skill distribution test", idempotency_key=key))
-    return scope.scope_id
 
 
 async def _approved_package(contexts, scope_id: str, *, target: ArtifactRef | None = None):
@@ -143,7 +136,7 @@ def test_remote_enrollment_is_one_time_and_revocation_invalidates_the_credential
 def test_remote_publish_reconcile_download_receipt_and_safe_unpublish_converge() -> None:
     async def exercise() -> None:
         async with open_builtin_contexts(BuiltinConfig(database=SQLiteConfig())) as contexts:
-            scope_id = await _create_scope(contexts, "project:one")
+            scope_id = "project:one"
             artifact, package = await _approved_package(contexts, scope_id)
             service = contexts.remote_skill_distribution()
             _enrollment, target = await _active_target(service, scope_id)
@@ -153,10 +146,6 @@ def test_remote_publish_reconcile_download_receipt_and_safe_unpublish_converge()
             assert publication.generation == 0
             assert publication.state is AgentSkillProjectionState.PENDING
             statuses = await service.list_targets(scope_id, target_id=target.target_id)
-            assert (
-                await service.publish(scope_id, target.target_id, artifact, publication.generation)
-                == (statuses[0].publications[0])
-            )
             assert len(statuses) == 1
             assert statuses[0].target.target_id == target.target_id
             assert len(statuses[0].publications) == 1
@@ -199,13 +188,6 @@ def test_remote_publish_reconcile_download_receipt_and_safe_unpublish_converge()
             )
             assert (await service.reconcile(credential, (observation,), "0.1.0", "e" * 64)).actions == ()
 
-            before_repeat = (await service.list_targets(scope_id, target_id=target.target_id))[0].publications[0]
-            repeated = await service.publish(scope_id, target.target_id, artifact, installed.publication.generation)
-            assert repeated == before_repeat
-            assert (await service.reconcile(credential, (observation,), "0.1.0", "e" * 64)).actions == ()
-            statuses = await service.list_targets(scope_id, target_id=target.target_id)
-            assert statuses[0].publications[0] == before_repeat
-
             unpublished = await service.unpublish(scope_id, target.target_id, artifact.artifact_id, 0)
             assert unpublished.generation == 1
             assert unpublished.desired_state is SkillPublicationDesiredState.UNPUBLISHED
@@ -231,19 +213,13 @@ def test_remote_publish_reconcile_download_receipt_and_safe_unpublish_converge()
             with pytest.raises(RemoteTargetAuthenticationError):
                 await service.download(credential, remove.generation, artifact, package.reference)
 
-            republished = await service.publish(scope_id, target.target_id, artifact, unpublished.generation)
-            assert republished.generation == unpublished.generation + 1
-            assert republished.state is AgentSkillProjectionState.PENDING
-            with pytest.raises(RemotePublicationGenerationError):
-                await service.publish(scope_id, target.target_id, artifact, unpublished.generation)
-
     asyncio.run(exercise())
 
 
 def test_remote_publish_distinguishes_skill_lifecycle_from_target_state() -> None:
     async def exercise() -> None:
         async with open_builtin_contexts(BuiltinConfig(database=SQLiteConfig())) as contexts:
-            scope_id = await _create_scope(contexts, "project:one")
+            scope_id = "project:one"
             artifact, _package_snapshot = await _approved_package(contexts, scope_id)
             service = contexts.remote_skill_distribution()
             _enrollment, target = await _active_target(service, scope_id)
@@ -288,7 +264,7 @@ def test_remote_publish_distinguishes_skill_lifecycle_from_target_state() -> Non
 def test_remote_receipt_loss_and_failure_retry_do_not_advance_or_regress_desired_generation() -> None:
     async def exercise() -> None:
         async with open_builtin_contexts(BuiltinConfig(database=SQLiteConfig())) as contexts:
-            scope_id = await _create_scope(contexts, "project:one")
+            scope_id = "project:one"
             artifact, package = await _approved_package(contexts, scope_id)
             service = contexts.remote_skill_distribution()
             _enrollment, target = await _active_target(service, scope_id)
@@ -318,12 +294,6 @@ def test_remote_receipt_loss_and_failure_retry_do_not_advance_or_regress_desired
             failed = await service.receipt(credential, failed_receipt)
             assert failed.publication.generation == publication.generation
             assert failed.publication.state is AgentSkillProjectionState.DELIVERY_FAILED
-            before_repeat = (await service.list_targets(scope_id, target_id=target.target_id))[0].publications[0]
-            repeated = await service.publish(scope_id, target.target_id, artifact, failed.publication.generation)
-            assert repeated == before_repeat
-            retry = await service.reconcile(credential, (), "0.1.0", None)
-            assert retry.actions[0].operation is RemoteSkillOperation.INSTALL
-            assert retry.actions[0].generation == publication.generation
 
             success_receipt = failed_receipt.model_copy(
                 update={
@@ -358,7 +328,7 @@ def test_remote_receipt_loss_and_failure_retry_do_not_advance_or_regress_desired
 def test_reconcile_persists_authenticated_drift_after_a_successful_receipt() -> None:
     async def exercise() -> None:
         async with open_builtin_contexts(BuiltinConfig(database=SQLiteConfig())) as contexts:
-            scope_id = await _create_scope(contexts, "project:one")
+            scope_id = "project:one"
             artifact, package = await _approved_package(contexts, scope_id)
             service = contexts.remote_skill_distribution()
             _enrollment, target = await _active_target(service, scope_id)

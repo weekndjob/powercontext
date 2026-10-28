@@ -40,7 +40,6 @@ from powercontext.service.model import (
     ServiceError,
     SupportState,
 )
-from powercontext.service.native_command import run_native_command
 
 _FAILURE_LIMIT = 3
 _FAILURE_WINDOW_SECONDS = 60
@@ -232,19 +231,6 @@ class LaunchdUserAdapter:
         if registration.definition is not None:
             _clear_retry_files(registration.definition)
 
-    def suspend(self, marker: Path) -> None:
-        # The persistent disabled override survives logout/reboot. bootout in
-        # stop() then removes the existing KeepAlive job as well.
-        self.disable()
-
-    def resume(self) -> None:
-        self.enable()
-
-    def update_suspended(self) -> None:
-        # A suspended LaunchAgent was booted out; its next bootstrap reads the
-        # replaced plist. The persistent disable override remains in force.
-        return None
-
     def remove(self) -> None:
         self.artifact_path.unlink(missing_ok=True)
 
@@ -282,10 +268,7 @@ class LaunchdUserAdapter:
     def _run(self, *arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
         command = ["launchctl", *arguments]
         try:
-            if arguments and arguments[0] in {"enable", "disable", "bootstrap", "bootout", "kickstart"}:
-                result = run_native_command(command, text=True, timeout=30)
-            else:
-                result = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)  # noqa: S603
+            result = subprocess.run(command, capture_output=True, text=True, timeout=30, check=False)  # noqa: S603
         except (OSError, subprocess.SubprocessError) as error:
             raise ServiceError(f"failed to execute launchctl: {error}") from error  # noqa: TRY003
         if check and result.returncode != 0:
@@ -336,10 +319,9 @@ def _clear_retry_files(definition: ServiceDefinition) -> None:
 
 
 def _launcher_arguments(definition: ServiceDefinition) -> list[str]:
-    launcher = definition.launcher_arguments()
-    module_position = launcher.index("-m")
     return [
-        *launcher[: module_position + 1],
+        definition.python_executable,
+        "-m",
         "powercontext_service_bootstrap",
         "--retry-state",
         str(_failure_state_path(definition)),
@@ -350,7 +332,7 @@ def _launcher_arguments(definition: ServiceDefinition) -> list[str]:
         "--retry-window-seconds",
         str(_FAILURE_WINDOW_SECONDS),
         "--",
-        *launcher[module_position + 2 :],
+        *definition.launcher_arguments()[3:],
     ]
 
 

@@ -89,13 +89,7 @@ from powercontext.builtin.artifacts.skill.prompts import (
     SKILL_GENERATION_INSTRUCTIONS_VERSION,
 )
 from powercontext.builtin.artifacts.skill.provenance import SkillOrigin, SkillOriginKind
-from powercontext.builtin.artifacts.skill.search import (
-    SkillSearchHit,
-    SkillSearchOutcome,
-    SkillSearchRequest,
-    skill_search_text,
-    skill_searchable_text,
-)
+from powercontext.builtin.artifacts.skill.search import SkillSearchHit, skill_search_text, skill_searchable_text
 
 __all__ = [
     "MAX_EXTERNAL_SKILL_DESCRIPTION_LENGTH",
@@ -156,8 +150,6 @@ __all__ = [
     "SkillRuntimeRequirements",
     "SkillRuntimeVariant",
     "SkillSearchHit",
-    "SkillSearchOutcome",
-    "SkillSearchRequest",
     "assess_skill_compatibility",
     "build_instruction_skill_package",
     "capture_skill_archive",

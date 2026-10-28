@@ -19,21 +19,13 @@ import { describe, expect, it } from "vitest";
 import { decodeCitation, encodeCitation } from "./types.js";
 
 describe("PowerContext citations", () => {
-  it("round trips exact Atomic references", () => {
-    const reference = {
-      artifact: { family: "atomic-memory", artifact_id: "memory-1", revision: 3 },
-      state_version: 2,
-    };
-    expect(decodeCitation(encodeCitation(reference))).toEqual(reference);
-  });
-
-  it("rejects encoded Memory entry citations locally", () => {
-    const encoded = `powercontext:${Buffer.from(JSON.stringify({
+  it("round trips exact citations", () => {
+    const citation = {
       memory_ref: { family: "memory", artifact_id: "memory-1", revision: 3 },
       entry_id: "entry-1",
       entry_version_id: "entry-1-v2",
-    }), "utf8").toString("base64url")}`;
-    expect(() => decodeCitation(encoded)).toThrow(/Atomic Memory reference/u);
+    };
+    expect(decodeCitation(encodeCitation(citation))).toEqual(citation);
   });
 
   it("rejects model-authored arbitrary citation strings", () => {

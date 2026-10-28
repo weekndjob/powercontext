@@ -18,63 +18,18 @@ from __future__ import annotations
 
 import asyncio
 import time
-from collections.abc import AsyncIterator, Callable, Collection
+from collections.abc import AsyncIterator
 from contextlib import AbstractAsyncContextManager, asynccontextmanager, nullcontext
-from sqlite3 import SQLITE_INTERRUPT
-from typing import Any
 
 from aiosqlite import Connection as SQLiteConnection
-from aiosqlite import Cursor as SQLiteCursor
-from sqlalchemy.exc import OperationalError, PendingRollbackError
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine
 
-from powercontext.builtin.persistence.errors import DatabaseClosedError, PersistenceError
+from powercontext.builtin.persistence.errors import DatabaseClosedError
 
 # Repositories that read a whole Scope selection in one statement chunk it to stay
 # below the lowest bind-parameter ceiling across the supported backends.
 SELECTION_BATCH_SIZE = 500
-
-
-class ModelUsageAttemptExpired(TimeoutError):
-    """A usage attempt stopped before its body could commit.
-
-    Raised only where the record cannot have been applied, which is the same
-    rollback-safe shape as a lost race: the recorder may spend more of the same
-    record budget on another attempt. A deadline that may have raced a commit
-    stays a plain ``TimeoutError``, because repeating that one could count the
-    same usage twice.
-    """
-
-
-@asynccontextmanager
-async def _expiring(deadline: float) -> AsyncIterator[None]:
-    """Bound a step that cannot have applied anything when it expires.
-
-    Guard acquisition and checkout run before the body, so an expired step
-    leaves the record unapplied and worth another attempt within its budget.
-    """
-
-    try:
-        async with asyncio.timeout_at(deadline):
-            yield
-    except TimeoutError as error:
-        raise ModelUsageAttemptExpired from error
-
-
-async def begin_mysql_read_snapshot(connection: AsyncConnection) -> None:
-    """Start an owned read snapshot without changing the session default.
-
-    The caller owns a fresh connection and must close or roll it back afterward.
-    Never use this inside a transaction that has already read business data.
-    """
-    try:
-        await connection.exec_driver_sql("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
-        await connection.exec_driver_sql("START TRANSACTION WITH CONSISTENT SNAPSHOT")
-    except BaseException:
-        # A one-shot setting may have applied before START failed or was
-        # cancelled. Pool rollback alone does not consume that setting.
-        await connection.invalidate()
-        raise
 
 
 class AsyncDatabase:
@@ -117,66 +72,15 @@ class AsyncDatabase:
         return self._engine
 
     @asynccontextmanager
-    async def transaction(self, *, consistent_snapshot: bool = False) -> AsyncIterator[AsyncConnection]:
-        """Yield an owned transaction, optionally pinning its short read snapshot.
+    async def transaction(self) -> AsyncIterator[AsyncConnection]:
+        """Yield a connection in a transaction owned by the calling use case."""
 
-        MySQL snapshot isolation applies only to this transaction. Nested
-        in-memory SQLite reads retain their caller's transaction and writes.
-        An already borrowed MySQL transaction cannot be upgraded in place.
-        """
-
-        if self._shared_connection is not None and self._transaction_owner is asyncio.current_task():
-            # Nested lookups join their caller's transaction. Only its owner
-            # runs connection cleanup, so nested exits cannot close its cursors.
-            connection = self._shared_connection
-            if consistent_snapshot and connection.dialect.name != "sqlite":
-                raise PersistenceError("cannot establish a snapshot inside an existing transaction")  # noqa: TRY003
-            async with connection.begin_nested() if consistent_snapshot else nullcontext():
-                yield connection
-            return
-        context = self._transaction(consistent_snapshot=consistent_snapshot)
-        connection = await context.__aenter__()
-        sqlite_stop = None
-        sqlite_cursors: Collection[SQLiteCursor] | None = None
-        info: dict[str, Any] | None = None
-        if connection.dialect.name == "sqlite":
-            # Hold the info dict itself. `connection.info` re-resolves the DBAPI
-            # connection and raises once it has been invalidated, and cleanup has
-            # to survive that.
-            info = connection.info
-            sqlite_stop = info.get("_powercontext_sqlite_stop")
-            sqlite_cursors = info.get("_powercontext_sqlite_cursors")
-            # An interrupt recorded by a statement outside this transaction (the
-            # usage recorder owns its own) must not fail this one.
-            info.pop("_powercontext_sqlite_interrupted", None)
-        try:
-            yield connection
-        except BaseException as error:
-            if info is not None:
-                info.pop("_powercontext_sqlite_interrupted", None)
-            await _finish_transaction(context, connection, error, sqlite_stop, sqlite_cursors)
-            raise
-        if info is not None and info.pop("_powercontext_sqlite_interrupted", False):
-            # An interrupted statement rolled SQLite's whole native transaction
-            # back, so writes that already reported success are gone. Committing
-            # now would persist only the later ones; fail the transaction instead.
-            interrupted = PendingRollbackError(
-                "The transaction was interrupted, so its earlier writes were rolled back.", code="8s2b"
-            )
-            await _finish_transaction(context, connection, interrupted, sqlite_stop, sqlite_cursors)
-            raise interrupted
-        try:
-            await context.__aexit__(None, None, None)
-        finally:
-            # The commit itself can be cancelled, and its error handler records the
-            # mark after the check above; clear it so the next borrower of this
-            # pooled connection cannot inherit an interrupt that was not theirs.
-            if info is not None:
-                info.pop("_powercontext_sqlite_interrupted", None)
-
-    @asynccontextmanager
-    async def _transaction(self, *, consistent_snapshot: bool = False) -> AsyncIterator[AsyncConnection]:
         owner = asyncio.current_task()
+        if self._shared_connection is not None and self._transaction_owner is owner:
+            # Nested lookups on a single-connection profile must join their
+            # caller's transaction, not acquire or commit that connection again.
+            yield self._shared_connection
+            return
         async with self._state_changed:
             if self._closed or self._closing:
                 raise DatabaseClosedError
@@ -187,27 +91,12 @@ class AsyncDatabase:
                 if connection.dialect.name == "mysql":
                     # The MySQL dialect's begin hook is a no-op. Explicitly start
                     # the owned transaction even when the server session uses autocommit.
-                    if consistent_snapshot:
-                        await begin_mysql_read_snapshot(connection)
-                    else:
-                        await connection.exec_driver_sql("START TRANSACTION")
-                snapshot = nullcontext()
-                if consistent_snapshot and connection.dialect.name == "sqlite":
-                    # SQLAlchemy's logical begin does not start a native SQLite
-                    # transaction for SELECT. One native BEGIN pins a fresh
-                    # owned snapshot. Retain a SAVEPOINT if the attached driver
-                    # has already started a physical transaction.
-                    driver = (await connection.get_raw_connection()).driver_connection
-                    if isinstance(driver, SQLiteConnection) and not driver.in_transaction:
-                        await connection.exec_driver_sql("BEGIN")
-                    else:
-                        snapshot = connection.begin_nested()
+                    await connection.exec_driver_sql("START TRANSACTION")
                 if self._shared_connection_lock is not None:
                     self._transaction_owner = owner
                     self._shared_connection = connection
                 try:
-                    async with snapshot:
-                        yield connection
+                    yield connection
                 finally:
                     self._transaction_owner = None
                     self._shared_connection = None
@@ -217,14 +106,12 @@ class AsyncDatabase:
                 self._state_changed.notify_all()
 
     @asynccontextmanager
-    async def statistics_transaction(self, timeout_seconds: float) -> AsyncIterator[AsyncConnection]:
-        """Own a bounded statistics transaction, never join a caller's transaction.
+    async def _model_usage_transaction(self, timeout_seconds: float) -> AsyncIterator[AsyncConnection]:
+        """Own a best-effort usage transaction, never join a caller's transaction.
 
-        Call only outside a business transaction. SQLite SQL is interrupted
-        natively, not by cancelling SQLAlchemy (which invalidates its connection
-        and destroys a StaticPool's in-memory database). A step that expires
-        before the body commits raises ``ModelUsageAttemptExpired``; only the
-        model-usage consumer retries that rollback-safe outcome.
+        Only the recorder's separate consumer task calls this method. SQLite SQL
+        is interrupted natively, not by cancelling SQLAlchemy (which invalidates
+        its connection and destroys a StaticPool's in-memory database).
         """
 
         deadline = asyncio.get_running_loop().time() + timeout_seconds
@@ -237,7 +124,7 @@ class AsyncDatabase:
         try:
             if guard is not None:
                 # Cancellation is safe here: no driver operation has started.
-                async with _expiring(deadline):
+                async with asyncio.timeout_at(deadline):
                     await guard.acquire()
                 acquired = True
             connection = self._engine.connect()
@@ -245,7 +132,7 @@ class AsyncDatabase:
                 # Pool timeout only bounds waiting for a slot, not pre-ping or
                 # the driver's handshake. SQLAlchemy returns an interrupted
                 # checkout to the pool; aiomysql closes cancelled socket reads.
-                async with _expiring(deadline):
+                async with asyncio.timeout_at(deadline):
                     await connection.start()
                 if connection.dialect.name == "sqlite":
                     async with _sqlite_model_usage_transaction(connection, deadline):
@@ -308,71 +195,6 @@ class AsyncDatabase:
                 self._state_changed.notify_all()
 
 
-async def _retire_cancelled_connection(
-    connection: AsyncConnection,
-    error: BaseException,
-    sqlite_cursors: Collection[SQLiteCursor] | None,
-) -> None:
-    """Close a cancelled connection's native cursor, then discard a dead driver."""
-
-    raw = await connection.get_raw_connection()
-    driver = raw.driver_connection
-    if sqlite_cursors and isinstance(driver, SQLiteConnection) and driver._running:
-        # A cancelled await leaves the native cursor held by the exception stack;
-        # rollback cannot complete until it closes.
-        for cursor in tuple(sqlite_cursors):
-            await cursor.close()
-    if _driver_is_dead(driver, connection.dialect.name):
-        # A cancelled invalidate can close the driver before updating SQLAlchemy's state.
-        await connection.invalidate(error)
-
-
-def _driver_is_dead(driver: object, dialect_name: str) -> bool:
-    """Report whether a cancelled driver already exited and must not be reused."""
-
-    if isinstance(driver, SQLiteConnection):
-        return not driver._running
-    if dialect_name == "mysql":
-        from aiomysql import Connection as MySQLConnection
-
-        return isinstance(driver, MySQLConnection) and driver.closed
-    return False
-
-
-async def _finish_transaction(
-    context: AbstractAsyncContextManager[AsyncConnection],
-    connection: AsyncConnection,
-    error: BaseException,
-    sqlite_stop: Callable[[], asyncio.Future[object] | None] | None,
-    sqlite_cursors: Collection[SQLiteCursor] | None = None,
-) -> None:
-    """Retire a failed transaction before its error propagates to the caller."""
-
-    async def finish() -> None:
-        try:
-            if isinstance(error, asyncio.CancelledError) and not connection.closed:
-                if not connection.invalidated:
-                    await _retire_cancelled_connection(connection, error, sqlite_cursors)
-                if connection.invalidated and sqlite_stop is not None:
-                    stopped = sqlite_stop()
-                    if stopped is not None:
-                        await stopped
-        finally:
-            await context.__aexit__(type(error), error, error.__traceback__)
-
-    finishing = asyncio.create_task(finish(), name="powercontext-transaction-cleanup")
-    interrupted = None
-    # Keep connection ownership until cleanup finishes, even under repeated cancellation.
-    while not finishing.done():
-        try:
-            await asyncio.shield(finishing)
-        except asyncio.CancelledError as cancellation:
-            interrupted = cancellation
-    finishing.result()
-    if interrupted is not None:
-        raise interrupted
-
-
 @asynccontextmanager
 async def _sqlite_model_usage_transaction(connection: AsyncConnection, deadline: float) -> AsyncIterator[None]:
     driver = (await connection.get_raw_connection()).driver_connection
@@ -381,8 +203,6 @@ async def _sqlite_model_usage_transaction(connection: AsyncConnection, deadline:
     loop = asyncio.get_running_loop()
     remaining = deadline - loop.time()
     if remaining <= 0:
-        # The record's budget was already gone when this attempt started, so
-        # there is nothing left to repeat it with.
         raise TimeoutError
     # The worker thread uses a monotonic clock, not the event loop's clock API.
     stop_at = time.monotonic() + remaining
@@ -420,8 +240,15 @@ async def _sqlite_model_usage_transaction(connection: AsyncConnection, deadline:
         # without queuing work. Use that same thread-safe primitive in a timer so
         # each record needs no additional asyncio task.
         timer = loop.call_at(deadline, driver._conn.interrupt)
-        async with _sqlite_usage_attempt(connection, deadline):
+        async with connection.begin():
+            if loop.time() >= deadline:
+                raise TimeoutError
+            # sqlite3's legacy mode does not begin a transaction for SELECT.
+            # Include the Scope existence read in the write's actual snapshot.
+            await connection.exec_driver_sql("BEGIN")
             yield
+            if loop.time() >= deadline:
+                raise TimeoutError
         # busy_timeout stays bounded through COMMIT and any automatic ROLLBACK.
     finally:
         if timer is not None:
@@ -429,34 +256,6 @@ async def _sqlite_model_usage_transaction(connection: AsyncConnection, deadline:
         await _restore_sqlite_usage_connection(driver, busy_timeout)
     # SQLite cannot interrupt a user-defined function or a blocked filesystem
     # syscall. Await native cleanup rather than falsely report it as cancelled.
-
-
-@asynccontextmanager
-async def _sqlite_usage_attempt(connection: AsyncConnection, deadline: float) -> AsyncIterator[None]:
-    """Repeat only an expired body, never an interruption with an unknown commit."""
-
-    loop = asyncio.get_running_loop()
-    committing = False
-    try:
-        async with connection.begin():
-            if loop.time() >= deadline:
-                raise ModelUsageAttemptExpired
-            # sqlite3's legacy mode does not begin a transaction for SELECT.
-            # Include the Scope existence read in the write's actual snapshot.
-            await connection.exec_driver_sql("BEGIN")
-            yield
-            # Native interruption and a body that returns after its slice are
-            # both unapplied attempts. Let the recorder spend its remaining budget.
-            if loop.time() >= deadline:
-                raise ModelUsageAttemptExpired
-            committing = True
-    except OperationalError as error:
-        # The transaction has rolled back. Connection-level restoration must
-        # also succeed before the enclosing context can return this expiry.
-        sqlite_code = getattr(error.orig, "sqlite_errorcode", None)
-        if not committing and sqlite_code == SQLITE_INTERRUPT and loop.time() >= deadline:
-            raise ModelUsageAttemptExpired from error
-        raise
 
 
 def _disabled_progress() -> int:

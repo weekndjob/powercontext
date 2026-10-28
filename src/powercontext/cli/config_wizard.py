@@ -576,8 +576,8 @@ def _network(state: Wizard) -> None:
     ui = state.ui
     ui.section("4. Dashboard and access", "4. Dashboard 与访问")
     dashboard = ui.confirm(
-        "Enable the browser Dashboard?",
-        "开启浏览器 Dashboard？",
+        "Enable the browser Dashboard? This also enables authenticated access and creates or retains a Server token.",
+        "开启浏览器 Dashboard？这会同时启用访问认证，并生成或沿用 Server Token。",
         default=state.values.get(f"{SERVER}DASHBOARD_ENABLED", "false") == "true",
     )
     ui.say(
@@ -622,13 +622,9 @@ def _network(state: Wizard) -> None:
         else:
             host, port, address = _custom_access(state, port)
     token = state.values.get(f"{SERVER}AUTH_TOKEN", "")
-    authenticated = state.scenario != "local" or bool(token) or state.values.get(f"{SERVER}ACCESS_MODE") == "enforced"
-    if dashboard and not authenticated:
-        authenticated = ui.confirm(
-            "Require authentication for Dashboard, HTTP API, and MCP?",
-            "为 Dashboard、HTTP API 和 MCP 启用访问认证？",
-            default=False,
-        )
+    authenticated = (
+        dashboard or state.scenario != "local" or bool(token) or state.values.get(f"{SERVER}ACCESS_MODE") == "enforced"
+    )
     if authenticated and not token:
         token = secrets.token_urlsafe(32)
         state.generated_auth_token = token

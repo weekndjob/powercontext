@@ -30,8 +30,6 @@ MAX_DEMONSTRATION_BYTES = 64 * 1024
 MAX_PROMPT_BYTES = 256 * 1024
 
 PromptKey = Literal[
-    "atomic_memory.extract",
-    "atomic_memory.reconcile",
     "memory.extract",
     "memory.rerank",
     "experience.incubate",
@@ -48,8 +46,6 @@ PromptKey = Literal[
     "profile.generate",
 ]
 PROMPT_KEYS: tuple[PromptKey, ...] = (
-    "atomic_memory.extract",
-    "atomic_memory.reconcile",
     "memory.extract",
     "memory.rerank",
     "experience.incubate",

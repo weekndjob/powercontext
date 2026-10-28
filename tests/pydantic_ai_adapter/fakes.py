@@ -18,59 +18,66 @@ from typing import Any, ClassVar
 
 from powercontext.http import (
     ArtifactReference,
-    AtomicMemoryRecord,
-    AtomicMemorySearchHit,
-    AtomicMemorySearchMode,
-    AtomicMemoryState,
     CaptureContentSourceResponse,
     CaptureStatus,
     FlushMemoryResponse,
     FlushStatus,
+    MemoryCitation,
+    MemoryEntry,
+    MemoryEntryState,
+    MemoryMatchedBy,
     MemoryMutationResponse,
+    MemoryUsedSearchMode,
     PreparedContext,
     ScopeDescriptor,
+    SearchMemoryHit,
     SearchMemoryResponse,
     SourceReference,
 )
 
 
 def artifact(revision: int = 7) -> ArtifactReference:
-    return ArtifactReference(family="atomic-memory", artifact_id="project-memory", revision=revision)
+    return ArtifactReference(family="memory", artifact_id="project-memory", revision=revision)
 
 
 def search_response() -> SearchMemoryResponse:
+    memory = artifact()
     return SearchMemoryResponse(
-        mode=AtomicMemorySearchMode.TEXT,
+        memory=memory,
+        mode=MemoryUsedSearchMode.FTS,
         hits=[
-            AtomicMemorySearchHit.model_validate({
-                "memory": AtomicMemoryRecord(
-                    artifact=artifact(),
-                    kind="fact",
-                    text="Keep the public response intact.",
-                    state=AtomicMemoryState.ACTIVE,
-                    state_version=0,
-                    merged_into_id=None,
+            SearchMemoryHit(
+                citation=MemoryCitation(
+                    memory_ref=memory,
+                    entry_id="entry-1",
+                    entry_version_id="entry-version-1",
                 ),
-                "score": 0.875,
-                "matched_by": ["text"],
-            })
+                text="Keep the public response intact.",
+                score=0.875,
+                matched_by=[MemoryMatchedBy.FTS],
+            )
         ],
     )
 
 
 def remember_response() -> MemoryMutationResponse:
+    memory = artifact(revision=8)
+    citation = MemoryCitation(
+        memory_ref=memory,
+        entry_id="entry-2",
+        entry_version_id="entry-version-2",
+    )
     return MemoryMutationResponse(
-        changed=True,
-        records=[
-            AtomicMemoryRecord(
-                artifact=ArtifactReference(family="atomic-memory", artifact_id="remembered-memory", revision=1),
-                kind="decision",
-                text="Use the public client.",
-                state=AtomicMemoryState.ACTIVE,
-                state_version=0,
-                merged_into_id=None,
-            )
-        ],
+        memory=memory,
+        entry=MemoryEntry(
+            citation=citation,
+            version=1,
+            kind="decision",
+            text="Use the public client.",
+            state=MemoryEntryState.ACTIVE,
+            source_refs=[],
+            artifact_refs=[],
+        ),
     )
 
 

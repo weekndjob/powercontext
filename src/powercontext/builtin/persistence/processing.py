@@ -86,20 +86,6 @@ class ArtifactProcessingPendingRepository:
         source_position: int,
         /,
     ) -> StoredArtifactProcessingPending:
-        await self.note_source(connection, scope_id, binding_name, source_position)
-        stored = await self.load(connection, scope_id, binding_name)
-        return cast(StoredArtifactProcessingPending, stored)
-
-    async def note_source(
-        self,
-        connection: AsyncConnection,
-        scope_id: str,
-        binding_name: str,
-        source_position: int,
-        /,
-    ) -> None:
-        """Advance source pending state when the caller does not need a readback."""
-
         _require_position("source_position", source_position)
         await _upsert_pending(
             connection,
@@ -108,6 +94,8 @@ class ArtifactProcessingPendingRepository:
             source_through=source_position,
             increment_flush=False,
         )
+        stored = await self.load(connection, scope_id, binding_name)
+        return cast(StoredArtifactProcessingPending, stored)
 
     async def scan(
         self,

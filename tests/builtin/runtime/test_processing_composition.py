@@ -29,7 +29,6 @@ from powercontext.builtin.persistence.oceanbase import OceanBaseConfig
 from powercontext.builtin.persistence.processing_migration import (
     ProcessingSchemaNotReadyError,
     apply_processing_migration,
-    bootstrap_processing_schema,
 )
 from powercontext.builtin.persistence.sqlite import SQLiteConfig, SQLiteProfile
 from powercontext.builtin.persistence.supervision import ArtifactProcessingFence
@@ -57,18 +56,6 @@ from powercontext.builtin.runtime.topic_memory_processing import TopicMemoryWork
 
 _FAMILIES = {"memory", "topic-memory", "experience", "profile"}
 _BINDING = "topic-memory-source-window"
-_PRE_HANDOFF_PROMPT_MANIFEST = {
-    "mode": "global",
-    "capabilities": [],
-    "bindings": {
-        "memory-source-window": "memory",
-        "topic-memory-source-window": "topic-memory",
-        "experience-incubation": "experience",
-        "profile-source-window": "profile",
-        "skill.dream.v1": "skill",
-    },
-    "legacy_automatic_bindings": ["topic-memory-source-window"],
-}
 _OCEANBASE = OceanBaseConfig(
     url=SecretStr("mysql+aoceanbase://root%40test@127.0.0.1:2881/composition_unused?charset=utf8mb4")
 )
@@ -123,32 +110,6 @@ def test_fresh_sqlite_bootstraps_and_reopens_after_business_data_is_written(tmp_
     asyncio.run(scenario())
 
 
-def test_startup_rejects_legacy_dream_manifest_without_rewriting_it(tmp_path: Path) -> None:
-    async def scenario() -> None:
-        database = _sqlite(tmp_path / "pre-dream-bindings.db")
-        config = BuiltinConfig(database=database, runtime=RuntimeConfig(dream_enabled=False))
-        async with (
-            SQLiteProfile.open(database, tables=SHARED_TABLES) as profile,
-            profile.database.transaction() as connection,
-        ):
-            await bootstrap_processing_schema(connection, _PRE_HANDOFF_PROMPT_MANIFEST)
-            before = (await connection.execute(select(ARTIFACT_PROCESSING_SCHEMA_TABLE))).mappings().one()
-
-        for _ in range(2):
-            with pytest.raises(ProcessingSchemaNotReadyError, match="configuration differs"):
-                async with open_builtin_contexts(config):
-                    pytest.fail("Legacy Dream bindings require explicit maintenance")
-
-        async with (
-            SQLiteProfile.open(database, tables=SHARED_TABLES) as profile,
-            profile.database.transaction() as connection,
-        ):
-            after = (await connection.execute(select(ARTIFACT_PROCESSING_SCHEMA_TABLE))).mappings().one()
-        assert after == before
-
-    asyncio.run(scenario())
-
-
 def test_nonempty_legacy_sqlite_is_rejected_without_importing_or_discarding_work(tmp_path: Path) -> None:
     async def scenario() -> None:
         database = _sqlite(tmp_path / "legacy.db")
@@ -188,8 +149,8 @@ def test_partial_migration_refuses_split_role_startup(
         # Exercise the OceanBase role's real startup gate against a real SQLite
         # transaction. A failed gate must run before dialect-specific indexes.
         @asynccontextmanager
-        async def local_profile(_config, *, tables, _archive_recovery=False):
-            async with SQLiteProfile.open(database, tables=tables, _archive_recovery=_archive_recovery) as profile:
+        async def local_profile(_config, *, tables):
+            async with SQLiteProfile.open(database, tables=tables) as profile:
                 yield profile
 
         monkeypatch.setattr(composition.OceanBaseProfile, "open", local_profile)
@@ -285,10 +246,18 @@ def test_dream_injection_requires_a_reconstructible_worker(tmp_path: Path, famil
     asyncio.run(scenario())
 
 
-def test_injected_memory_write_gate_is_preserved_for_atomic_memory_composition() -> None:
-    gate = _InjectedGate()
+def test_injected_memory_write_gate_requires_a_reconstructible_worker(tmp_path: Path) -> None:
+    async def scenario() -> None:
+        config = BuiltinConfig(
+            database=_sqlite(tmp_path / "memory-gate-injection.db"),
+            inference=InferenceConfig(generation_model="test"),
+            runtime=RuntimeConfig(artifact_processing_families=("memory",)),
+        )
+        with pytest.raises(BuiltinConfigurationError, match="child-reconstructible inference resources"):
+            async with open_builtin_runtime(config, memory_write_gate=_InjectedGate()):
+                pytest.fail("a spawned Worker must not silently ignore an injected Memory write gate")
 
-    assert composition._configured_memory_write_gate(gate, None, RuntimeConfig()) is gate
+    asyncio.run(scenario())
 
 
 @pytest.mark.parametrize("role", ["all", "api"])

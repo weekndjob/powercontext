@@ -20,7 +20,6 @@ from typing import TYPE_CHECKING, Any
 
 from powercontext.builtin.scope.errors import (
     ScopeBindingNotFoundError,
-    ScopeBindingTargetMissingError,
     ScopeError,
     ScopeIdempotencyConflictError,
     ScopeNotFoundError,
@@ -57,7 +56,6 @@ __all__ = [
     "ScopeBinding",
     "ScopeBindingKey",
     "ScopeBindingNotFoundError",
-    "ScopeBindingTargetMissingError",
     "ScopeDescriptor",
     "ScopeDescriptorPage",
     "ScopeDiscovery",

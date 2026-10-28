@@ -16,7 +16,7 @@
 
 'use client';
 
-import { lazy, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -26,8 +26,6 @@ import {
   languagePreferenceKey,
   type Language,
 } from '@/lib/i18n';
-
-const DocsSearchDialog = lazy(() => import('./docs-search-dialog'));
 
 export function Provider({ children, lang }: { children: ReactNode; lang: Language }) {
   const pathname = usePathname();
@@ -57,7 +55,7 @@ export function Provider({ children, lang }: { children: ReactNode; lang: Langua
   return (
     <RootProvider
       i18n={{ ...provider, onLocaleChange }}
-      search={{ SearchDialog: DocsSearchDialog }}
+      search={{ options: { type: 'static', api: `/${lang}/search-index.json` } }}
     >
       {children}
     </RootProvider>

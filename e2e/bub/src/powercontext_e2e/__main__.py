@@ -84,7 +84,7 @@ def main() -> None:
         help="Continue through case failures or stop the Harbor trial at the first failed step.",
     )
 
-    paired_parser = subparsers.add_parser("paired", help="Compare PowerContext off and on for paired workloads.")
+    paired_parser = subparsers.add_parser("paired", help="Compare PowerContext off and on for continuation workloads.")
     paired_parser.add_argument("--manifest", type=Path, default=Path("e2e/bub/paired-tasks"))
     paired_parser.add_argument(
         "--id",
@@ -102,7 +102,7 @@ def main() -> None:
     paired_parser.add_argument("--trials", type=int, default=2, help="Trials per arm; the arm order alternates.")
     paired_parser.add_argument(
         "--host",
-        choices=("bub", "codex", "claude-code", "opencode", "pi", "kimi-code"),
+        choices=("bub", "codex"),
         default="bub",
         help="Agent host that runs both arms with its own PowerContext integration.",
     )
@@ -131,8 +131,7 @@ def main() -> None:
             run_paired(selected, output_dir=args.output, settings=settings, trials=args.trials, host=args.host)
         )
         # The run is valid when every arm produced a measurement; the task outcome itself is the result.
-        on = report.total.on
-        unscored = report.total.off.errors + on.errors + on.integration_failures + on.cross_scope_accesses
+        unscored = report.total.off.errors + report.total.on.errors + report.total.on.integration_failures
         passed = unscored == 0
     else:
         from .catalog import load_tasks, select_tasks

@@ -34,16 +34,9 @@ function createRuntime(): PluginRuntime {
     requestTimeoutMs: config.requestTimeoutMs,
   })
   const emitDiagnostic = createDiagnosticEmitter(diagnosticWriter(config.diagnostics))
-  const diagnostic = (event: string, error: unknown, extra: Record<string, unknown> = {}) => {
+  const diagnostic = (event: string, error: unknown) => {
     const failure = failureEvent(event, error)
-    if (failure) {
-      emitDiagnostic({
-        component: 'powercontext.pi',
-        ...failure,
-        ...(extra.lifecycle_event ? { failure_class: failure.outcome } : {}),
-        ...extra,
-      })
-    }
+    if (failure) emitDiagnostic({ component: 'powercontext.pi', ...failure })
   }
   const flusher = createPendingSourceFlusher(client, config, diagnostic)
   return {
@@ -53,9 +46,8 @@ function createRuntime(): PluginRuntime {
       return resolveScopeId(client, cwd, config.scopeId)
     },
     recordCapture: (scopeId, position) => flusher.record(scopeId, position),
-    flushPending: (lifecycleEvent, signal) => flusher.flush(lifecycleEvent, signal),
+    flushPending: (signal) => flusher.flush(signal),
     diagnostic,
-    observe: emitDiagnostic,
   }
 }
 
@@ -88,18 +80,18 @@ export default function powercontextPi(pi: ExtensionAPI): void {
   })
 
   pi.on('agent_end', (_event, ctx) => {
-    void runtime?.flushPending?.('agent_end', ctx.signal)
+    void runtime?.flushPending?.(ctx.signal)
   })
 
   pi.on('session_before_compact', async (event, _ctx) => {
-    await runtime?.flushPending?.('session_before_compact', event.signal)
+    await runtime?.flushPending?.(event.signal)
   })
 
   pi.on('session_before_switch', async (_event, ctx) => {
-    await runtime?.flushPending?.('session_before_switch', ctx.signal)
+    await runtime?.flushPending?.(ctx.signal)
   })
 
   pi.on('session_shutdown', async (_event, ctx) => {
-    await runtime?.flushPending?.('session_shutdown', ctx.signal)
+    await runtime?.flushPending?.(ctx.signal)
   })
 }

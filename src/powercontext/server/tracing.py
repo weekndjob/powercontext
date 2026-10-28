@@ -28,6 +28,7 @@ from fastmcp.server.middleware import CallNext, Middleware, MiddlewareContext
 from opentelemetry import context as otel_context
 from opentelemetry import propagate, trace
 from opentelemetry.context import Context, Token
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
@@ -36,10 +37,8 @@ from opentelemetry.trace import Span, SpanKind, Status, StatusCode, Tracer, set_
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from typing_extensions import override
 
-from powercontext._logging import error_category
 from powercontext.server.context import bind_request_id, is_internal_bridge, reset_request_id
 from powercontext.server.settings import TracingConfig
-from powercontext.server.telemetry import service_resource
 
 if TYPE_CHECKING:
     from pydantic_ai.models.instrumented import InstrumentationSettings
@@ -68,28 +67,10 @@ class _SuppressibleTracer(Tracer):
 
     @override
     def start_as_current_span(self, name: str, *args: Any, **kwargs: Any) -> Any:
-        # Provider exceptions can echo Source or prompt content. Disable the SDK's automatic
-        # exception events and status descriptions, then apply only bounded failure metadata.
-        kwargs["record_exception"] = False
-        kwargs["set_status_on_exception"] = False
-        return _sanitized_span(self._selected().start_as_current_span(name, *args, **kwargs))
+        return self._selected().start_as_current_span(name, *args, **kwargs)
 
     def _selected(self) -> Tracer:
         return self._noop if self._suppressed.get() else self._delegate
-
-
-@contextmanager
-def _sanitized_span(manager: Any) -> Iterator[Span]:
-    with manager as span:
-        try:
-            yield span
-        except asyncio.CancelledError:
-            raise
-        except BaseException as error:
-            with suppress(Exception):
-                span.set_attribute("error.type", type(error).__qualname__)
-                span.set_status(Status(StatusCode.ERROR))
-            raise
 
 
 class ServerTracing:
@@ -104,12 +85,12 @@ class ServerTracing:
         )
 
     @classmethod
-    def context_only(cls, *, role: str = "server") -> ServerTracing:
+    def context_only(cls) -> ServerTracing:
         """Create valid request contexts without recording or exporting spans."""
 
         return cls(
             TracerProvider(
-                resource=service_resource(role),
+                resource=_server_resource(),
                 sampler=ParentBased(ALWAYS_OFF),
                 shutdown_on_exit=False,
             )
@@ -155,7 +136,7 @@ class ServerTracing:
             span.finish("cancelled", error=error)
             raise
         except BaseException as error:
-            span.finish(span.outcome if span.outcome in {"blocked", "cancelled"} else "failure", error=error)
+            span.finish("failure", error=error)
             raise
         span.finish(span.outcome or "success")
 
@@ -191,7 +172,7 @@ class ServerTracing:
                 span.finish("cancelled", error=error)
                 raise
             except BaseException as error:
-                span.finish(span.outcome if span.outcome in {"blocked", "cancelled"} else "failure", error=error)
+                span.finish("failure", error=error)
                 raise
             span.finish(span.outcome or "success")
         finally:
@@ -238,7 +219,6 @@ class _ActiveSpan:
         self.token = token
         self.finished = False
         self._outcome: str | None = None
-        self._error_category: str | None = None
 
     @property
     def outcome(self) -> str | None:
@@ -273,9 +253,6 @@ class _ActiveSpan:
         return request_id_from_span(self.span)
 
     def set_attributes(self, attributes: Mapping[str, Any]) -> None:
-        category = attributes.get("powercontext.error.category")
-        if isinstance(category, str):
-            self._error_category = category
         if self.span is not None:
             with suppress(Exception):
                 self.span.set_attributes(attributes)
@@ -294,16 +271,9 @@ class _ActiveSpan:
             with suppress(Exception):
                 self.span.set_attribute("powercontext.operation.outcome", outcome)
                 if attributes is not None:
-                    self.set_attributes(attributes)
+                    self.span.set_attributes(attributes)
                 if error is not None:
                     self.span.set_attribute("error.type", type(error).__qualname__)
-                category = self._error_category or error_category(
-                    None if error is None else type(error).__name__,
-                    status_code=None if attributes is None else attributes.get("http.response.status_code"),
-                    outcome=outcome,
-                )
-                if category is not None:
-                    self.span.set_attribute("powercontext.error.category", category)
                 if outcome == "failure":
                     self.span.set_status(Status(StatusCode.ERROR))
         if self.token is not None:
@@ -415,7 +385,7 @@ class McpTracingMiddleware(Middleware):
         return result
 
 
-def configure_server_tracing(config: TracingConfig, *, role: str = "server") -> ServerTracing:
+def configure_server_tracing(config: TracingConfig) -> ServerTracing:
     """Build request context and optional OTLP export from standard OTel configuration."""
 
     exporter_type = None
@@ -425,7 +395,7 @@ def configure_server_tracing(config: TracingConfig, *, role: str = "server") -> 
         except ImportError as error:
             raise RuntimeError(_MISSING_OTLP_EXPORTER) from error
     provider = TracerProvider(
-        resource=service_resource(role),
+        resource=_server_resource(),
         sampler=None if config.enabled else ParentBased(ALWAYS_OFF),
         shutdown_on_exit=False,
     )
@@ -464,6 +434,13 @@ def request_id_from_span(span: Span | None = None) -> str:
     span_context = (trace.get_current_span() if span is None else span).get_span_context()
     span_id = span_context.span_id if span_context.is_valid else _ID_GENERATOR.generate_span_id()
     return format(span_id, "016x")
+
+
+def _server_resource() -> Resource:
+    resource = Resource.create()
+    if str(resource.attributes.get(SERVICE_NAME, "")).startswith("unknown_service"):
+        resource = resource.merge(Resource({SERVICE_NAME: "powercontext-server"}))
+    return resource
 
 
 def _headers(scope: Scope) -> dict[str, str]:
