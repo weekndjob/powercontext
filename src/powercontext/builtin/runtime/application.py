@@ -2657,6 +2657,11 @@ class ScopedTopicMemoryApplication:
         if len(set(analyze_text(query).split())) > MAX_TOPIC_MEMORY_QUERY_TERMS:
             raise InvalidRuntimeRequestError("topic-memory-query-terms")
 
+        lifecycle = getattr(self._runtime, "lifecycle", None)
+        unavailable_topics = frozenset() if lifecycle is None else await lifecycle.unavailable_topics(self.scope_id)
+        search_request = request.model_copy(
+            update={"limit": min(MAX_TOPIC_MEMORY_SEARCH_LIMIT, request.limit + len(unavailable_topics))}
+        )
         used_fallback = False
         async with self._runtime._scoped_operation(
             self.scope_id,
@@ -2670,20 +2675,28 @@ class ScopedTopicMemoryApplication:
                 result = await search(
                     self.scope_id,
                     query,
-                    limit=request.limit,
+                    limit=search_request.limit,
                     mode="fts",
                     **_admission_keyword(admission),
                 )
                 result = result.model_copy(update={"embedding_calls": 0})
             else:
                 result, used_fallback = await self._search_with_embedding(
-                    request,
+                    search_request,
                     embedding,
                     search,
                     admission,
                     query_embedding,
                     embedding_timeout_seconds,
                 )
+        if unavailable_topics:
+            result = result.model_copy(
+                update={
+                    "hits": tuple(
+                        hit for hit in result.hits if hit.artifact_ref.artifact_id not in unavailable_topics
+                    )[: request.limit]
+                }
+            )
         observer = self._runtime._topic_memory_search_observer
         if observer is not None:
             try:

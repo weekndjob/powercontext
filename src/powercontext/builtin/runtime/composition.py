@@ -156,6 +156,7 @@ from powercontext.builtin.runtime.readiness import (
 )
 from powercontext.builtin.runtime.recall_sufficiency import RecallSufficiencyPolicy
 from powercontext.builtin.runtime.relational import RelationalContexts
+from powercontext.builtin.runtime.source_lifecycle import SourceLifecycleApplication, initialize_lifecycle
 from powercontext.builtin.runtime.topic_memory_processing import (
     TopicMemoryWorkerSpec,
     run_topic_memory_worker,
@@ -505,6 +506,7 @@ async def open_builtin_runtime(
                 handoff_verification_keys=handoff_verification_keys,
             )
         )
+        await initialize_lifecycle(contexts.database)
         contexts.profiles.generator = generated_profile if profile_generator is None else profile_generator
         contexts.profiles.max_sources = config.runtime.profile_max_sources_per_window
         if scheduled_profile_runner is not None:
@@ -655,6 +657,7 @@ async def open_builtin_runtime(
                 remote_ingestion=contexts,
             )
         )
+        runtime.lifecycle = SourceLifecycleApplication(runtime, contexts.database)
         runtime.artifact_processing_supervisor = await resources.enter_async_context(
             _open_artifact_processing_supervisor(config, contexts, processing_bindings, tracing=tracing)
         )
