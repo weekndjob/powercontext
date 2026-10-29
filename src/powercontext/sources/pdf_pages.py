@@ -120,17 +120,28 @@ _QUESTION_WORDS = frozenset(
     "a an and are as at be by can could did do does for from has have how if in into is it its of on or our per "
     "that the their there these this to was were what when where which who why will with would year years fiscal "
     "company companies financial report reported according based using use calculate answer question shown statement "
-    "fy2020 fy2021 fy2022 fy2023".split()
+    "fy fy2020 fy2021 fy2022 fy2023".split()
+)
+_FINANCIAL_EXPANSIONS = (
+    (("income statement", "p&l", "profit and loss"), "consolidated statement of income"),
+    (("cash flow", "cash flows"), "consolidated statement of cash flows"),
+    (("legal battle", "legal proceedings", "litigation"), "legal proceedings"),
+    (("restructuring",), "restructuring charges"),
+    (("capex", "capital expenditure"), "capital expenditures"),
+    (("geograph", "geographi"), "geographic areas"),
 )
 
 
 def _search_queries(question: str) -> tuple[str, ...]:
-    terms = [term for term in re.findall(r"[a-z]+|\d+", question.casefold()) if len(term) > 2 and term not in _QUESTION_WORDS]
+    terms = [
+        term for term in re.findall(r"[a-z]+|\d+", question.casefold())
+        if len(term) > 2 and term not in _QUESTION_WORDS and not (term.isdigit() and len(term) == 4)
+    ]
+    lowered = question.casefold()
     queries = [question]
-    if len(terms) > 3:
-        queries.append(" ".join(terms[:6]))
-    queries.extend(" ".join(terms[index : index + 2]) for index in range(min(len(terms) - 1, 8)))
-    queries.extend(terms[:4])
+    queries.extend(expanded for triggers, expanded in _FINANCIAL_EXPANSIONS if any(trigger in lowered for trigger in triggers))
+    queries.extend(" ".join(terms[index : index + 3]) for index in range(len(terms) - 2))
+    queries.extend(" ".join(terms[index : index + 2]) for index in range(len(terms) - 1))
     return tuple(dict.fromkeys(queries))
 
 
@@ -142,9 +153,12 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
         return ()
     scores: dict[tuple[str, str, int, str, str], float] = defaultdict(float)
     citations: dict[tuple[str, str, int, str, str], MemoryCitation] = {}
+    focus_groups: list[list[tuple[str, str, int, str, str]]] = []
+    focused_queries = {expanded for _, expanded in _FINANCIAL_EXPANSIONS}
     for query_index, query in enumerate(_search_queries(question)):
         page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=max(limit * 2, 30)))
-        weight = 2.0 if query_index == 0 else 1.0
+        weight = 1.0 if query_index == 0 else 2.5 if query.startswith("consolidated statement") else 1.5 if len(query.split()) == 3 else 1.0
+        focus: list[tuple[str, str, int, str, str]] = []
         for rank, hit in enumerate(page.hits):
             citation = MemoryCitation(memory_ref=hit.memory_ref, entry_id=hit.entry_id,
                                       entry_version_id=hit.entry_version_id)
@@ -152,8 +166,17 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
                         hit.entry_id, hit.entry_version_id)
             citations[identity] = citation
             scores[identity] += weight / (rank + 8)
+            focus.append(identity)
+        if query in focused_queries:
+            focus_groups.append(focus)
     ranked = sorted(scores, key=lambda identity: (-scores[identity], identity))
-    return tuple(citations[identity] for identity in ranked[:limit])
+    selected: list[tuple[str, str, int, str, str]] = []
+    for group in focus_groups:
+        for identity in group[: max(3, min(6, limit // 3))]:
+            if identity not in selected and len(selected) < limit:
+                selected.append(identity)
+    selected.extend(identity for identity in ranked if identity not in selected and len(selected) < limit)
+    return tuple(citations[identity] for identity in selected)
 
 
 __all__ = ["PDFDocumentInput", "PDFPageInput", "PDFPageSource", "parse_pdf_document", "PDF_PAGE_SOURCE_DEFINITION", "search_pdf_pages"]
