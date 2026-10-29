@@ -247,6 +247,13 @@ class CompositeMemoryIndex:
         request: MemorySearchRequest,
         /,
     ) -> MemorySearchChannels:
+        if request.mode == "hybrid":
+            # The OceanBase/seekdb vector strategy can issue both native index
+            # scans in one statement. Other backends retain their own strategy.
+            for index in self.indexes:
+                hybrid_search = getattr(index, "search_hybrid", None)
+                if hybrid_search is not None and any(other.capabilities.fts for other in self.indexes):
+                    return await hybrid_search(connection, scope_id, request)
         fts: tuple[MemoryChannelHit, ...] = ()
         vector: tuple[MemoryChannelHit, ...] = ()
         for index in self.indexes:
