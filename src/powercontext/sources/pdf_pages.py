@@ -55,11 +55,11 @@ def _page_identity(page: PDFPageInput) -> str:
 
 def parse_pdf_document(value: PDFDocumentInput) -> tuple[PDFPageInput, ...]:
     """Parse every physical page before returning any page result."""
-    if not value.document_id.strip() or b"%PDF-" not in value.content[:1024]:
+    if not value.document_id.strip() or not value.content.startswith(b"%PDF-"):
         raise ValueError("invalid PDF document")
     digest = hashlib.sha256(value.content).hexdigest()
     try:
-        reader = PdfReader(io.BytesIO(value.content), strict=False)
+        reader = PdfReader(io.BytesIO(value.content), strict=True)
         if reader.is_encrypted and not reader.decrypt(""):
             raise ValueError("PDF requires a password")
         pages = tuple(

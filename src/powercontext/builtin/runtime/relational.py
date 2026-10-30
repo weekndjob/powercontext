@@ -1987,8 +1987,12 @@ def _validate_source_observation(source: SourceObservation, manifest: SourceDefi
         raise InvalidSourceObservationError("definition", "does not match the registered manifest identity")
     if source.definition_fingerprint != manifest.fingerprint:
         raise InvalidSourceObservationError("fingerprint", "does not match the registered manifest")
-    if len(source.model_dump_json().encode()) > MAX_SOURCE_OBSERVATION_BYTES:
-        raise InvalidSourceObservationError("size", "must not exceed 4 MiB")
+    # Pi tool results are retained in full in the captured Source as well as its
+    # text projection. The two copies can exceed the ordinary observation cap
+    # even when one result is well below it.
+    size_limit = 32 * 1024 * 1024 if source.source_type == "pi-event" else MAX_SOURCE_OBSERVATION_BYTES
+    if len(source.model_dump_json().encode()) > size_limit:
+        raise InvalidSourceObservationError("size", f"must not exceed {size_limit // (1024 * 1024)} MiB")
     _validate_schema_value(manifest.name, manifest.source_schema, source.payload)
 
     declarations = {projection.key: projection for projection in manifest.projections}
