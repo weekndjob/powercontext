@@ -142,6 +142,9 @@ def _search_queries(question: str) -> tuple[str, ...]:
     queries.extend(expanded for triggers, expanded in _FINANCIAL_EXPANSIONS if any(trigger in lowered for trigger in triggers))
     queries.extend(" ".join(terms[index : index + 3]) for index in range(len(terms) - 2))
     queries.extend(" ".join(terms[index : index + 2]) for index in range(len(terms) - 1))
+    # A company name can be the only shared term when a question uses a
+    # different inflection from the report (for example revenue/revenues).
+    queries.extend(terms)
     return tuple(dict.fromkeys(queries))
 
 
@@ -153,8 +156,10 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
         return ()
     scores: dict[tuple[str, str, int, str, str], float] = defaultdict(float)
     citations: dict[tuple[str, str, int, str, str], MemoryCitation] = {}
+    matching_documents: set[tuple[str, str, int, str, str]] = set()
     focus_groups: list[list[tuple[str, str, int, str, str]]] = []
     focused_queries = {expanded for _, expanded in _FINANCIAL_EXPANSIONS}
+    question_terms = set(re.findall(r"[a-z0-9]+", question.casefold()))
     for query_index, query in enumerate(_search_queries(question)):
         page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=max(limit * 2, 30)))
         weight = 1.0 if query_index == 0 else 2.5 if query.startswith("consolidated statement") else 1.5 if len(query.split()) == 3 else 1.0
@@ -165,13 +170,19 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
             identity = (hit.memory_ref.family, hit.memory_ref.artifact_id, hit.memory_ref.revision,
                         hit.entry_id, hit.entry_version_id)
             citations[identity] = citation
+            document_id = hit.text.partition("\n")[0]
+            first_component = re.split(r"[^a-z0-9]+", document_id.casefold(), maxsplit=1)[0]
+            if len(first_component) >= 3 and first_component not in _QUESTION_WORDS and first_component in question_terms:
+                matching_documents.add(identity)
             scores[identity] += weight / (rank + 8)
             focus.append(identity)
         if query in focused_queries:
             focus_groups.append(focus)
-    ranked = sorted(scores, key=lambda identity: (-scores[identity], identity))
+    ranked = sorted(scores, key=lambda identity: (identity not in matching_documents, -scores[identity], identity))
     selected: list[tuple[str, str, int, str, str]] = []
     for group in focus_groups:
+        if matching_documents:
+            group = [identity for identity in group if identity in matching_documents]
         for identity in group[: max(3, min(6, limit // 3))]:
             if identity not in selected and len(selected) < limit:
                 selected.append(identity)

@@ -101,11 +101,11 @@ _OCEANBASE_HYBRID_SEARCH_SQL = """
 WITH fts_candidates AS (
     SELECT f.scope_id, f.memory_artifact_id, f.head_revision,
            f.entry_id, f.entry_version_id,
-           MATCH (f.searchable_text) AGAINST (:analyzed_query IN BOOLEAN MODE) AS score
+           MATCH (f.searchable_text) AGAINST (:analyzed_query) AS score
     FROM pc_memory_entry_heads AS f
     WHERE f.scope_id = :scope_id
       AND f.memory_artifact_id IN :memory_artifact_ids
-      AND MATCH (f.searchable_text) AGAINST (:analyzed_query IN BOOLEAN MODE)
+      AND MATCH (f.searchable_text) AGAINST (:analyzed_query)
       {fts_tags}
     ORDER BY score DESC, f.memory_artifact_id, f.entry_id, f.entry_version_id
     LIMIT :candidate_limit
