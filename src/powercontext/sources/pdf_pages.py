@@ -145,6 +145,12 @@ def _search_queries(question: str) -> tuple[str, ...]:
     # A company name can be the only shared term when a question uses a
     # different inflection from the report (for example revenue/revenues).
     queries.extend(terms)
+    # The Memory analyzer does not stem English words. Search common singular
+    # and plural forms as separate queries without changing the saved evidence.
+    queries.extend(
+        term[:-1] if term.endswith("s") and not term.endswith("ss") else term + "s"
+        for term in terms if term.isalpha() and len(term) >= 4
+    )
     return tuple(dict.fromkeys(queries))
 
 
@@ -157,11 +163,16 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
     scores: dict[tuple[str, str, int, str, str], float] = defaultdict(float)
     citations: dict[tuple[str, str, int, str, str], MemoryCitation] = {}
     matching_documents: set[tuple[str, str, int, str, str]] = set()
+    document_ids: set[str] = set()
     focus_groups: list[list[tuple[str, str, int, str, str]]] = []
     focused_queries = {expanded for _, expanded in _FINANCIAL_EXPANSIONS}
     question_terms = set(re.findall(r"[a-z0-9]+", question.casefold()))
-    for query_index, query in enumerate(_search_queries(question)):
-        page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=max(limit * 2, 30)))
+    queries = list(_search_queries(question))
+    for query_index, query in enumerate(queries):
+        # Single-term discovery needs a wider pool when several reports use the
+        # same financial vocabulary; the final result is still bounded by limit.
+        pool_size = max(limit * (10 if len(query.split()) == 1 else 2), 30)
+        page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=pool_size))
         weight = 1.0 if query_index == 0 else 2.5 if query.startswith("consolidated statement") else 1.5 if len(query.split()) == 3 else 1.0
         focus: list[tuple[str, str, int, str, str]] = []
         for rank, hit in enumerate(page.hits):
@@ -174,6 +185,11 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
             first_component = re.split(r"[^a-z0-9]+", document_id.casefold(), maxsplit=1)[0]
             if len(first_component) >= 3 and first_component not in _QUESTION_WORDS and first_component in question_terms:
                 matching_documents.add(identity)
+                if document_id not in document_ids:
+                    document_ids.add(document_id)
+                    # An underscore-delimited document ID is indexed as one
+                    # token, so use the actual observed ID in a follow-up query.
+                    queries.append(f"{document_id} {question}")
             scores[identity] += weight / (rank + 8)
             focus.append(identity)
         if query in focused_queries:
