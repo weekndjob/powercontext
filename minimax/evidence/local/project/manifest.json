@@ -1,0 +1,30 @@
+{
+  "project_id": "demo_058fb177353543b68859e59540133a56",
+  "documents": [
+    {
+      "path": "specs/archive_policy.md",
+      "kind": "spec",
+      "status": "active"
+    },
+    {
+      "path": "specs/archive_policy_legacy.md",
+      "kind": "decision",
+      "status": "superseded"
+    },
+    {
+      "path": "taskboard.py",
+      "kind": "code",
+      "status": "active"
+    },
+    {
+      "path": "tests/test_archive.py",
+      "kind": "test",
+      "status": "active"
+    },
+    {
+      "path": "tests/test_compatibility.py",
+      "kind": "test",
+      "status": "active"
+    }
+  ]
+}
