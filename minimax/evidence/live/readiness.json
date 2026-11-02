@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "runnable": true,
+    "minimax_actual": true,
+    "context_correct": true,
+    "database_actual": true,
+    "state_reused": true,
+    "code_modification_valid": true
+  },
+  "status": "ready_for_submission",
+  "required_sources": [
+    "specs/archive_policy.md",
+    "taskboard.py",
+    "tests/test_archive.py",
+    "tests/test_compatibility.py"
+  ],
+  "versions": {
+    "powercontext": "1.2.0",
+    "PyMySQL": "1.1.2",
+    "httpx": "0.28.1",
+    "pytest": "8.4.2"
+  }
+}

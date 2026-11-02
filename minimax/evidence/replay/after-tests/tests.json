@@ -1,0 +1,42 @@
+{
+  "results": [
+    {
+      "group": "target",
+      "command": [
+        "E:\\codex\\seekdb比赛\\deployment\\minimax-20261102\\cleanroom-20261102-001\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_archive.py"
+      ],
+      "exit_code": 0,
+      "log": "target.log"
+    },
+    {
+      "group": "compatibility",
+      "command": [
+        "E:\\codex\\seekdb比赛\\deployment\\minimax-20261102\\cleanroom-20261102-001\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_compatibility.py"
+      ],
+      "exit_code": 0,
+      "log": "compatibility.log"
+    }
+  ],
+  "fingerprints": {
+    "specs/archive_policy.md": "1321d46c3b99e5fda8bcd35694ae0f651c875fa8f6398fb5f53e688145bbdd04",
+    "specs/archive_policy_legacy.md": "8d89653090bb1eccede8858b53d2802ceb50d5318d64887024823a1e2e10fb74",
+    "taskboard.py": "948405eaec301b21cf6071c2b7166f7b27d8367b9433bac9fc9e5975e5bc0392",
+    "tests/test_archive.py": "86d75a108f68f7bca7b6e04290501ee0e6928ddf2e546a88692354f75308fedb",
+    "tests/test_compatibility.py": "256ccb229a9fc27162a56a74ffe7d00981243aec20daf1dfce9e200e28ac7968",
+    "@manifest": "e0a0de7cdeb08ba1a8af836cdbe3b51b931086f3834d2e8afe9e3e9ed03dde77"
+  },
+  "python": "3.14.2 (tags/v3.14.2:df79316, Dec  5 2025, 17:18:21) [MSC v.1944 64 bit (AMD64)]",
+  "passed": true
+}

@@ -1,0 +1,6 @@
+{
+  "powercontext": "1.2.0",
+  "PyMySQL": "1.1.2",
+  "httpx": "0.28.1",
+  "pytest": "8.4.2"
+}

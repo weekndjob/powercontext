@@ -2,7 +2,7 @@
 
 本作品对应「规有所依——面向软件持续演进的 SDD 上下文管理系统」。基于官方生态分支 `2026-competition-ecosystem`，资产均在 `minimax/`。工作分支为 `competition/2026/minimax-sdd-context`。
 
-**当前状态：上下文、真实 seekdb 检索和 PowerContext 状态恢复已实现；尚未开通 MiniMax，真实模型修改及修改后测试待执行，尚未达到六项全部通过的提测条件。** 本文的运行流程支持开通后生成完整证据；不会用模拟响应代替真实 MiniMax 开发记录。
+**当前验证：六项必做验收全部通过。** MiniMax 已实际修改代码，真实 seekdb 查询结果参与上下文，PowerContext 状态在独立进程间保存并复用。同一组目标测试修改前为 3 失败、2 通过，修改后为 5 通过；兼容测试前后均为 3 通过。完整记录见 `evidence/live/`。此处是本地验收结果，正式成绩以平台评审为准。
 
 ## 做题顺序与验收
 
@@ -41,11 +41,11 @@ export SEEKDB_USER=root
 export SEEKDB_PASSWORD='YOUR_DATABASE_PASSWORD'
 export SEEKDB_DATABASE=minimax_sdd
 export MINIMAX_API_KEY='YOUR_MINIMAX_API_KEY'
-export MINIMAX_BASE_URL=https://api.minimax.io/v1
+export MINIMAX_BASE_URL=https://api.minimax.cn/v1
 export MINIMAX_MODEL=MiniMax-M3.1-Flash
 ```
 
-MiniMax 接入使用官方 OpenAI 兼容 HTTP 接口；国内官方地址可配置为 `https://api.minimaxi.com/v1`。实际模型名须是账号可用模型。若使用 Token Plan，须先确认账号提供该兼容接口；当前程序不实现 Anthropic 协议。密钥不写入开发记录。
+MiniMax 接入使用官方 OpenAI 兼容 HTTP 接口；国内当前官方地址可配置为 `https://api.minimax.cn/v1`，也接受 `api.minimaxi.com` 地址。本次使用 M Plan 订阅 Key、国内接口和 API 模型 ID `MiniMax-M3.1-Flash` 完成真实验证；不要将界面显示名直接当作 API 模型 ID。M3.1-Flash 请求设置 `reasoning_effort=low`，输出上限为 4096 tokens。当前程序不实现 Anthropic 协议。密钥不写入开发记录。
 
 数据库用户需具有专用库的建表、读写和全文索引权限。模块会创建 `sdd_documents` 表，不创建或删除用户数据库。不同演示运行使用独立 project_id；同一 project_id 的导入表示完整快照替换。
 
@@ -64,6 +64,14 @@ python run_demo.py --prepare-only --output runs/prepare-001
 ```
 
 此命令明确输出 `awaiting_minimax`，`minimax_actual` 和 `code_modification_valid` 为 false，不能拿该记录作为完整提测通过证据。重置样例只需选择新的输出目录；原始 `sample/` 始终保留修改前代码。
+
+已有真实开发记录无需再次调用模型即可核对代码有效性：
+
+```bash
+python replay_change.py --output runs/replay-001
+```
+
+该入口核对模型记录、修改前后代码哈希和固定测试哈希，从全新样例运行修改前测试，再安装已记录的 MiniMax 输出并运行修改后测试。成功输出 `recorded_change_verified`，明确标记 `new_model_request=false`；这只是已记录代码的复现，不能替代完整演示中的真实模型、数据库与状态验证。
 
 ## 验证样例与必要上下文
 
@@ -107,7 +115,7 @@ SDD_REAL_DATABASE_TESTS=1 python -m pytest -q tests
 
 ## 提交材料和技术使用记录
 
-完整真实运行目录应交付到 `evidence/live/`，其中包括：
+完整真实运行目录已交付到 `evidence/live/`，其中包括：
 
 - `versions.json`、`commands.jsonl`：版本和命令/退出码。
 - `database.jsonl`：实际入库和全文查询记录，查询结果直接构成上下文。
@@ -117,6 +125,10 @@ SDD_REAL_DATABASE_TESTS=1 python -m pytest -q tests
 - `minimax/taskboard.before.py`、`taskboard.after.py`、`code.diff`：代码快照与差异。
 - `before-tests/`、`after-tests/` 和相应 JSON：同一测试集的目标失败、修改后成功与兼容结果，以及对应代码/测试哈希。
 - `readiness.json`：六项是否全部通过。
+
+`evidence/cleanroom-validation.json` 记录新的源码目录、新建虚拟环境安装固定依赖、真实数据库模块测试和另一轮真实 MiniMax 完整流程的验证；`evidence/replay/` 记录保存代码的独立复现。数据库服务是外部依赖，使用上述初始化和连接配置；不交付任何个人数据库文件或运行时状态文件。
+
+`evidence/local/` 保留早期仅准备阶段的记录，不能作为完成验收的依据；本次正式材料以 `evidence/live/`、全新环境验证和复现记录为准。
 
 提交前检查记录中没有真实凭据。实际模型输出不同不影响复现，评审可使用已记录的代码修改和固定测试，无需重新生成相同补丁。
 
@@ -128,4 +140,4 @@ MiniMax 输出是可执行代码，应先审阅保存的 diff，在隔离样例�
 
 开源组件来源：PowerContext、seekdb（OceanBase），PyMySQL、HTTPX、pytest；通过安装固定依赖复用，不复制其源码。业务样例与上下文模块为本作品新增代码。
 
-官方参考：[题面](https://oceanbase.yuque.com/org-wiki-obtech-vh7w9r/hc3pio/qlqnoryzrs7gtqbw)、[MiniMax OpenAI 兼容接口](https://platform.minimax.io/docs/api-reference/text-openai-api)。
+官方参考：[题面](https://oceanbase.yuque.com/org-wiki-obtech-vh7w9r/hc3pio/qlqnoryzrs7gtqbw)、[MiniMax OpenAI 兼容接口](https://platform.minimax.io/docs/api-reference/text-openai-api)、[M Plan 国内接口与模型 ID](https://platform.minimax.cn/docs/m-plan/other-tools)。

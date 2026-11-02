@@ -20,7 +20,7 @@ def generate_change(context: dict, project: Path, evidence: Path):
         raise ValueError("Configure MINIMAX_API_KEY before the real development run")
     base = os.environ.get("MINIMAX_BASE_URL", "https://api.minimax.io/v1").rstrip("/")
     parsed = urlsplit(base)
-    if parsed.scheme != "https" or parsed.hostname not in {"api.minimax.io", "api.minimaxi.com"}:
+    if parsed.scheme != "https" or parsed.hostname not in {"api.minimax.io", "api.minimax.cn", "api.minimaxi.com"}:
         raise ValueError("Use an official MiniMax HTTPS endpoint")
     model = os.environ.get("MINIMAX_MODEL", "MiniMax-M3.1-Flash")
     sources = {item["path"]: item for item in context["sources"]}
@@ -40,7 +40,9 @@ def generate_change(context: dict, project: Path, evidence: Path):
             "Do not include private reasoning or markdown fences.")},
         {"role": "user", "content": json.dumps(context, ensure_ascii=False)},
     ]
-    request = {"model": model, "messages": messages, "max_tokens": 4096, "stream": False}
+    request = {"model": model, "messages": messages, "max_completion_tokens": 4096, "stream": False}
+    if model.startswith("MiniMax-M3.1-Flash"):
+        request["reasoning_effort"] = "low"
     evidence.mkdir(parents=True, exist_ok=True)
     (evidence / "minimax-request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2), encoding="utf-8")
     with httpx.Client(timeout=180, follow_redirects=False) as client:

@@ -1,0 +1,39 @@
+FFF..                                                                    [100%]
+================================== FAILURES ===================================
+_____________________ test_archive_is_excluded_by_default _____________________
+
+    def test_archive_is_excluded_by_default():
+>       assert [row["id"] for row in list_tasks(ROWS)] == [1, 3]
+E       assert [1, 2, 3, 4] == [1, 3]
+E         
+E         At index 1 diff: 2 != 3
+E         Left contains 2 more items, first extra item: 3
+E         Use -v to get more diff
+
+tests\test_archive.py:14: AssertionError
+__________________ test_explicit_false_also_excludes_archive __________________
+
+    def test_explicit_false_also_excludes_archive():
+>       assert [row["id"] for row in list_tasks(ROWS, include_archived=False)] == [1, 3]
+E       assert [1, 2, 3, 4] == [1, 3]
+E         
+E         At index 1 diff: 2 != 3
+E         Left contains 2 more items, first extra item: 3
+E         Use -v to get more diff
+
+tests\test_archive.py:18: AssertionError
+________________ test_archive_status_filter_is_an_intersection ________________
+
+    def test_archive_status_filter_is_an_intersection():
+>       assert [row["id"] for row in list_tasks(ROWS, status="open")] == [1]
+E       assert [1, 2] == [1]
+E         
+E         Left contains one more item: 2
+E         Use -v to get more diff
+
+tests\test_archive.py:22: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_archive.py::test_archive_is_excluded_by_default - assert [1...
+FAILED tests/test_archive.py::test_explicit_false_also_excludes_archive - ass...
+FAILED tests/test_archive.py::test_archive_status_filter_is_an_intersection
+3 failed, 2 passed in 0.14s

@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "fresh_source_directory": true,
+  "fresh_virtualenv": true,
+  "installed_from": "minimax/requirements.txt",
+  "previous_evidence_and_state_not_copied": true,
+  "database": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "module_tests": "7 passed",
+  "actual_model_request": true,
+  "provider": "MiniMax",
+  "model": "MiniMax-M3.1-Flash",
+  "response_id": "0737c6d761b89ed89e11c7862e8cdaea",
+  "usage": {
+    "total_tokens": 3007,
+    "total_characters": 0,
+    "prompt_tokens": 2804,
+    "completion_tokens": 203,
+    "completion_tokens_details": {
+      "reasoning_tokens": 81
+    },
+    "prompt_tokens_details": {
+      "cached_tokens": 128
+    }
+  },
+  "official_checks": {
+    "runnable": true,
+    "minimax_actual": true,
+    "context_correct": true,
+    "database_actual": true,
+    "state_reused": true,
+    "code_modification_valid": true
+  },
+  "recorded_code_replay": "recorded_change_verified",
+  "source_sha256": {
+    "minimax/requirements.txt": "f577c2d7f9c63eed2cc079b8177f9c145845c15115106c7ba56f8efdd27856c8",
+    "minimax/run_demo.py": "d66d14eb1028b7163988a090bfeed1426860f7dc7bcccfd56ad6afab4243b5bd",
+    "minimax/sample/taskboard.py": "78c0aacd0c355066d1b5fdfdd978b84a6f881a232b1ca11c1b5a4f1140e7b82e",
+    "minimax/sample/tests/test_archive.py": "86d75a108f68f7bca7b6e04290501ee0e6928ddf2e546a88692354f75308fedb",
+    "minimax/sample/tests/test_compatibility.py": "256ccb229a9fc27162a56a74ffe7d00981243aec20daf1dfce9e200e28ac7968",
+    "minimax/sdd_context/__init__.py": "f2b72d5f10ae531d1d9f2608d47c15b8f6f1335fedb94eb95b779494c6f2aca1",
+    "minimax/sdd_context/__main__.py": "2c1ac9d960fe6f9f4d037019d2e14b579538fa24483d22ac03ac998405cfce19",
+    "minimax/sdd_context/agent.py": "4e5b32e5ec094d7ac1cd18f5f7926cf7d4b9de8ade2ae2babbd06544e7c7f96d",
+    "minimax/sdd_context/repository.py": "e9747956f3a7bce6b47d26f8464d6ed7ff0647f54ca8c1ec1f967eb9ae9835a2",
+    "minimax/sdd_context/state.py": "3c392ffcfa10f39ec5ab40cf4dfd474c83b303b8ae7055f4534d8d7e824798f8",
+    "minimax/tests/test_agent.py": "ad80bb212b2260bdc894b4f87408cd5600e1e97d7f63b55bacc7e0849992cf85",
+    "minimax/tests/test_context.py": "19cc600b5a04ae0259f7bd7cf903838a43e81e82ad2cdfc83d5819921ef3b540",
+    "minimax/replay_change.py": "3c7cf5cf427f4905eceb47b655eb1ee99fa608cfcf4fee7e85b1433d67f425c5"
+  }
+}
