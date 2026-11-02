@@ -1,0 +1,6 @@
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+# Preserve captured evidence bytes, including platform line endings and pytest output.
+evidence/** -text whitespace=-blank-at-eol,cr-at-eol
