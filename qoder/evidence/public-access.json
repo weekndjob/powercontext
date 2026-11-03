@@ -1,0 +1,39 @@
+{
+  "checked_at": "2026-11-03T15:25:37.194534+08:00",
+  "url": "https://yantuo-research-desk-wp1a3l0vxnl.qoder.zone",
+  "requests": [
+    {
+      "path": "/",
+      "status_code": 200,
+      "final_url": "https://yantuo-research-desk-wp1a3l0vxnl.qoder.zone/",
+      "request_had_cookie": false,
+      "bytes": 81692,
+      "sha256": "294c6dd50d554561ce8d790db12b9864692b0994eb4bb22644d497bdcd125e4c"
+    },
+    {
+      "path": "/images/qoder-search-desktop.png",
+      "status_code": 200,
+      "final_url": "https://yantuo-research-desk-wp1a3l0vxnl.qoder.zone/images/qoder-search-desktop.png",
+      "request_had_cookie": false,
+      "bytes": 115241,
+      "sha256": "ab6eba51c17ee3ac2a1bd22fc356fc42dcc0f73f4da225d47b947fb1447b79a3"
+    },
+    {
+      "path": "/images/qoder-summary-desktop.png",
+      "status_code": 200,
+      "final_url": "https://yantuo-research-desk-wp1a3l0vxnl.qoder.zone/images/qoder-summary-desktop.png",
+      "request_had_cookie": false,
+      "bytes": 96143,
+      "sha256": "8cbc45d525f4a79f2ea539cfc38b5452146bd37737a5591a25056ca100988569"
+    },
+    {
+      "path": "/images/qoder-search-mobile.png",
+      "status_code": 200,
+      "final_url": "https://yantuo-research-desk-wp1a3l0vxnl.qoder.zone/images/qoder-search-mobile.png",
+      "request_had_cookie": false,
+      "bytes": 99972,
+      "sha256": "7c92b89cc2c8780a949839521b3983e8847d7a9993f7f2dde5f14d2cfd5a81d4"
+    }
+  ],
+  "status": "passed"
+}

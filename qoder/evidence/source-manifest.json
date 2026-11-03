@@ -1,0 +1,122 @@
+{
+  ".env.example": {
+    "sha256": "a52e7ef1310b35a7e9b8cc7e12b2a8dcd08aa7f8c5957ca275eac9775065b7da",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  ".gitignore": {
+    "sha256": "d035739905badc9a47ad988c225604fbb8be33110d9fdeca7ede26329b8b1b05",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  ".gitkeep": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "app.py": {
+    "sha256": "e6b6e3c3d1863d7eeb228ac35031a4e5444cd93087cc40884fbfcd9efaadd645",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "database.py": {
+    "sha256": "3a939520e15d35c9c09135d16cdd6c586e215519f7e54f17937bedfc0444bd50",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "DEVELOPMENT_SUMMARY.md": {
+    "sha256": "8509112c4242d8810fd02ac6d5476e9618084aadbc57983d9b26038baf25c6eb",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "IMPLEMENTATION_PLAN.md": {
+    "sha256": "97465d5f3189e033c435180823ba615f5a5d3d21051862465a56b4b1afb504cf",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "import_samples.py": {
+    "sha256": "80397c64b4fa4ba90c916bb04282500ac571f3a9a121f011dbac452b36edc403",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "models.py": {
+    "sha256": "bd9abd2bcfdfb4d99552e4f4aa65eeeb413426a4f94875b08fd1b5afdab997af",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "QUICKSTART.md": {
+    "sha256": "f754df27eaf8ea4e7ba9ecc0e12973739aae714c7920518dc863dfe0f5bad107",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "README.md": {
+    "sha256": "6faa30b145decb27012983a758112a1ae75e87ecacc616f07e71f3e6f05f95bd",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "requirements-dev.txt": {
+    "sha256": "934fbb549ab3209320a68f549631f92ffa7dcd1372d15620c148eb5f55bd7735",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "requirements.txt": {
+    "sha256": "2beccb09a0d7c178bf61a5d5d334e0eec90825a2867e8f92b28eef766c1dfcf5",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "samples/sample_materials.json": {
+    "sha256": "32536714b4224480b3fdad48ac16d8a1c7016e099d39cefc22cfcda7954ba2ec",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "setup_database.py": {
+    "sha256": "a192994b0014734ea83ca90b0d860aac6a7ae578d3d742587436ee3becf39e61",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "site/.gitignore": {
+    "sha256": "20e280ff7af20e72041d559abd3b5c6228ab1055d71706327d62bbb122cb8e23",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "site/.研途 Research Desk.qoder.site": {
+    "sha256": "455f40c80b982798b8b8f1a73891cf091c3969409c652c383f6686a1345ea084",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "site/images/qoder-search-desktop.png": {
+    "sha256": "ab6eba51c17ee3ac2a1bd22fc356fc42dcc0f73f4da225d47b947fb1447b79a3",
+    "hash_basis": "binary bytes"
+  },
+  "site/images/qoder-search-mobile.png": {
+    "sha256": "7c92b89cc2c8780a949839521b3983e8847d7a9993f7f2dde5f14d2cfd5a81d4",
+    "hash_basis": "binary bytes"
+  },
+  "site/images/qoder-summary-desktop.png": {
+    "sha256": "8cbc45d525f4a79f2ea539cfc38b5452146bd37737a5591a25056ca100988569",
+    "hash_basis": "binary bytes"
+  },
+  "site/index.html": {
+    "sha256": "bb24e05a9e471b1f9aa7141ca292db9fb153c28d5a7b6fb8891e469bb8bc54ad",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "site/README.md": {
+    "sha256": "2ce8c02be122d82c5367005a680cc0f24d24e6f9f2e0816593fcf111996d600f",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "SUBMISSION.md": {
+    "sha256": "e9946c8fdd1e0c9a2fb6f944e51687a93aa18bf1b8509aa12fd32fc82284319d",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "templates/base.html": {
+    "sha256": "0bc48244b711b9391ff1e6cf3d2f592a58451ae8ca80cf9a9e27110195652e1a",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "templates/index.html": {
+    "sha256": "3fcc4fedbadab2ba8e12465229478ee1efb6281dc4cd4f646c8871c63ee2b87b",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "templates/materials.html": {
+    "sha256": "8a42cbfd28c12006727b59a012414af0b0c6f3d06a43784cba96da3e8e37f242",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "templates/search.html": {
+    "sha256": "9013f532a4fe95b21990eccd1980671feccdc067338827bc743324dbf9e4ba66",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "templates/summary.html": {
+    "sha256": "2dbe10bc2fe52ef63f342c4b4acbc898bf4bf1d35452316318784d1bb5fa28c5",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "templates/todos.html": {
+    "sha256": "1f2627794bb7e91368b1dc4add9458e8d53124492680f8ace322cd50b7a3a3ea",
+    "hash_basis": "UTF8 text with LF normalization"
+  },
+  "verify.py": {
+    "sha256": "86068e84c984656b8f0ec2765ff5495554b148f2f5e504c473e0075fdb0b8f20",
+    "hash_basis": "UTF8 text with LF normalization"
+  }
+}

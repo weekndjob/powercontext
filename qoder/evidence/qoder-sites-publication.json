@@ -1,0 +1,16 @@
+{
+  "provider": "Qoder Sites CN",
+  "source_session_id": "b1a6b66c-8157-4e77-b8d9-68fe6498aff8",
+  "action_id": "a444c979-90e6-4f91-b11e-ffda23e4f7ca",
+  "project_id": "01a1a03f-004c-7871-9c02-d7752c1d135a",
+  "site_id": "01a1a03f-004d-75f5-9a7f-0d46f72d25b5",
+  "deployment_id": "01a1a04a-d404-74c7-809d-2e222fc1bbf0",
+  "artifact_sha256": "9cac361698a3ee1e5145f7c431348243c91a07319939fa9ca09bd5205536346e",
+  "index_sha256": "3a592b3412dc89c108e1b546722134b8d6904827c33b7ff5ed2cd4c088e8a72f",
+  "readiness": "publication_completed",
+  "published": true,
+  "access_mode": "public",
+  "url": "https://yantuo-research-desk-wp1a3l0vxnl.qoder.zone",
+  "generated_descriptor": ".研途 Research Desk.qoder.site",
+  "descriptor_index_matches_current_source": true
+}

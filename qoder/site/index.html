@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"><meta name="description" content="研途 Research Desk：Qoder 开发、seekdb 驱动的科研资料检索与任务管理，附真实演示与复现步骤。"><link rel="icon" href="data:,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研途 Research Desk - 科研资料管理与任务协作平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #4a5568;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .section h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+            color: #2d3748;
+        }
+
+        .pain-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .pain-card {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #fc8181;
+        }
+
+        .pain-card h4 {
+            color: #c53030;
+            margin-bottom: 0.5rem;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #5a67d8;
+            margin-bottom: 0.5rem;
+        }
+
+        .architecture {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .workflow {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid #667eea;
+        }
+
+        .workflow-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .step-content h4 {
+            color: #2d3748;
+            margin-bottom: 0.3rem;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .highlight {
+            background: #fef3c7;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        ul {
+            margin-left: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .note {
+            background: #bee3f8;
+            border-left: 4px solid #3182ce;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+
+        .note strong {
+            color: #2c5282;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>研途 Research Desk</h1>
+        <p>科研资料管理与任务协作平台，基于 seekdb 全文检索引擎驱动</p>
+    </div>
+
+    <div class="container">
+        <div class="section">
+            <h2>痛点分析</h2>
+            <p>科研工作者和项目管理者在日常工作中面临以下挑战：</p>
+            <div class="pain-points">
+                <div class="pain-card">
+                    <h4>资料难找</h4>
+                    <p>论文、笔记、技术文档散落在各处，需要时难以快速定位。传统的文件夹管理方式效率低下，无法进行内容级别的检索。</p>
+                </div>
+                <div class="pain-card">
+                    <h4>任务分散</h4>
+                    <p>待办事项与相关资料脱节，无法直观看到某个任务对应的参考资料。任务进度难以追踪和汇总。</p>
+                </div>
+                <div class="pain-card">
+                    <h4>检索困难</h4>
+                    <p>普通数据库的 LIKE 查询无法满足中英文混合、语义相关的检索需求。缺乏相关性排序，难以找到最匹配的结果。</p>
+                </div>
+                <div class="pain-card">
+                    <h4>进度不清</h4>
+                    <p>缺乏直观的统计和汇总工具，无法快速了解一段时间内的工作进展和完成情况。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>核心功能</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <h4>资料录入与文本导入</h4>
+                    <p>支持标题、正文、来源、标签等信息录入，自动创建全文索引。支持 UTF-8 编码的中英文 Markdown/文本格式。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>全文检索与标签筛选</h4>
+                    <p>基于 seekdb MATCH AGAINST 全文索引，支持中英文混合检索。按相关性排序，支持标签组合筛选。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>来源定位</h4>
+                    <p>每条资料记录来源信息（论文、网站、书籍等），检索结果清晰展示出处，方便追溯原始资料。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>关联资料待办</h4>
+                    <p>创建待办任务并关联到具体资料，方便追踪后续工作。支持截止日期、完成状态管理。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>进度汇总</h4>
+                    <p>按日期范围统计资料和待办数量，生成可复制的进度报告。直观展示工作进展和完成率。</p>
+                </div>
+                <div class="feature-card">
+                    <h4>安全性</h4>
+                    <p>所有 SQL 参数化防止注入，前端输入转义防止 XSS，明确的长度限制和错误提示。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>技术架构</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">Python 3.12</span>
+                <span class="tech-badge">FastAPI</span>
+                <span class="tech-badge">PyMySQL</span>
+                <span class="tech-badge">seekdb</span>
+                <span class="tech-badge">Jinja2</span>
+                <span class="tech-badge">HTML/CSS/JS</span>
+            </div>
+
+            <h3>系统架构图</h3>
+            <div class="architecture">
+┌─────────────────────────────────────────────────────────┐
+│                    前端界面层                              │
+│  HTML + CSS + JavaScript (Jinja2 模板)                   │
+│  - 资料管理页面  - 全文检索页面  - 待办管理页面  - 汇总页面 │
+└────────────────────┬────────────────────────────────────┘
+                     │ HTTP/REST API
+┌────────────────────▼────────────────────────────────────┐
+│                  FastAPI 后端层                           │
+│  - /api/materials   资料 CRUD                            │
+│  - /api/search      全文检索 (MATCH AGAINST)             │
+│  - /api/todos       待办管理                             │
+│  - /api/summary     汇总统计                             │
+└────────────────────┬────────────────────────────────────┘
+                     │ PyMySQL (参数化 SQL)
+┌────────────────────▼────────────────────────────────────┐
+│                  seekdb 数据库层                          │
+│  - materials 表 (全文索引: ik)                        │
+│  - todos 表 (外键关联 materials)                         │
+│  - MATCH(title, content) AGAINST(... IN NATURAL MODE)    │
+└─────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>核心技术点</h3>
+            <ul>
+                <li><strong>全文索引：</strong>使用 seekdb 的 <code class="highlight">MATCH(title, content) AGAINST(query IN NATURAL LANGUAGE MODE)</code> 实现中英文混合检索</li>
+                <li><strong>ik 分词：</strong>全文索引使用 ik 分词器，支持中文分词检索，按相关性排序</li>
+                <li><strong>参数化查询：</strong>所有 SQL 使用 <code class="highlight">%s</code> 占位符，防止 SQL 注入</li>
+                <li><strong>相关性排序：</strong>搜索结果按全文索引计算的相关性评分降序排列</li>
+                <li><strong>标签筛选：</strong>使用 <code class="highlight">FIND_IN_SET(tag, tags)</code> 实现标签组合过滤</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>真实使用 seekdb 的流程</h2>
+
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>配置数据库连接</h4>
+                        <p>从环境变量读取 seekdb 连接信息（主机、端口、用户名、密码、数据库名），不硬编码任何凭据。</p>
+                        <div class="code-block">
+SEEKDB_HOST=127.0.0.1
+SEEKDB_PORT=2881
+SEEKDB_USER=root
+SEEKDB_PASSWORD=
+SEEKDB_DATABASE=qoder_research_desk
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>初始化表结构和全文索引</h4>
+                        <p>自动创建 materials 和 todos 表，为 title 和 content 字段创建全文索引。</p>
+                        <div class="code-block">
+CREATE TABLE materials (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    content MEDIUMTEXT NOT NULL,
+    source VARCHAR(1000),
+    tags VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FULLTEXT INDEX ft_idx_content (title, content) WITH PARSER ik
+);
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>录入资料并自动索引</h4>
+                        <p>通过 POST /api/materials 接口录入资料，seekdb 自动为正文内容建立全文索引。</p>
+                        <div class="code-block">
+POST /api/materials
+{
+  "title": "深度学习在NLP中的应用",
+  "content": "近年来，深度学习技术在自然语言处理...",
+  "source": "计算机学报 2024",
+  "tags": "深度学习,NLP,论文"
+}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>执行全文检索</h4>
+                        <p>使用 MATCH AGAINST 语法执行全文检索，返回相关性评分和匹配结果。</p>
+                        <div class="code-block">
+SELECT id, title, content, source, tags,
+       MATCH(title, content) AGAINST('深度学习' IN NATURAL LANGUAGE MODE) as relevance
+FROM materials
+WHERE MATCH(title, content) AGAINST('深度学习' IN NATURAL LANGUAGE MODE)
+ORDER BY relevance DESC
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>标签筛选和组合查询</h4>
+                        <p>支持全文检索和标签筛选的组合查询，使用参数化 SQL 防止注入。</p>
+                        <div class="code-block">
+SELECT * FROM materials
+WHERE MATCH(title, content) AGAINST(%s IN NATURAL LANGUAGE MODE)
+  AND FIND_IN_SET(%s, tags)
+ORDER BY relevance DESC
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h4>数据持久化和重启恢复</h4>
+                        <p>所有数据保存在 seekdb 中，应用重启后数据仍可读取，支持长期存储和管理。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>复现说明</h2>
+
+            <h3>环境要求</h3>
+            <ul>
+                <li>Python 3.12（本次实际验证为 3.12.14）</li>
+                <li>seekdb 数据库（MySQL 协议兼容）</li>
+                <li>网络连接（用于下载依赖）</li>
+            </ul>
+
+            <h3>安装步骤</h3>
+            <div class="code-block"># 获取提测仓库的本题分支
+git clone --branch competition/2026/qoder-research-desk https://github.com/weekndjob/powercontext.git research-desk
+cd research-desk/qoder
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+
+# 配置真实 seekdb（按自己的实例修改）
+export SEEKDB_HOST=127.0.0.1
+export SEEKDB_PORT=2881
+export SEEKDB_USER=root
+export SEEKDB_PASSWORD=&#x27;&#x27;
+export SEEKDB_DATABASE=qoder_research_desk
+.venv/bin/python setup_database.py
+.venv/bin/python import_samples.py
+.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000
+# 浏览器打开 http://127.0.0.1:8000
+# Windows PowerShell 的等价命令见源码 README
+</div>
+
+            <h3>导入样例数据</h3>
+            <div class="code-block">
+python import_samples.py
+            </div>
+
+            <h3>运行验收测试</h3>
+            <div class="code-block">
+python verify.py
+            </div>
+
+            <div class="note">
+                <strong>注意：</strong>验收测试需要真实 seekdb 数据库连接。如果数据库不可用，测试会明确失败，不会标记为成功。
+            </div>
+
+            <h3>功能验证清单</h3>
+            <ul>
+                <li>✓ 资料录入（中文和英文）</li>
+                <li>✓ 全文检索（有匹配和无匹配情况）</li>
+                <li>✓ 标签筛选（单标签和多标签组合）</li>
+                <li>✓ 来源显示</li>
+                <li>✓ 待办任务创建和状态更新</li>
+                <li>✓ 进度汇总和报告生成</li>
+                <li>✓ 输入长度限制和错误提示</li>
+                <li>✓ 数据持久化（重启后读取）</li>
+            </ul>
+        </div>
+
+        <div class="section" id="verified-demo">
+<h2>真实运行演示</h2>
+<p>以下截图来自连接真实 seekdb 的本机应用：搜索资料、显示来源、创建关联待办并生成报告。展示站提供项目说明和复现入口，公网访问不会连接本机数据库。</p>
+<figure><a href="images/qoder-search-desktop.png"><img src="images/qoder-search-desktop.png" alt="真实 seekdb 中文全文检索结果与来源" loading="lazy" style="width:100%;height:auto;border:1px solid #ddd;border-radius:8px;margin-top:20px"></a><figcaption>中文资料检索，样例来源明确标注为人工构造验证资料。</figcaption></figure>
+<figure><a href="images/qoder-summary-desktop.png"><img src="images/qoder-summary-desktop.png" alt="真实应用的资料与任务进度汇总" loading="lazy" style="width:100%;height:auto;border:1px solid #ddd;border-radius:8px;margin-top:20px"></a><figcaption>汇总和复制报告；图中的完成率是测试任务状态，不是效率提升数据。</figcaption></figure>
+<p><a href="images/qoder-search-mobile.png">查看 390px 手机视口的实际检索截图</a></p>
+<h3>验收结果</h3>
+<p>63 项 HTTP/SQL 检查通过：真实 seekdb 5.7.25-OceanBase seekdb-v1.4.0.0；覆盖中英文检索、完整标签匹配、导入边界、任务状态、并发关联一致性、日期汇总，以及应用重启后读取；48,000 个中文与 emoji 字符也已实际写入并读回。</p>
+<p>浏览器验证涵盖文件上传、任务创建与完成、来源详情、报告复制、手机视口和 HTML/引号边界。运行依据见 <a href="https://github.com/weekndjob/powercontext/tree/competition/2026/qoder-research-desk/qoder/evidence">仓库验收证据</a>。</p>
+<p>没有提供真实用户效果统计或大赛正式评分；合成样例仅用于复现功能。日期统计按记录创建日期筛选，完成数反映这些任务的当前状态。</p>
+</div>
+<div class="section">
+            <h2>源码链接</h2>
+            <p>本项目源码托管在 GitHub：</p>
+            <div style="margin-top: 1rem;">
+                <a href="https://github.com/weekndjob/powercontext/tree/competition/2026/qoder-research-desk" class="btn" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+                <a href="https://github.com/weekndjob/powercontext/tree/competition/2026/qoder-research-desk/qoder" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">项目目录</a>
+            </div>
+
+            <h3>分支信息</h3>
+            <ul>
+                <li><strong>分支名称：</strong>competition/2026/qoder-research-desk</li>
+                <li><strong>基础提交：</strong>d647275c (chore: initialize 2026 competition ecosystem directories)</li>
+                <li><strong>开发工具：</strong>Qoder CN CLI</li>
+            </ul>
+
+            <h3>项目文件结构</h3>
+            <div class="code-block">
+qoder/
+├── app.py                  # FastAPI 主应用
+├── database.py             # 数据库连接和配置
+├── models.py               # Pydantic 数据模型
+├── requirements.txt        # Python 依赖（锁定版本）
+├── .env.example            # 环境变量示例
+├── templates/              # Jinja2 HTML 模板
+│   ├── base.html
+│   ├── index.html
+│   ├── materials.html
+│   ├── search.html
+│   ├── todos.html
+│   └── summary.html
+├── samples/                # 样例数据
+│   └── sample_materials.json
+├── verify.py               # 验收测试脚本
+├── import_samples.py       # 导入样例数据
+└── README.md               # 项目文档
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>开发记录</h2>
+            <p>主要后端与界面由 <strong>Qoder CN CLI 1.1.81</strong> 实际开发；Codex 负责需求整理、审查修复、独立验收和交付整理。真实 Qoder 会话标识、开发事件和日志校验值保留于仓库，供赛事核验。</p>
+
+            <h3>开发过程</h3>
+            <ul>
+                <li>使用 Qoder CN CLI 进行代码编写和调试</li>
+                <li>遵循最小必要范围实现，不增加额外依赖</li>
+                <li>所有 SQL 参数化，防止注入攻击</li>
+                <li>前端输入转义，防止 XSS 攻击</li>
+                <li>明确的字段长度限制和错误提示</li>
+                <li>不虚构用户数据、性能指标或开发历史</li>
+            </ul>
+
+            <h3>技术决策</h3>
+            <ul>
+                <li><strong>后端框架：</strong>FastAPI - 现代、快速、自动生成 API 文档</li>
+                <li><strong>数据库驱动：</strong>PyMySQL - 纯 Python 实现，兼容 MySQL 协议</li>
+                <li><strong>全文检索：</strong>seekdb MATCH AGAINST - 实际建立 IK 全文索引并运行检索</li>
+                <li><strong>前端技术：</strong>原生 HTML/CSS/JavaScript - 无额外依赖，易于部署</li>
+                <li><strong>模板引擎：</strong>Jinja2 - Python 标准模板引擎</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>研途 Research Desk - 2026 seekdb 比赛参赛作品</p>
+        <p>由 Qoder CN 实际开发</p>
+    </div>
+</body>
+</html>

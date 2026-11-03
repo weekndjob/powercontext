@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 研途 Research Desk{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>欢迎使用研途 Research Desk</h2>
+    <p style="color: #718096; margin-bottom: 1.5rem;">
+        科研资料管理与任务协作平台，基于 seekdb 全文检索引擎驱动
+    </p>
+
+    <div class="stats-grid" id="stats">
+        <div class="stat-card">
+            <div class="value" id="total-materials">-</div>
+            <div class="label">资料总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="total-todos">-</div>
+            <div class="label">待办任务</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="completed-todos">-</div>
+            <div class="label">已完成</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="completion-rate">-</div>
+            <div class="label">完成率</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>快速开始</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <a href="/materials" class="btn btn-primary" style="text-align: center;">
+            录入资料
+        </a>
+        <a href="/search" class="btn btn-primary" style="text-align: center;">
+            全文检索
+        </a>
+        <a href="/todos" class="btn btn-primary" style="text-align: center;">
+            管理待办
+        </a>
+        <a href="/summary" class="btn btn-secondary" style="text-align: center;">
+            查看汇总
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <h2>核心功能</h2>
+    <ul style="list-style: none; padding: 0;">
+        <li style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
+            <strong>资料录入与文本导入</strong>
+            <p style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">
+                支持标题、正文、来源、标签等信息录入，自动创建全文索引
+            </p>
+        </li>
+        <li style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
+            <strong>全文检索与标签筛选</strong>
+            <p style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">
+                基于 seekdb MATCH AGAINST 全文索引，支持中英文混合检索和相关性排序
+            </p>
+        </li>
+        <li style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
+            <strong>来源定位</strong>
+            <p style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">
+                每条资料记录来源信息，检索结果清晰展示出处
+            </p>
+        </li>
+        <li style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
+            <strong>关联资料待办</strong>
+            <p style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">
+                创建待办任务并关联到具体资料，方便追踪后续工作
+            </p>
+        </li>
+        <li style="padding: 0.8rem 0;">
+            <strong>进度汇总</strong>
+            <p style="color: #718096; font-size: 0.9rem; margin-top: 0.3rem;">
+                按日期范围统计资料和待办数量，生成可复制的进度报告
+            </p>
+        </li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>技术架构</h2>
+    <p style="color: #718096; margin-bottom: 1rem;">
+        本项目使用 Python FastAPI 构建后端，前端采用原生 HTML/CSS/JavaScript，
+        数据库使用 seekdb MySQL 协议，全文检索通过 MATCH AGAINST 实现。
+    </p>
+    <div style="background: #f7fafc; padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.9rem;">
+        <div>后端: FastAPI + PyMySQL</div>
+        <div>数据库: seekdb (MySQL 协议)</div>
+        <div>全文索引: MATCH(title, content) AGAINST(...)</div>
+        <div>前端: Jinja2 模板 + 原生 JavaScript</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const summary = await apiRequest('/api/summary', {
+            method: 'POST',
+            body: JSON.stringify({})
+        });
+
+        document.getElementById('total-materials').textContent = summary.total_materials;
+        document.getElementById('total-todos').textContent = summary.total_todos;
+        document.getElementById('completed-todos').textContent = summary.completed_todos;
+        document.getElementById('completion-rate').textContent = summary.completion_rate.toFixed(1) + '%';
+    } catch (error) {
+        console.error('加载统计数据失败:', error);
+    }
+});
+{% endblock %}

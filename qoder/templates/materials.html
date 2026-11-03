@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}资料管理 - 研途 Research Desk{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>录入新资料</h2>
+    <form id="material-form">
+        <div class="form-group">
+            <label for="title">标题 *</label>
+            <input type="text" id="title" name="title" class="form-control"
+                   required maxlength="500" placeholder="输入资料标题">
+            <small style="color: #718096;">最多 500 字符</small>
+        </div>
+
+        <div class="form-group">
+            <label for="content">正文 *</label>
+            <textarea id="content" name="content" class="form-control"
+                      required maxlength="50000" rows="8"
+                      placeholder="输入资料正文内容，支持 Markdown 格式"></textarea>
+            <small style="color: #718096;">最多 50000 字符</small>
+        </div>
+
+        <div class="form-group">
+            <label for="source">来源</label>
+            <input type="text" id="source" name="source" class="form-control"
+                   maxlength="1000" placeholder="输入资料来源（如论文、网站、书籍等）">
+            <small style="color: #718096;">最多 1000 字符</small>
+        </div>
+
+        <div class="form-group">
+            <label for="tags">标签</label>
+            <input type="text" id="tags" name="tags" class="form-control"
+                   maxlength="500" placeholder="输入标签，用逗号分隔（如：机器学习,深度学习,论文）">
+            <small style="color: #718096;">用逗号分隔多个标签，最多 500 字符</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">保存资料</button>
+        <button type="reset" class="btn btn-secondary">重置</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>导入文本文件</h2>
+    <p>支持 UTF-8 编码的 .txt、.md 文件；最多 2 MB、正文最多 50,000 字符。</p>
+    <form id="import-form">
+        <div class="form-group"><label for="import-title">资料标题 *</label><input id="import-title" name="title" class="form-control" required maxlength="500"></div>
+        <div class="form-group"><label for="import-source">来源</label><input id="import-source" name="source" class="form-control" maxlength="1000"></div>
+        <div class="form-group"><label for="import-tags">标签（逗号分隔）</label><input id="import-tags" name="tags" class="form-control" maxlength="500"></div>
+        <div class="form-group"><label for="import-file">文本文件 *</label><input id="import-file" name="file" type="file" accept=".txt,.md" required></div>
+        <button type="submit" class="btn btn-primary">导入文件</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>资料列表</h2>
+    <div id="materials-list">
+        <div class="loading">加载中...</div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="modal-overlay" id="detail-modal">
+    <div class="modal">
+        <h2 id="detail-title">资料详情</h2>
+        <div id="detail-content"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+document.getElementById('import-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+        const response = await fetch('/api/materials/import', {method: 'POST', body: new FormData(form)});
+        const result = await response.json();
+        if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : '文件导入失败，请检查输入');
+        showAlert('文件导入成功', 'success');
+        form.reset();
+        await loadMaterials(1);
+    } catch (error) { showAlert(error.message, 'error'); }
+    finally { button.disabled = false; }
+});
+let currentPage = 1;
+const pageSize = 10;
+
+document.getElementById('material-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = {
+        title: document.getElementById('title').value.trim(),
+        content: document.getElementById('content').value.trim(),
+        source: document.getElementById('source').value.trim() || null,
+        tags: document.getElementById('tags').value.trim() || null
+    };
+
+    // 前端验证
+    if (!formData.title) {
+        showAlert('请输入标题', 'error');
+        return;
+    }
+    if (formData.title.length > 500) {
+        showAlert('标题不能超过 500 字符', 'error');
+        return;
+    }
+    if (!formData.content) {
+        showAlert('请输入正文', 'error');
+        return;
+    }
+    if (formData.content.length > 50000) {
+        showAlert('正文不能超过 50000 字符', 'error');
+        return;
+    }
+
+    try {
+        const result = await apiRequest('/api/materials', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+
+        showAlert('资料保存成功', 'success');
+        e.target.reset();
+        loadMaterials();
+    } catch (error) {
+        showAlert('保存失败: ' + error.message, 'error');
+    }
+});
+
+async function loadMaterials(page = 1) {
+    currentPage = page;
+    const container = document.getElementById('materials-list');
+    container.innerHTML = '<div class="loading">加载中...</div>';
+
+    try {
+        const data = await apiRequest(`/api/materials?page=${page}&page_size=${pageSize}`);
+
+        if (data.materials.length === 0) {
+            container.innerHTML = '<div class="empty-state"><p>暂无资料，请录入第一条资料</p></div>';
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = data.materials.map(m => `
+            <div class="material-item">
+                <h3>${escapeHtml(m.title)}</h3>
+                <div class="meta">
+                    <span>创建时间: ${formatDate(m.created_at)}</span>
+                    ${m.source ? `<span> | 来源: ${escapeHtml(m.source)}</span>` : ''}
+                </div>
+                ${m.tags ? `<div style="margin: 0.5rem 0;">${m.tags.split(',').map(t => `<span class="tag">${escapeHtml(t.trim())}</span>`).join('')}</div>` : ''}
+                <div class="excerpt">${escapeHtml(m.content.substring(0, 200))}${m.content.length > 200 ? '...' : ''}</div>
+                <div style="margin-top: 0.8rem;">
+                    <button class="btn btn-secondary view-material-btn" data-id="${m.id}">查看详情</button>
+                    <button class="btn btn-danger delete-material-btn" data-id="${m.id}">删除</button>
+                </div>
+            </div>
+        `).join('');
+
+        // Event delegation for material buttons
+        container.querySelectorAll('.view-material-btn').forEach(btn => {
+            btn.addEventListener('click', () => viewMaterial(parseInt(btn.dataset.id)));
+        });
+        container.querySelectorAll('.delete-material-btn').forEach(btn => {
+            btn.addEventListener('click', () => deleteMaterial(parseInt(btn.dataset.id)));
+        });
+
+        renderPagination(data.total, page, pageSize);
+    } catch (error) {
+        container.innerHTML = `<div class="alert alert-error">加载失败: ${escapeHtml(error.message)}</div>`;
+    }
+}
+
+function renderPagination(total, current, size) {
+    const totalPages = Math.ceil(total / size);
+    if (totalPages <= 1) {
+        document.getElementById('pagination').innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    html += `<button ${current === 1 ? 'disabled' : ''} class="page-btn" data-page="${current - 1}">上一页</button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === current) {
+            html += `<button class="active page-btn" data-page="${i}">${i}</button>`;
+        } else if (i === 1 || i === totalPages || Math.abs(i - current) <= 2) {
+            html += `<button class="page-btn" data-page="${i}">${i}</button>`;
+        } else if (Math.abs(i - current) === 3) {
+            html += `<button disabled>...</button>`;
+        }
+    }
+
+    html += `<button ${current === totalPages ? 'disabled' : ''} class="page-btn" data-page="${current + 1}">下一页</button>`;
+
+    document.getElementById('pagination').innerHTML = html;
+
+    // Event delegation for pagination
+    document.getElementById('pagination').querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!btn.disabled) {
+                loadMaterials(parseInt(btn.dataset.page));
+            }
+        });
+    });
+}
+
+async function viewMaterial(id) {
+    try {
+        const m = await apiRequest(`/api/materials/${id}`);
+
+        document.getElementById('detail-title').textContent = m.title;
+        document.getElementById('detail-content').innerHTML = `
+            <div style="margin-bottom: 1rem;">
+                <strong>创建时间:</strong> ${formatDate(m.created_at)}
+            </div>
+            ${m.source ? `<div style="margin-bottom: 1rem;"><strong>来源:</strong> ${escapeHtml(m.source)}</div>` : ''}
+            ${m.tags ? `<div style="margin-bottom: 1rem;"><strong>标签:</strong> ${m.tags.split(',').map(t => `<span class="tag">${escapeHtml(t.trim())}</span>`).join('')}</div>` : ''}
+            <div style="margin-bottom: 1rem;"><strong>正文:</strong></div>
+            <div style="background: #f7fafc; padding: 1rem; border-radius: 6px; white-space: pre-wrap;">${escapeHtml(m.content)}</div>
+        `;
+
+        document.getElementById('detail-modal').classList.add('active');
+    } catch (error) {
+        showAlert('加载详情失败: ' + error.message, 'error');
+    }
+}
+
+function closeModal() {
+    document.getElementById('detail-modal').classList.remove('active');
+}
+
+async function deleteMaterial(id) {
+    if (!confirm('确定要删除这条资料吗？此操作不可恢复。')) {
+        return;
+    }
+
+    try {
+        await apiRequest(`/api/materials/${id}`, {
+            method: 'DELETE'
+        });
+
+        showAlert('资料已删除', 'success');
+        loadMaterials(currentPage);
+    } catch (error) {
+        showAlert('删除失败: ' + error.message, 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadMaterials();
+});
+{% endblock %}

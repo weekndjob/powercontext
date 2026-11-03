@@ -1,0 +1,26 @@
+[
+  {
+    "title": "测试样例｜seekdb 全文检索实验笔记",
+    "content": "科研项目资料检索可以使用 seekdb 的全文索引。本文为人工构造测试样例，记录数据库建表、IK 中文分词、MATCH AGAINST 查询和来源定位。关键词：数据库 科研 全文检索 research retrieval。",
+    "source": "人工构造验证样例，不对应正式论文",
+    "tags": "科研,数据库,实验笔记"
+  },
+  {
+    "title": "测试样例｜文献阅读流程",
+    "content": "这是一份测试用的文献整理流程：记录标题、原始来源、阅读摘要和待办。先检索科研资料，再创建阅读任务，完成后生成日期范围进度报告。所有文字为演示数据。",
+    "source": "人工构造验证样例",
+    "tags": "科研,文献,工作流"
+  },
+  {
+    "title": "Test sample | Research retrieval protocol",
+    "content": "Synthetic test material for research knowledge retrieval. Store notes in seekdb, retrieve relevant documents with fulltext search, preserve the source, and track follow-up tasks. This is an example, not a published paper.",
+    "source": "Synthetic validation sample",
+    "tags": "科研,English,retrieval"
+  },
+  {
+    "title": "测试样例｜周进度整理规范",
+    "content": "项目周报应记录资料整理、已完成任务和待办数量。本工具按创建日期筛选资料及任务，统计任务当前完成状态。演示记录不代表真实用户效果数据。",
+    "source": "人工构造验证样例",
+    "tags": "科研,周报,任务"
+  }
+]

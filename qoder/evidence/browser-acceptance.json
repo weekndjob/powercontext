@@ -1,0 +1,21 @@
+{
+  "verified_at": "2026-11-03T15:26:21.860156+08:00",
+  "browser": "Chromium via Playwright CLI",
+  "status": "passed",
+  "checks": [
+    "Chinese search returns real seekdb records with source",
+    "Create associated task from search result",
+    "Mark task completed and open exact associated material",
+    "UTF8 Markdown upload through real file chooser persists",
+    "Copy summary report displays success confirmation",
+    "Quotes and HTML remain text in search and task list",
+    "390px application viewport has no horizontal overflow",
+    "Fresh browser opens public Qoder Sites project without login",
+    "Final published site has no horizontal overflow at 390px"
+  ],
+  "javascript_syntax": {
+    "rendered_pages_checked": 5,
+    "status": "passed"
+  },
+  "samples": "Synthetic validation data, not real user effectiveness evidence"
+}

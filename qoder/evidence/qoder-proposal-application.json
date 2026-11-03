@@ -1,0 +1,7 @@
+{
+  "tool_call_id": "call_255cf8cb734143138352fcca",
+  "source_session": "a10e3d96-4d1e-43e8-b39e-82d708a3abbc",
+  "file": "qoder/app.py",
+  "content_utf8_sha256": "44eeb2db8ee13711aa09cf5c505bcb43e17b7325e3e09d186945498132676681",
+  "method": "Codex saved Qoder-authored app_py literal after CLI shell quoting failed; shell code was not executed"
+}

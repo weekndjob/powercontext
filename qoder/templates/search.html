@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}全文检索 - 研途 Research Desk{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>全文检索</h2>
+    <p style="color: #718096; margin-bottom: 1rem; font-size: 0.9rem;">
+        基于 seekdb MATCH AGAINST 全文索引，支持中英文混合检索
+    </p>
+
+    <form id="search-form">
+        <div class="search-bar">
+            <input type="text" id="query" name="query" class="form-control"
+                   placeholder="输入搜索关键词..." maxlength="200">
+            <button type="submit" class="btn btn-primary">搜索</button>
+        </div>
+
+        <div class="form-group">
+            <label for="tags-filter">标签筛选</label>
+            <input type="text" id="tags-filter" name="tags" class="form-control"
+                   placeholder="输入标签过滤，逗号分隔（可选）" maxlength="500">
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>搜索结果</h2>
+    <div id="search-info" style="color: #718096; margin-bottom: 1rem;"></div>
+    <div id="search-results">
+        <div class="empty-state">
+            <p>输入关键词开始检索</p>
+        </div>
+    </div>
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="modal-overlay" id="detail-modal">
+    <div class="modal">
+        <h2 id="detail-title">资料详情</h2>
+        <div id="detail-content"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+            <button class="btn btn-primary" id="create-todo-btn" style="display: none;">创建待办</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+let currentPage = 1;
+const pageSize = 10;
+let lastQuery = '';
+let lastTags = '';
+
+document.getElementById('search-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    currentPage = 1;
+    await performSearch();
+});
+
+async function performSearch() {
+    const query = document.getElementById('query').value.trim();
+    const tags = document.getElementById('tags-filter').value.trim();
+
+    lastQuery = query;
+    lastTags = tags;
+
+    const container = document.getElementById('search-results');
+    const info = document.getElementById('search-info');
+    container.innerHTML = '<div class="loading">搜索中...</div>';
+    info.innerHTML = '';
+
+    try {
+        const searchParams = new URLSearchParams({
+            q: query,
+            page: currentPage,
+            page_size: pageSize
+        });
+
+        if (tags) {
+            searchParams.append('tags', tags);
+        }
+
+        const data = await apiRequest(`/api/search?${searchParams.toString()}`);
+
+        if (data.total === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <p>${query ? '未找到匹配的资料' : '暂无资料'}</p>
+                    ${query ? '<p style="font-size: 0.9rem; margin-top: 0.5rem;">尝试使用不同的关键词或减少筛选条件</p>' : ''}
+                </div>
+            `;
+            info.innerHTML = '';
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+
+        info.innerHTML = `
+            找到 <strong>${data.total}</strong> 条结果
+            ${query ? `，关键词: "<mark>${escapeHtml(query)}</mark>"` : ''}
+            ${tags ? `，标签: ${escapeHtml(tags)}` : ''}
+        `;
+
+        container.innerHTML = data.materials.map(m => `
+            <div class="material-item">
+                <h3>${escapeHtml(m.title)}</h3>
+                <div class="meta">
+                    <span>创建时间: ${formatDate(m.created_at)}</span>
+                    ${m.source ? `<span> | 来源: ${escapeHtml(m.source)}</span>` : ''}
+                    ${m.relevance ? `<span> | 相关性: ${m.relevance.toFixed(2)}</span>` : ''}
+                </div>
+                ${m.tags ? `<div style="margin: 0.5rem 0;">${m.tags.split(',').map(t => `<span class="tag">${escapeHtml(t.trim())}</span>`).join('')}</div>` : ''}
+                <div class="excerpt" data-content="${escapeHtml(m.highlight || m.content.substring(0, 150))}" data-query="${escapeHtml(query)}"></div>
+                <div style="margin-top: 0.8rem;">
+                    <button class="btn btn-secondary view-material-btn" data-id="${m.id}">查看详情</button>
+                    <button class="btn btn-primary create-todo-btn" data-id="${m.id}" data-title="${escapeHtml(m.title)}">创建待办</button>
+                </div>
+            </div>
+        `).join('');
+
+        // Apply highlighting using DOM text nodes
+        container.querySelectorAll('.excerpt').forEach(div => {
+            const content = div.dataset.content;
+            const query = div.dataset.query;
+            div.textContent = content;
+            if (query && content) {
+                const terms = query.split(/\s+/).filter(t => t);
+                if (terms.length > 0) {
+                    const firstTerm = terms[0];
+                    const regex = new RegExp(`(${firstTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    const parts = content.split(regex);
+                    div.innerHTML = '';
+                    parts.forEach(part => {
+                        if (regex.test(part)) {
+                            const mark = document.createElement('mark');
+                            mark.textContent = part;
+                            div.appendChild(mark);
+                        } else {
+                            div.appendChild(document.createTextNode(part));
+                        }
+                        regex.lastIndex = 0;
+                    });
+                }
+            }
+        });
+
+        // Event delegation for buttons
+        container.querySelectorAll('.view-material-btn').forEach(btn => {
+            btn.addEventListener('click', () => viewMaterial(parseInt(btn.dataset.id)));
+        });
+        container.querySelectorAll('.create-todo-btn').forEach(btn => {
+            btn.addEventListener('click', () => createTodoForMaterial(parseInt(btn.dataset.id), btn.dataset.title));
+        });
+
+        renderPagination(data.total, currentPage, pageSize);
+    } catch (error) {
+        container.innerHTML = `<div class="alert alert-error">搜索失败: ${escapeHtml(error.message)}</div>`;
+    }
+}
+
+function renderPagination(total, current, size) {
+    const totalPages = Math.ceil(total / size);
+    if (totalPages <= 1) {
+        document.getElementById('pagination').innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    html += `<button ${current === 1 ? 'disabled' : ''} class="page-btn" data-page="${current - 1}">上一页</button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === current) {
+            html += `<button class="active page-btn" data-page="${i}">${i}</button>`;
+        } else if (i === 1 || i === totalPages || Math.abs(i - current) <= 2) {
+            html += `<button class="page-btn" data-page="${i}">${i}</button>`;
+        } else if (Math.abs(i - current) === 3) {
+            html += `<button disabled>...</button>`;
+        }
+    }
+
+    html += `<button ${current === totalPages ? 'disabled' : ''} class="page-btn" data-page="${current + 1}">下一页</button>`;
+
+    document.getElementById('pagination').innerHTML = html;
+
+    // Event delegation for pagination
+    document.getElementById('pagination').querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!btn.disabled) {
+                goToPage(parseInt(btn.dataset.page));
+            }
+        });
+    });
+}
+
+function goToPage(page) {
+    currentPage = page;
+    performSearch();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function viewMaterial(id) {
+    try {
+        const m = await apiRequest(`/api/materials/${id}`);
+
+        document.getElementById('detail-title').textContent = m.title;
+        document.getElementById('detail-content').innerHTML = `
+            <div style="margin-bottom: 1rem;">
+                <strong>创建时间:</strong> ${formatDate(m.created_at)}
+            </div>
+            ${m.source ? `<div style="margin-bottom: 1rem;"><strong>来源:</strong> ${escapeHtml(m.source)}</div>` : ''}
+            ${m.tags ? `<div style="margin-bottom: 1rem;"><strong>标签:</strong> ${m.tags.split(',').map(t => `<span class="tag">${escapeHtml(t.trim())}</span>`).join('')}</div>` : ''}
+            <div style="margin-bottom: 1rem;"><strong>正文:</strong></div>
+            <div style="background: #f7fafc; padding: 1rem; border-radius: 6px; white-space: pre-wrap;">${escapeHtml(m.content)}</div>
+        `;
+
+        document.getElementById('create-todo-btn').style.display = 'inline-block';
+        document.getElementById('create-todo-btn').onclick = () => {
+            closeModal();
+            createTodoForMaterial(id, m.title);
+        };
+
+        document.getElementById('detail-modal').classList.add('active');
+    } catch (error) {
+        showAlert('加载详情失败: ' + error.message, 'error');
+    }
+}
+
+function closeModal() {
+    document.getElementById('detail-modal').classList.remove('active');
+    document.getElementById('create-todo-btn').style.display = 'none';
+}
+
+async function createTodoForMaterial(materialId, materialTitle) {
+    const title = prompt(`为资料"${materialTitle}"创建待办\n请输入待办标题:`);
+    if (!title || !title.trim()) {
+        return;
+    }
+
+    if (title.length > 500) {
+        showAlert('待办标题不能超过 500 字符', 'error');
+        return;
+    }
+
+    const dueDateStr = prompt('请输入截止日期 (YYYY-MM-DD，可选):');
+    if (dueDateStr === null) return;
+    let dueDate = null;
+    if (dueDateStr && dueDateStr.trim()) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDateStr.trim())) {
+            showAlert('日期格式不正确，请使用 YYYY-MM-DD 格式', 'error');
+            return;
+        }
+        dueDate = dueDateStr.trim();
+    }
+
+    try {
+        await apiRequest('/api/todos', {
+            method: 'POST',
+            body: JSON.stringify({
+                title: title.trim(),
+                material_id: materialId,
+                due_date: dueDate
+            })
+        });
+
+        showAlert('待办创建成功', 'success');
+    } catch (error) {
+        showAlert('创建待办失败: ' + error.message, 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get('q');
+    const tags = urlParams.get('tags');
+    const materialId = Number(urlParams.get('material_id'));
+    if (Number.isSafeInteger(materialId) && materialId > 0) viewMaterial(materialId);
+
+    if (q) {
+        document.getElementById('query').value = q;
+    }
+    if (tags) {
+        document.getElementById('tags-filter').value = tags;
+    }
+
+    if (q || tags) {
+        performSearch();
+    }
+});
+{% endblock %}

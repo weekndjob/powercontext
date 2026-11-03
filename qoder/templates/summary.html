@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}进度汇总 - 研途 Research Desk{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>日期范围筛选</h2>
+    <form id="summary-form" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="start_date">开始日期</label>
+            <input type="date" id="start_date" name="start_date" class="form-control">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="end_date">结束日期</label>
+            <input type="date" id="end_date" name="end_date" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">查询汇总</button>
+        <button type="button" class="btn btn-secondary" onclick="resetDateRange()">重置</button>
+        <button type="button" class="btn btn-secondary" onclick="copySummary()">复制汇总报告</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>总体统计</h2>
+    <div class="stats-grid" id="stats">
+        <div class="stat-card">
+            <div class="value" id="total-materials">-</div>
+            <div class="label">资料总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="total-todos">-</div>
+            <div class="label">待办总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="completed-todos">-</div>
+            <div class="label">已完成待办</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="pending-todos">-</div>
+            <div class="label">未完成待办</div>
+        </div>
+        <div class="stat-card">
+            <div class="value" id="completion-rate">-</div>
+            <div class="label">完成率</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>按日期统计 - 资料录入</h2>
+    <div id="materials-by-date">
+        <div class="loading">加载中...</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>按日期统计 - 待办任务</h2>
+    <div id="todos-by-date">
+        <div class="loading">加载中...</div>
+    </div>
+</div>
+
+<div class="card" id="summary-report-card" style="display: none;">
+    <h2>汇总报告</h2>
+    <div id="summary-report" style="background: #f7fafc; padding: 1rem; border-radius: 6px; font-family: monospace; white-space: pre-wrap;"></div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+let summaryData = null;
+
+document.getElementById('summary-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await loadSummary();
+});
+
+function resetDateRange() {
+    document.getElementById('start_date').value = '';
+    document.getElementById('end_date').value = '';
+    loadSummary();
+}
+
+async function loadSummary() {
+    const startDate = document.getElementById('start_date').value || null;
+    const endDate = document.getElementById('end_date').value || null;
+
+    try {
+        summaryData = await apiRequest('/api/summary', {
+            method: 'POST',
+            body: JSON.stringify({
+                start_date: startDate,
+                end_date: endDate
+            })
+        });
+
+        document.getElementById('total-materials').textContent = summaryData.total_materials;
+        document.getElementById('total-todos').textContent = summaryData.total_todos;
+        document.getElementById('completed-todos').textContent = summaryData.completed_todos;
+        document.getElementById('pending-todos').textContent = summaryData.pending_todos;
+        document.getElementById('completion-rate').textContent = summaryData.completion_rate.toFixed(1) + '%';
+
+        renderMaterialsByDate();
+        renderTodosByDate();
+        generateSummaryReport(startDate, endDate);
+    } catch (error) {
+        showAlert('加载汇总失败: ' + error.message, 'error');
+    }
+}
+
+function renderMaterialsByDate() {
+    const container = document.getElementById('materials-by-date');
+
+    if (!summaryData.materials_by_date || summaryData.materials_by_date.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>暂无数据</p></div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>新增资料数</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${summaryData.materials_by_date.map(item => `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td><span class="badge badge-info">${item.count}</span></td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function renderTodosByDate() {
+    const container = document.getElementById('todos-by-date');
+
+    if (!summaryData.todos_by_date || summaryData.todos_by_date.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>暂无数据</p></div>';
+        return;
+    }
+
+    container.innerHTML = `
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>新增待办</th>
+                    <th>完成待办</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${summaryData.todos_by_date.map(item => `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td><span class="badge badge-warning">${item.total}</span></td>
+                        <td><span class="badge badge-success">${item.completed}</span></td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+function generateSummaryReport(startDate, endDate) {
+    const dateRange = startDate && endDate
+        ? `${startDate} 至 ${endDate}`
+        : startDate
+        ? `${startDate} 至今`
+        : endDate
+        ? `至 ${endDate}`
+        : '全部时间';
+
+    const report = `研途 Research Desk 进度汇总报告
+================================
+
+统计范围: ${dateRange}
+生成时间: ${new Date().toLocaleString('zh-CN')}
+
+【资料统计】
+总资料数: ${summaryData.total_materials}
+
+【待办统计】
+总待办数: ${summaryData.total_todos}
+已完成: ${summaryData.completed_todos}
+未完成: ${summaryData.pending_todos}
+完成率: ${summaryData.completion_rate.toFixed(1)}%
+
+【按日期明细 - 资料录入】
+${summaryData.materials_by_date.length > 0
+    ? summaryData.materials_by_date.map(item => `${item.date}: ${item.count} 条`).join('\n')
+    : '暂无数据'}
+
+【按日期明细 - 待办任务】
+${summaryData.todos_by_date.length > 0
+    ? summaryData.todos_by_date.map(item => `${item.date}: 新增 ${item.total} 条, 完成 ${item.completed} 条`).join('\n')
+    : '暂无数据'}
+
+================================
+报告结束`;
+
+    document.getElementById('summary-report').textContent = report;
+    document.getElementById('summary-report-card').style.display = 'block';
+}
+
+function copySummary() {
+    const report = document.getElementById('summary-report').textContent;
+    if (!report) {
+        showAlert('请先生成汇总报告', 'error');
+        return;
+    }
+
+    navigator.clipboard.writeText(report).then(() => {
+        showAlert('汇总报告已复制到剪贴板', 'success');
+    }).catch(err => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = report;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showAlert('汇总报告已复制到剪贴板', 'success');
+        } catch (err) {
+            showAlert('复制失败，请手动复制', 'error');
+        }
+        document.body.removeChild(textArea);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadSummary();
+});
+{% endblock %}

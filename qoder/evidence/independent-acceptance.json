@@ -1,0 +1,482 @@
+{
+  "started_at": "2026-11-03T15:22:01.607164+08:00",
+  "checks": [
+    {
+      "name": "HTML /",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "HTML /materials",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "HTML /search",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "HTML /todos",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "HTML /summary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Native IK fulltext index",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "GET /api/materials/44",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "48000 Unicode characters above 64 KiB persist",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/search",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "English fulltext selects matching documents",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/search",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Chinese fulltext and normalized complete tag",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/search",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "No match is empty",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/search",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Tag matches whole tag",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/search",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Query remains a bound SQL parameter",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/materials/import",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "GET /api/materials/45",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "UTF8 Markdown import and BOM removal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/materials/import",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials/import",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials/import",
+      "passed": true,
+      "detail": {
+        "status": 422,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials/import",
+      "passed": true,
+      "detail": {
+        "status": 400,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 422,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 422,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 422,
+        "body": null
+      }
+    },
+    {
+      "name": "POST /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "PUT /api/todos/12",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "PUT /api/todos/12",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "PUT /api/todos/12",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "PUT /api/todos/12",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "GET /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Task status, same-status edit and nullable fields",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "DELETE /api/materials/42",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "GET /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Deleting material clears existing task association",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Concurrent material delete 0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Concurrent todo create 0",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Concurrent material delete 1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Concurrent todo create 1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "No orphan after concurrent delete 1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/materials",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Concurrent material delete 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Concurrent todo create 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "No orphan after concurrent delete 2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "POST /api/summary",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Date range applies to totals",
+      "passed": true,
+      "detail": {
+        "start_date": "2000-01-01",
+        "end_date": "2000-01-01",
+        "total_materials": 1,
+        "total_todos": 0,
+        "completed_todos": 0,
+        "pending_todos": 0,
+        "completion_rate": 0.0,
+        "materials_by_date": [
+          {
+            "date": "2000-01-01",
+            "count": 1
+          }
+        ],
+        "todos_by_date": []
+      }
+    },
+    {
+      "name": "Reject reversed date range",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/materials/41",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Document survives application restart",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "GET /api/todos",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "body": null
+      }
+    },
+    {
+      "name": "Completed task survives application restart",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "responses": {
+    "chinese_search": {
+      "materials": [
+        {
+          "id": 41,
+          "title": "测试样例 ');window.__qoder_xss=1;//",
+          "content": "测试样例：科研知识检索 数据库 quasar research retrieval",
+          "source": "independent-acceptance-only",
+          "tags": "科研,端到端",
+          "created_at": "2026-11-03T15:22:04",
+          "relevance": 0.2075471698113208,
+          "highlight": "测试样例：科研知识检索 数据库 quasar research retrieval"
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "page_size": 20
+    },
+    "dated_summary": {
+      "start_date": "2000-01-01",
+      "end_date": "2000-01-01",
+      "total_materials": 1,
+      "total_todos": 0,
+      "completed_todos": 0,
+      "pending_todos": 0,
+      "completion_rate": 0.0,
+      "materials_by_date": [
+        {
+          "date": "2000-01-01",
+          "count": 1
+        }
+      ],
+      "todos_by_date": []
+    }
+  },
+  "database_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "materials_ddl": "CREATE TABLE `materials` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `title` varchar(500) NOT NULL,\n  `content` mediumtext NOT NULL,\n  `source` varchar(1000) DEFAULT NULL,\n  `tags` varchar(500) DEFAULT NULL,\n  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`),\n  KEY `idx_materials_tags` (`tags`) BLOCK_SIZE 16384 LOCAL,\n  KEY `idx_materials_created` (`created_at`) BLOCK_SIZE 16384 LOCAL,\n  FULLTEXT KEY `ft_idx_content` (`title`, `content`) WITH PARSER ik PARSER_PROPERTIES=(ik_mode=\"smart\") BLOCK_SIZE 16384\n) ORGANIZATION INDEX AUTO_INCREMENT = 41 DEFAULT CHARSET = utf8mb4 ROW_FORMAT = DYNAMIC COMPRESSION = 'zstd_1.3.8' BLOCK_SIZE = 16384 TABLET_SIZE = 134217728 PCTFREE = 0",
+  "status": "passed",
+  "finished_at": "2026-11-03T15:22:18.099108+08:00"
+}
