@@ -1,0 +1,6 @@
+### Result
+{"status":"导入完成：写入 1 个分块，0 份文件未变化","counts":"2 份文件 · 2 个分块","id":"sf_e05bdfffde004f60a75a83f075f52faf"}
+### Ran Playwright code
+```js
+await (async(page)=>{await page.waitForFunction(()=>!document.getElementById("import").disabled);return await page.evaluate(()=>({status:document.getElementById("status").textContent,counts:document.getElementById("counts").textContent,id:edgeKB.activeId}));})(page);
+```

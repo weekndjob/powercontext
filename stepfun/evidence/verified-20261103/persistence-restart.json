@@ -1,0 +1,9 @@
+{
+  "id": "sf_e05bdfffde004f60a75a83f075f52faf",
+  "counts": "2 份文件 · 2 个分块",
+  "files": [
+    "qa-upload.txt",
+    "separate.txt"
+  ],
+  "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)"
+}

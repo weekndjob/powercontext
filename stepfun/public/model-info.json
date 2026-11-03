@@ -1,0 +1,73 @@
+{
+  "id": "Xenova/all-MiniLM-L6-v2",
+  "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+  "dimension": 384,
+  "pooling": "mean",
+  "normalize": true,
+  "maxLength": 256,
+  "language": "English-focused; Chinese quality is not claimed",
+  "license": "Apache-2.0",
+  "common": [
+    "config.json",
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "special_tokens_map.json",
+    "vocab.txt"
+  ],
+  "weights": {
+    "fp32": "onnx/model.onnx",
+    "fp16": "onnx/model_fp16.onnx",
+    "q8": "onnx/model_quantized.onnx"
+  },
+  "files": {
+    "config.json": {
+      "path": "config.json",
+      "bytes": 650,
+      "sha256": null,
+      "gitBlobSha1": "72147e4ff4426ebedbfa2146c4a0999def51a313"
+    },
+    "onnx/model.onnx": {
+      "path": "onnx/model.onnx",
+      "bytes": 90387606,
+      "sha256": "759c3cd2b7fe7e93933ad23c4c9181b7396442a2ed746ec7c1d46192c469c46e",
+      "gitBlobSha1": "e0fdb34b85735f843316aa3604c431583a53b13b"
+    },
+    "onnx/model_fp16.onnx": {
+      "path": "onnx/model_fp16.onnx",
+      "bytes": 45297825,
+      "sha256": "2cdb5e58291813b6d6e248ed69010100246821a367fa17b1b81ae9483744533d",
+      "gitBlobSha1": "fad6b714b903b5157108e0bfa51541cfa016ea2e"
+    },
+    "onnx/model_quantized.onnx": {
+      "path": "onnx/model_quantized.onnx",
+      "bytes": 22972370,
+      "sha256": "afdb6f1a0e45b715d0bb9b11772f032c399babd23bfc31fed1c170afc848bdb1",
+      "gitBlobSha1": "bdb02d11c4446148e92a9210ab4d1013b3450a72"
+    },
+    "special_tokens_map.json": {
+      "path": "special_tokens_map.json",
+      "bytes": 125,
+      "sha256": null,
+      "gitBlobSha1": "a8b3208c2884c4efb86e49300fdd3dc877220cdf"
+    },
+    "tokenizer.json": {
+      "path": "tokenizer.json",
+      "bytes": 711661,
+      "sha256": null,
+      "gitBlobSha1": "c17ed520ed8438736732a54957a69306b8822215"
+    },
+    "tokenizer_config.json": {
+      "path": "tokenizer_config.json",
+      "bytes": 366,
+      "sha256": null,
+      "gitBlobSha1": "37fca74771bc76a8e01178ce3a6055a0995f8093"
+    },
+    "vocab.txt": {
+      "path": "vocab.txt",
+      "bytes": 231508,
+      "sha256": null,
+      "gitBlobSha1": "fb140275c155a9c7c5a3b3e0e77a9e839594a938"
+    }
+  },
+  "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384"
+}

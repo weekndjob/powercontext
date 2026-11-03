@@ -1,0 +1,12 @@
+✔ chunking preserves source spans, covers the tail, and bounds long CJK text (2.2819ms)
+✔ rank metrics count duplicate hits once and use graded nDCG (1.0216ms)
+✔ reject malformed, nonfinite and wrong-space vectors before any DB mutation (0.6385ms)
+✔ complete SDK operations stay serialized even when one request fails (25.8347ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 129.7303

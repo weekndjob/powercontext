@@ -1,0 +1,7 @@
+{
+  "lib/store.mjs": "7f38329dc9a9afa0509cb125cf9712fa1459ad0e12e04081b10629d8caa212fc",
+  "server.mjs": "33821e68c619913b39785e9bc4a2f817ee86f6769802c686b9781c64d9d7a9ad",
+  "public/app.js": "5429f5ca0eaddef642194f72dd179c0ded79854d254a3191698453da7a0a0204",
+  "public/embedding-worker.js": "ce7d37db1b653bc71a1c3c37873e2e51e19c7c6730c2c2e6bee4cfe580c752b9",
+  "public/benchmark.js": "78ad97e35be003cdacdee3c21cba349d9bee3a79e35327cc6cf15e6c00e2138c"
+}

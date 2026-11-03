@@ -1,0 +1,145 @@
+{
+  "started_at": "2026-11-03T21:12:04.661866+08:00",
+  "status": "passed",
+  "results": [
+    {
+      "label": "baseline-fp32-wasm",
+      "summary": {
+        "embeddingMs": 1191.5600000023842,
+        "docsPerSecond": 20.141663029937206,
+        "queryEmbeddingMs": 14.08250000141561,
+        "dbMs": 6.291399999987334,
+        "e2eMs": 93.13250000029802,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "fp32",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 1531.515000000596,
+        "threads": 1,
+        "adapter": null
+      },
+      "sha256": "bff39d80ffcb01ff979bdbbb5fa9acd036be456e75e867e02d3303467d4526b4"
+    },
+    {
+      "label": "int8-wasm-batch1",
+      "summary": {
+        "embeddingMs": 642.3699999973178,
+        "docsPerSecond": 37.361645157931115,
+        "queryEmbeddingMs": 9.134999999776483,
+        "dbMs": 6.198999999993248,
+        "e2eMs": 89.67999999970198,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "q8",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 342.7399999983609,
+        "threads": 1,
+        "adapter": null
+      },
+      "sha256": "a694d721684009ec30ecf39d572e9d9528838e0f6d3011f80685bf1a4d127c3f"
+    },
+    {
+      "label": "int8-wasm-batch4",
+      "summary": {
+        "embeddingMs": 642.4250000007451,
+        "docsPerSecond": 37.35844651122258,
+        "queryEmbeddingMs": 9.099999999627471,
+        "dbMs": 6.037349999998696,
+        "e2eMs": 89.48750000074506,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "q8",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 342.7399999983609,
+        "threads": 1,
+        "adapter": null
+      },
+      "sha256": "90c0833d80cc039dc8013825f73619611d4150397a9fbffc2249df6b9f79a7e9"
+    },
+    {
+      "label": "fp16-webgpu-batch4",
+      "summary": {
+        "embeddingMs": 80.86499999836087,
+        "docsPerSecond": 296.7909478821057,
+        "queryEmbeddingMs": 12.610000001266599,
+        "dbMs": 5.814700000002631,
+        "e2eMs": 92.72000000067055,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "webgpu",
+        "dtype": "fp16",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 988.6700000017881,
+        "threads": 1,
+        "adapter": {
+          "vendor": "nvidia",
+          "architecture": "ampere",
+          "description": "",
+          "device": ""
+        }
+      },
+      "sha256": "b7209f016b16e8fc15c9faebae8a364f25de7e6bad7f9c0848fbbc7ed9d8b026"
+    },
+    {
+      "label": "automatic-wasm-fallback",
+      "summary": {
+        "embeddingMs": 741.625,
+        "docsPerSecond": 32.36136861621439,
+        "queryEmbeddingMs": 10.432499999180436,
+        "dbMs": 6.93300000000454,
+        "e2eMs": 93.10249999910593,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "q8",
+        "reason": "\u6d4f\u89c8\u5668\u672a\u63d0\u4f9b\u53ef\u7528 WebGPU \u9002\u914d\u5668\uff0c\u81ea\u52a8\u4f7f\u7528 INT8/WASM",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 873.0650000013411,
+        "threads": 1,
+        "adapter": null
+      },
+      "sha256": "0cd40fd8b3dedeaaa63b13e40ed65a6d330b2ea89e9cb830666d6e604e169223"
+    }
+  ],
+  "stepfun-latest-setup": {
+    "audit": "all external HTTP requests blocked",
+    "version": "156.0.8078.80"
+  },
+  "stepfun-fallback-setup": {
+    "audit": "all external HTTP requests blocked",
+    "version": "156.0.8078.80"
+  },
+  "phase": "automatic-wasm-fallback"
+}

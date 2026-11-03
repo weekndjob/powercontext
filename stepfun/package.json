@@ -1,0 +1,25 @@
+{
+  "name": "stepfun-edge-knowledge-base",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "models": "node scripts/download-models.mjs",
+    "db:init": "node --env-file-if-exists=.env scripts/init-db.mjs",
+    "test:database": "node --env-file-if-exists=.env --test tests/database.integration.mjs",
+    "test:http": "node --env-file-if-exists=.env --test tests/server.integration.mjs",
+    "benchmark": "python scripts/browser-benchmark.py"
+  },
+  "dependencies": {
+    "seekdb": "1.4.0"
+  },
+  "devDependencies": {
+    "@playwright/cli": "^0.1.23"
+  }
+}

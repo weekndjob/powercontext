@@ -1,0 +1,9 @@
+node_modules/
+public/vendor/
+public/models/
+.env
+*.log
+evidence/raw/
+.seekdb/
+.playwright-cli/
+.playwright/

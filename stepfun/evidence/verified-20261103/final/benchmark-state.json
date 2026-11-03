@@ -1,0 +1,90 @@
+{
+  "startedAt": "2026-11-03T21:43:37.060092+08:00",
+  "status": "passed",
+  "results": [
+    {
+      "label": "baseline-fp32-wasm",
+      "summary": {
+        "embeddingMs": 1194.914999999106,
+        "docsPerSecond": 20.085110656421552,
+        "queryEmbeddingMs": 14.857499999925494,
+        "dbMs": 7.24399999997695,
+        "e2eMs": 29.4375,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "dtype": "fp32",
+      "device": "wasm",
+      "sha256": "f98200fcd4d1f3b7a4dad5be0ee1fbe819490d9a56ae2d45fd943982ad6f3c81"
+    },
+    {
+      "label": "int8-wasm-batch1",
+      "summary": {
+        "embeddingMs": 647.1699999980628,
+        "docsPerSecond": 37.08453729324882,
+        "queryEmbeddingMs": 9.422499999403954,
+        "dbMs": 5.8879500000039116,
+        "e2eMs": 22.242499999701977,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "dtype": "q8",
+      "device": "wasm",
+      "sha256": "5ad76f92c1f789de4f1414ce02e828dd437354c4e122b5a301130433e5d53991"
+    },
+    {
+      "label": "int8-wasm-batch4",
+      "summary": {
+        "embeddingMs": 643.7949999980628,
+        "docsPerSecond": 37.27894749116134,
+        "queryEmbeddingMs": 9.152499999850988,
+        "dbMs": 5.931199999991804,
+        "e2eMs": 21.91999999806285,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "dtype": "q8",
+      "device": "wasm",
+      "sha256": "c2ee3752c0c2faaa189501c00c661a91f5f39ace023106952238bffb09a058d4"
+    },
+    {
+      "label": "fp16-webgpu-batch4",
+      "summary": {
+        "embeddingMs": 128.8450000025332,
+        "docsPerSecond": 186.27032480521666,
+        "queryEmbeddingMs": 11.194999998435378,
+        "dbMs": 5.752099999983329,
+        "e2eMs": 23.757500000298023,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "dtype": "fp16",
+      "device": "webgpu",
+      "sha256": "288738f581e7367693fb550aa2e5d3f9728dbf6d037dfbe959a055c2a86de0c7"
+    },
+    {
+      "label": "automatic-wasm-fallback",
+      "summary": {
+        "embeddingMs": 645.234999999404,
+        "docsPerSecond": 37.19575038555281,
+        "queryEmbeddingMs": 9.609999999403954,
+        "dbMs": 5.987650000024587,
+        "e2eMs": 22.90249999985099,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "dtype": "q8",
+      "device": "wasm",
+      "sha256": "9e09c91a8fb6b5070c829c8f0139b5a2f992ffa92f0df377f5a7a26a0228d77a"
+    }
+  ],
+  "stepfun-bench-gpu": {
+    "browserVersion": "156.0.8078.80",
+    "cacheKeys": []
+  },
+  "stepfun-bench-wasm": {
+    "browserVersion": "156.0.8078.80",
+    "cacheKeys": []
+  },
+  "phase": "automatic-wasm-fallback"
+}

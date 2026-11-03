@@ -1,0 +1,19 @@
+{
+  "os": "Windows",
+  "cpu": "AMD Ryzen 7 5800H",
+  "physicalCores": 8,
+  "logicalProcessors": 16,
+  "physicalMemoryBytes": 14877257728,
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "gpuAdapter": {
+    "vendor": "nvidia",
+    "architecture": "ampere",
+    "description": "",
+    "device": ""
+  },
+  "browser": "Chrome for Testing 156.0.8078.80",
+  "node": "24.22.1",
+  "seekdb": "5.7.25-OceanBase seekdb-v1.4.0.0",
+  "seekdbDeployment": "Ubuntu VM native server, 2 CPU, memory_limit 1G, datafile 512M-1G, redo 2G; SSH forwarding",
+  "modelPreparation": "Pinned public Hugging Face files, exact weight SHA256 and config Git blob hashes in model-manifest.json"
+}

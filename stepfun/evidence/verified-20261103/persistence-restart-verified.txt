@@ -1,0 +1,6 @@
+### Result
+{"id":"sf_e05bdfffde004f60a75a83f075f52faf","counts":"2 份文件 · 2 个分块","files":["qa-upload.txt","separate.txt"],"engine":"seekdb DBMS_HYBRID_SEARCH (RRF)"}
+### Ran Playwright code
+```js
+await (async(page)=>{await page.waitForFunction(()=>edgeKB.activeId);return await page.evaluate(async()=>{const result=await edgeKB.search("violet spectrometer uploaded notebook");return {id:edgeKB.activeId,counts:document.getElementById("counts").textContent,files:result.results.map(r=>r.metadata.source),engine:result.engine};});})(page);
+```

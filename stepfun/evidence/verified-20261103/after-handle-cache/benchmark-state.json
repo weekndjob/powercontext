@@ -1,0 +1,501 @@
+{
+  "started_at": "2026-11-03T21:18:32.252206+08:00",
+  "status": "passed",
+  "results": [
+    {
+      "label": "baseline-fp32-wasm",
+      "summary": {
+        "embeddingMs": 1230.355000000447,
+        "docsPerSecond": 19.506565178335748,
+        "queryEmbeddingMs": 14.584999999031425,
+        "dbMs": 6.269500000002154,
+        "e2eMs": 27.880000000819564,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "fp32",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 886.1300000026822,
+        "threads": 1,
+        "reused": false,
+        "assetEvents": [
+          {
+            "status": "initiate",
+            "file": "config.json",
+            "ms": 4.7349999994039536
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer.json",
+            "ms": 5.010000001639128
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer_config.json",
+            "ms": 5.060000002384186
+          },
+          {
+            "status": "download",
+            "file": "config.json",
+            "ms": 5.3900000005960464
+          },
+          {
+            "status": "download",
+            "file": "tokenizer.json",
+            "ms": 5.755000002682209
+          },
+          {
+            "status": "download",
+            "file": "tokenizer_config.json",
+            "ms": 5.9400000013411045
+          },
+          {
+            "status": "done",
+            "file": "config.json",
+            "ms": 7.2650000005960464
+          },
+          {
+            "status": "initiate",
+            "file": "onnx/model.onnx",
+            "ms": 7.71000000089407
+          },
+          {
+            "status": "done",
+            "file": "tokenizer.json",
+            "ms": 7.8599999994039536
+          },
+          {
+            "status": "done",
+            "file": "tokenizer_config.json",
+            "ms": 18.33000000193715
+          },
+          {
+            "status": "download",
+            "file": "onnx/model.onnx",
+            "ms": 31.625
+          },
+          {
+            "status": "done",
+            "file": "onnx/model.onnx",
+            "ms": 107.33000000193715
+          }
+        ],
+        "assetReadyMs": 107.33000000193715,
+        "postAssetsInitializationMs": 778.8149999976158,
+        "resources": [
+          {
+            "name": "http://localhost:18380/vendor/ort-wasm-simd-threaded.asyncify.mjs",
+            "durationMs": 3.294999998062849,
+            "transferBytes": 53357,
+            "bodyBytes": 53057
+          },
+          {
+            "name": "http://localhost:18380/vendor/ort-wasm-simd-threaded.asyncify.wasm",
+            "durationMs": 77.72500000149012,
+            "transferBytes": 26862077,
+            "bodyBytes": 26861777
+          }
+        ],
+        "adapter": null
+      },
+      "sha256": "96381ddaf4f73d95ea17678c406f12a0b714dbf99506522975f96646c6089a13"
+    },
+    {
+      "label": "int8-wasm-batch1",
+      "summary": {
+        "embeddingMs": 661.234999999404,
+        "docsPerSecond": 36.29571937362909,
+        "queryEmbeddingMs": 9.712499998509884,
+        "dbMs": 6.1701000000030035,
+        "e2eMs": 22.56749999895692,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "q8",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 189.41499999910593,
+        "threads": 1,
+        "reused": false,
+        "assetEvents": [
+          {
+            "status": "initiate",
+            "file": "config.json",
+            "ms": 0.75
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer.json",
+            "ms": 0.8149999976158142
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer_config.json",
+            "ms": 0.8399999998509884
+          },
+          {
+            "status": "download",
+            "file": "config.json",
+            "ms": 1.1549999974668026
+          },
+          {
+            "status": "download",
+            "file": "tokenizer.json",
+            "ms": 1.4549999982118607
+          },
+          {
+            "status": "download",
+            "file": "tokenizer_config.json",
+            "ms": 1.6349999979138374
+          },
+          {
+            "status": "done",
+            "file": "config.json",
+            "ms": 2.7049999982118607
+          },
+          {
+            "status": "initiate",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 2.8299999982118607
+          },
+          {
+            "status": "done",
+            "file": "tokenizer.json",
+            "ms": 2.974999997764826
+          },
+          {
+            "status": "done",
+            "file": "tokenizer_config.json",
+            "ms": 10.890000000596046
+          },
+          {
+            "status": "download",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 22.08499999716878
+          },
+          {
+            "status": "done",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 34.599999997764826
+          }
+        ],
+        "assetReadyMs": 34.599999997764826,
+        "postAssetsInitializationMs": 154.8150000013411,
+        "resources": [],
+        "adapter": null
+      },
+      "sha256": "1227bd724ad364f9f13396807b0fa95deab89e8231b83476c94b68d862e7cba5"
+    },
+    {
+      "label": "int8-wasm-batch4",
+      "summary": {
+        "embeddingMs": 696.6350000016391,
+        "docsPerSecond": 34.45132673486622,
+        "queryEmbeddingMs": 9.49750000052154,
+        "dbMs": 6.2384999999922,
+        "e2eMs": 23.51750000193715,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "q8",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 189.41499999910593,
+        "threads": 1,
+        "reused": false,
+        "assetEvents": [
+          {
+            "status": "initiate",
+            "file": "config.json",
+            "ms": 0.75
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer.json",
+            "ms": 0.8149999976158142
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer_config.json",
+            "ms": 0.8399999998509884
+          },
+          {
+            "status": "download",
+            "file": "config.json",
+            "ms": 1.1549999974668026
+          },
+          {
+            "status": "download",
+            "file": "tokenizer.json",
+            "ms": 1.4549999982118607
+          },
+          {
+            "status": "download",
+            "file": "tokenizer_config.json",
+            "ms": 1.6349999979138374
+          },
+          {
+            "status": "done",
+            "file": "config.json",
+            "ms": 2.7049999982118607
+          },
+          {
+            "status": "initiate",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 2.8299999982118607
+          },
+          {
+            "status": "done",
+            "file": "tokenizer.json",
+            "ms": 2.974999997764826
+          },
+          {
+            "status": "done",
+            "file": "tokenizer_config.json",
+            "ms": 10.890000000596046
+          },
+          {
+            "status": "download",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 22.08499999716878
+          },
+          {
+            "status": "done",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 34.599999997764826
+          }
+        ],
+        "assetReadyMs": 34.599999997764826,
+        "postAssetsInitializationMs": 154.8150000013411,
+        "resources": [],
+        "adapter": null
+      },
+      "sha256": "3c0511feacc675cedc1f4ec39c4e7aeab748bfdef60eb9e3e6df694b859d5858"
+    },
+    {
+      "label": "fp16-webgpu-batch4",
+      "summary": {
+        "embeddingMs": 82.87000000104308,
+        "docsPerSecond": 289.6102328912503,
+        "queryEmbeddingMs": 10.762499999254942,
+        "dbMs": 6.2048999999969965,
+        "e2eMs": 24.547499999403954,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "webgpu",
+        "dtype": "fp16",
+        "reason": "",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 593.7599999979138,
+        "threads": 1,
+        "reused": false,
+        "assetEvents": [
+          {
+            "status": "initiate",
+            "file": "config.json",
+            "ms": 315.464999999851
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer.json",
+            "ms": 315.54499999806285
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer_config.json",
+            "ms": 315.570000000298
+          },
+          {
+            "status": "download",
+            "file": "config.json",
+            "ms": 316.16999999806285
+          },
+          {
+            "status": "download",
+            "file": "tokenizer.json",
+            "ms": 316.41999999806285
+          },
+          {
+            "status": "download",
+            "file": "tokenizer_config.json",
+            "ms": 316.58500000089407
+          },
+          {
+            "status": "done",
+            "file": "config.json",
+            "ms": 318.14000000059605
+          },
+          {
+            "status": "done",
+            "file": "tokenizer.json",
+            "ms": 318.3999999985099
+          },
+          {
+            "status": "done",
+            "file": "tokenizer_config.json",
+            "ms": 329.179999999702
+          },
+          {
+            "status": "initiate",
+            "file": "onnx/model_fp16.onnx",
+            "ms": 342.8099999986589
+          },
+          {
+            "status": "download",
+            "file": "onnx/model_fp16.onnx",
+            "ms": 343.38499999791384
+          },
+          {
+            "status": "done",
+            "file": "onnx/model_fp16.onnx",
+            "ms": 366.66499999910593
+          }
+        ],
+        "assetReadyMs": 366.66499999910593,
+        "postAssetsInitializationMs": 227.0949999988079,
+        "resources": [],
+        "adapter": {
+          "vendor": "nvidia",
+          "architecture": "ampere",
+          "description": "",
+          "device": ""
+        }
+      },
+      "sha256": "97741253b847d332514bffa58e3e64b3fe2780d67dd6cb6cb84955dbe27d1862"
+    },
+    {
+      "label": "automatic-wasm-fallback",
+      "summary": {
+        "embeddingMs": 662.054999999702,
+        "docsPerSecond": 36.250764664583464,
+        "queryEmbeddingMs": 9.922499999403954,
+        "dbMs": 6.35899999999674,
+        "e2eMs": 23.032500000670552,
+        "recallAt5": 0.9583333333333334,
+        "ndcgAt5": 0.9662619947345021
+      },
+      "state": {
+        "device": "wasm",
+        "dtype": "q8",
+        "reason": "\u6d4f\u89c8\u5668\u672a\u63d0\u4f9b\u53ef\u7528 WebGPU \u9002\u914d\u5668\uff0c\u81ea\u52a8\u4f7f\u7528 INT8/WASM",
+        "model": "Xenova/all-MiniLM-L6-v2",
+        "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+        "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+        "dimension": 384,
+        "loadMs": 797.640000000596,
+        "threads": 1,
+        "reused": false,
+        "assetEvents": [
+          {
+            "status": "initiate",
+            "file": "config.json",
+            "ms": 5.504999998956919
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer.json",
+            "ms": 5.675000000745058
+          },
+          {
+            "status": "initiate",
+            "file": "tokenizer_config.json",
+            "ms": 5.739999998360872
+          },
+          {
+            "status": "download",
+            "file": "config.json",
+            "ms": 5.995000001043081
+          },
+          {
+            "status": "download",
+            "file": "tokenizer.json",
+            "ms": 6.379999998956919
+          },
+          {
+            "status": "download",
+            "file": "tokenizer_config.json",
+            "ms": 6.53999999910593
+          },
+          {
+            "status": "done",
+            "file": "config.json",
+            "ms": 6.844999998807907
+          },
+          {
+            "status": "initiate",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 7.3099999986588955
+          },
+          {
+            "status": "done",
+            "file": "tokenizer.json",
+            "ms": 8.469999998807907
+          },
+          {
+            "status": "done",
+            "file": "tokenizer_config.json",
+            "ms": 16.12000000104308
+          },
+          {
+            "status": "download",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 29.66000000014901
+          },
+          {
+            "status": "done",
+            "file": "onnx/model_quantized.onnx",
+            "ms": 70.24500000104308
+          }
+        ],
+        "assetReadyMs": 70.24500000104308,
+        "postAssetsInitializationMs": 727.3999999985099,
+        "resources": [
+          {
+            "name": "http://localhost:18380/vendor/ort-wasm-simd-threaded.asyncify.mjs",
+            "durationMs": 3.2899999991059303,
+            "transferBytes": 53357,
+            "bodyBytes": 53057
+          },
+          {
+            "name": "http://localhost:18380/vendor/ort-wasm-simd-threaded.asyncify.wasm",
+            "durationMs": 72.92999999970198,
+            "transferBytes": 26862077,
+            "bodyBytes": 26861777
+          }
+        ],
+        "adapter": null
+      },
+      "sha256": "624e311dc57ac594c8f72f93bcfdc61fd737150f591eb841c6d5edbb3a5bca91"
+    }
+  ],
+  "stepfun-latest-setup": {
+    "audit": "all external HTTP requests blocked",
+    "version": "156.0.8078.80"
+  },
+  "stepfun-fallback-setup": {
+    "audit": "all external HTTP requests blocked",
+    "version": "156.0.8078.80"
+  },
+  "phase": "automatic-wasm-fallback"
+}

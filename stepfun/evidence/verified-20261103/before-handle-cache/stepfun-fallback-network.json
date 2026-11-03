@@ -1,0 +1,217 @@
+[
+  {
+    "url": "http://localhost:18380/benchmark.js",
+    "method": "GET",
+    "type": "script"
+  },
+  {
+    "url": "http://localhost:18380/dataset.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/import",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_3e0010424c754414a2907690e81568ea/search",
+    "method": "POST",
+    "type": "fetch"
+  }
+]

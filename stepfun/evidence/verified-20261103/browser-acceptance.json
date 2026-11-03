@@ -1,0 +1,179 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "name": "long file has multiple persisted chunks",
+      "passed": true,
+      "detail": {
+        "written": 3,
+        "skipped": 0,
+        "writeMs": 59.71069999993779,
+        "refreshMs": 1379.3304999999236,
+        "totalMs": 1446.6625999999233
+      }
+    },
+    {
+      "name": "identical reimport does not duplicate rows",
+      "passed": true,
+      "detail": {
+        "written": 0,
+        "skipped": 1,
+        "writeMs": 0,
+        "refreshMs": 0,
+        "totalMs": 0.9631999999983236
+      }
+    },
+    {
+      "name": "replace long file with one current chunk",
+      "passed": true,
+      "detail": {
+        "written": 1,
+        "skipped": 0,
+        "writeMs": 4.064200000022538,
+        "refreshMs": 930.3453000000445,
+        "totalMs": 936.8726000000024
+      }
+    },
+    {
+      "name": "retired chunks never leak into retrieval",
+      "passed": true,
+      "detail": [
+        "Updated azimuth calibration reference. The spectrometer requires precise optical alignment and repeated calibration before measuring stellar emissions."
+      ]
+    },
+    {
+      "name": "incremental write immediately searchable",
+      "passed": true,
+      "detail": [
+        "incremental.txt",
+        "versioned.txt"
+      ]
+    },
+    {
+      "name": "sixteen concurrent requests preserve KB and session SQL state",
+      "passed": true
+    },
+    {
+      "name": "late results do not render into a newly selected KB",
+      "passed": true
+    },
+    {
+      "name": "invalid import rejected with 409",
+      "passed": true,
+      "detail": {
+        "error": "模型版本或向量协议不匹配，请重新加载页面"
+      }
+    },
+    {
+      "name": "invalid import rejected with 400",
+      "passed": true,
+      "detail": {
+        "error": "向量必须有 384 个分量"
+      }
+    },
+    {
+      "name": "invalid import rejected with 400",
+      "passed": true,
+      "detail": {
+        "error": "同一批次不能有重复文件名"
+      }
+    },
+    {
+      "name": "invalid batches have no visible side effects",
+      "passed": true
+    },
+    {
+      "name": "untrusted document and filename render as text",
+      "passed": true
+    }
+  ],
+  "collections": {
+    "a": "sf_1c9c33ab6ceb459e8b92c520c8cbf76b",
+    "b": "sf_e05bdfffde004f60a75a83f075f52faf"
+  },
+  "expectedSelected": "sf_e05bdfffde004f60a75a83f075f52faf",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "backend": {
+    "device": "webgpu",
+    "dtype": "fp16",
+    "reason": "",
+    "model": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+    "dimension": 384,
+    "loadMs": 593.7599999979138,
+    "threads": 1,
+    "reused": false,
+    "assetEvents": [
+      {
+        "status": "initiate",
+        "file": "config.json",
+        "ms": 315.464999999851
+      },
+      {
+        "status": "initiate",
+        "file": "tokenizer.json",
+        "ms": 315.54499999806285
+      },
+      {
+        "status": "initiate",
+        "file": "tokenizer_config.json",
+        "ms": 315.570000000298
+      },
+      {
+        "status": "download",
+        "file": "config.json",
+        "ms": 316.16999999806285
+      },
+      {
+        "status": "download",
+        "file": "tokenizer.json",
+        "ms": 316.41999999806285
+      },
+      {
+        "status": "download",
+        "file": "tokenizer_config.json",
+        "ms": 316.58500000089407
+      },
+      {
+        "status": "done",
+        "file": "config.json",
+        "ms": 318.14000000059605
+      },
+      {
+        "status": "done",
+        "file": "tokenizer.json",
+        "ms": 318.3999999985099
+      },
+      {
+        "status": "done",
+        "file": "tokenizer_config.json",
+        "ms": 329.179999999702
+      },
+      {
+        "status": "initiate",
+        "file": "onnx/model_fp16.onnx",
+        "ms": 342.8099999986589
+      },
+      {
+        "status": "download",
+        "file": "onnx/model_fp16.onnx",
+        "ms": 343.38499999791384
+      },
+      {
+        "status": "done",
+        "file": "onnx/model_fp16.onnx",
+        "ms": 366.66499999910593
+      }
+    ],
+    "assetReadyMs": 366.66499999910593,
+    "postAssetsInitializationMs": 227.0949999988079,
+    "resources": [],
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "ampere",
+      "description": "",
+      "device": ""
+    }
+  }
+}

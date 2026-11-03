@@ -1,0 +1,1335 @@
+{
+  "label": "same-source-cache-off",
+  "profile": "fp32-wasm",
+  "batchSize": 1,
+  "startedAt": "2026-11-03T13:51:07.479Z",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+  "hardwareConcurrency": 16,
+  "deviceMemory": 16,
+  "corpusCount": 24,
+  "queryCount": 12,
+  "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+  "warmRepetitions": 3,
+  "queries": [
+    {
+      "repeat": 0,
+      "index": 0,
+      "text": "How do I restore records that were accidentally deleted?",
+      "ranked": [
+        "backup",
+        "wal",
+        "fulltext",
+        "transactions",
+        "spacedrepetition"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.225000001490116,
+      "dbMs": 8.125700000000506,
+      "e2eMs": 88.125,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 1,
+      "text": "How can committed data survive a sudden power failure?",
+      "ranked": [
+        "wal",
+        "logging",
+        "backup",
+        "wasm",
+        "ratelimit"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 12.71000000089407,
+      "dbMs": 6.823599999999715,
+      "e2eMs": 92.11499999836087,
+      "recall": 0.5,
+      "ndcg": 0.9173194127129571
+    },
+    {
+      "repeat": 0,
+      "index": 2,
+      "text": "How do I avoid a half completed transfer between two bank accounts?",
+      "ranked": [
+        "transactions",
+        "chunking",
+        "webgpu",
+        "logging",
+        "modelcache"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 16.299999997019768,
+      "dbMs": 53.41580000000249,
+      "e2eMs": 137.089999999851,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 3,
+      "text": "How can I speed up a selective lookup without reading every row?",
+      "ranked": [
+        "index",
+        "spacedrepetition",
+        "modelcache",
+        "fulltext",
+        "passwords"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.010000001639128,
+      "dbMs": 6.8355999999985215,
+      "e2eMs": 92.51000000163913,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 4,
+      "text": "How can retrieval understand meaning while keeping exact product names?",
+      "ranked": [
+        "hybrid",
+        "citations",
+        "chunking",
+        "quantization",
+        "fulltext"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 12.92000000178814,
+      "dbMs": 13.468699999997625,
+      "e2eMs": 107.00999999791384,
+      "recall": 1,
+      "ndcg": 0.9680147827042069
+    },
+    {
+      "repeat": 0,
+      "index": 5,
+      "text": "How do I shrink a browser model while checking answer retrieval quality?",
+      "ranked": [
+        "quantization",
+        "chunking",
+        "hybrid",
+        "wasm",
+        "webgpu"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.845000002533197,
+      "dbMs": 6.382399999998597,
+      "e2eMs": 92.39999999850988,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 6,
+      "text": "How can a web application use the graphics chip for half precision inference?",
+      "ranked": [
+        "webgpu",
+        "modelcache",
+        "quantization",
+        "wasm",
+        "batching"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.405000001192093,
+      "dbMs": 5.668700000001991,
+      "e2eMs": 90.9349999986589,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 7,
+      "text": "What should happen if the browser cannot provide a GPU adapter?",
+      "ranked": [
+        "webgpu",
+        "wasm",
+        "modelcache",
+        "transactions",
+        "meetings"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.004999998956919,
+      "dbMs": 10.563500000000204,
+      "e2eMs": 107.66000000014901,
+      "recall": 1,
+      "ndcg": 0.7098097413968655
+    },
+    {
+      "repeat": 0,
+      "index": 8,
+      "text": "Why can processing four documents together be faster than one at a time?",
+      "ranked": [
+        "batching",
+        "fulltext",
+        "webgpu",
+        "spacedrepetition",
+        "modelcache"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.934999998658895,
+      "dbMs": 6.298500000000786,
+      "e2eMs": 92.73999999836087,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 9,
+      "text": "How do I handle a long document without losing information at passage boundaries?",
+      "ranked": [
+        "chunking",
+        "citations",
+        "meetings",
+        "fulltext",
+        "spacedrepetition"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.199999999254942,
+      "dbMs": 6.3365000000012515,
+      "e2eMs": 91.72499999776483,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 10,
+      "text": "How can I avoid reloading model weights for every request?",
+      "ranked": [
+        "modelcache",
+        "quantization",
+        "passwords",
+        "wasm",
+        "ratelimit"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.609999999403954,
+      "dbMs": 19.18829999999798,
+      "e2eMs": 107.25,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 0,
+      "index": 11,
+      "text": "How should a team turn meeting decisions into trackable work?",
+      "ranked": [
+        "meetings",
+        "timeblocking",
+        "citations",
+        "transactions",
+        "index"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.239999998360872,
+      "dbMs": 7.2871999999988475,
+      "e2eMs": 93.22500000149012,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 0,
+      "text": "How do I restore records that were accidentally deleted?",
+      "ranked": [
+        "backup",
+        "wal",
+        "fulltext",
+        "transactions",
+        "spacedrepetition"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 11.855000000447035,
+      "dbMs": 5.867699999998877,
+      "e2eMs": 76.26999999955297,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 1,
+      "text": "How can committed data survive a sudden power failure?",
+      "ranked": [
+        "wal",
+        "logging",
+        "backup",
+        "wasm",
+        "ratelimit"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 11.890000000596046,
+      "dbMs": 5.83179999999993,
+      "e2eMs": 76.41499999910593,
+      "recall": 0.5,
+      "ndcg": 0.9173194127129571
+    },
+    {
+      "repeat": 1,
+      "index": 2,
+      "text": "How do I avoid a half completed transfer between two bank accounts?",
+      "ranked": [
+        "transactions",
+        "chunking",
+        "webgpu",
+        "logging",
+        "modelcache"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.529999997466803,
+      "dbMs": 6.2995000000009895,
+      "e2eMs": 107.66500000283122,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 3,
+      "text": "How can I speed up a selective lookup without reading every row?",
+      "ranked": [
+        "index",
+        "spacedrepetition",
+        "modelcache",
+        "fulltext",
+        "passwords"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.275000002235174,
+      "dbMs": 12.4333000000006,
+      "e2eMs": 104,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 4,
+      "text": "How can retrieval understand meaning while keeping exact product names?",
+      "ranked": [
+        "hybrid",
+        "citations",
+        "chunking",
+        "quantization",
+        "fulltext"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 12.04500000178814,
+      "dbMs": 6.033900000002177,
+      "e2eMs": 111.3150000013411,
+      "recall": 1,
+      "ndcg": 0.9680147827042069
+    },
+    {
+      "repeat": 1,
+      "index": 5,
+      "text": "How do I shrink a browser model while checking answer retrieval quality?",
+      "ranked": [
+        "quantization",
+        "chunking",
+        "hybrid",
+        "wasm",
+        "webgpu"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.344999998807907,
+      "dbMs": 6.299199999997654,
+      "e2eMs": 92.99000000208616,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 6,
+      "text": "How can a web application use the graphics chip for half precision inference?",
+      "ranked": [
+        "webgpu",
+        "modelcache",
+        "quantization",
+        "wasm",
+        "batching"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.044999998062849,
+      "dbMs": 16.333599999998114,
+      "e2eMs": 101.53500000014901,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 7,
+      "text": "What should happen if the browser cannot provide a GPU adapter?",
+      "ranked": [
+        "webgpu",
+        "wasm",
+        "modelcache",
+        "transactions",
+        "meetings"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.234999999403954,
+      "dbMs": 6.719900000000052,
+      "e2eMs": 83.00999999791384,
+      "recall": 1,
+      "ndcg": 0.7098097413968655
+    },
+    {
+      "repeat": 1,
+      "index": 8,
+      "text": "Why can processing four documents together be faster than one at a time?",
+      "ranked": [
+        "batching",
+        "fulltext",
+        "webgpu",
+        "spacedrepetition",
+        "modelcache"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.365000002086163,
+      "dbMs": 6.090200000002369,
+      "e2eMs": 91.9400000013411,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 9,
+      "text": "How do I handle a long document without losing information at passage boundaries?",
+      "ranked": [
+        "chunking",
+        "citations",
+        "meetings",
+        "fulltext",
+        "spacedrepetition"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.359999999403954,
+      "dbMs": 11.04320000000007,
+      "e2eMs": 97.16499999910593,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 10,
+      "text": "How can I avoid reloading model weights for every request?",
+      "ranked": [
+        "modelcache",
+        "quantization",
+        "passwords",
+        "wasm",
+        "ratelimit"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.690000001341105,
+      "dbMs": 10.943399999996473,
+      "e2eMs": 91.4349999986589,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 1,
+      "index": 11,
+      "text": "How should a team turn meeting decisions into trackable work?",
+      "ranked": [
+        "meetings",
+        "timeblocking",
+        "citations",
+        "transactions",
+        "index"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.269999999552965,
+      "dbMs": 6.248500000001513,
+      "e2eMs": 89.23999999836087,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 0,
+      "text": "How do I restore records that were accidentally deleted?",
+      "ranked": [
+        "backup",
+        "wal",
+        "fulltext",
+        "transactions",
+        "spacedrepetition"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 11.860000003129244,
+      "dbMs": 5.627199999998993,
+      "e2eMs": 77.08000000193715,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 1,
+      "text": "How can committed data survive a sudden power failure?",
+      "ranked": [
+        "wal",
+        "logging",
+        "backup",
+        "wasm",
+        "ratelimit"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 11.535000000149012,
+      "dbMs": 6.420399999999063,
+      "e2eMs": 77.43500000238419,
+      "recall": 0.5,
+      "ndcg": 0.9173194127129571
+    },
+    {
+      "repeat": 2,
+      "index": 2,
+      "text": "How do I avoid a half completed transfer between two bank accounts?",
+      "ranked": [
+        "transactions",
+        "chunking",
+        "webgpu",
+        "logging",
+        "modelcache"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.449999999254942,
+      "dbMs": 5.686300000001211,
+      "e2eMs": 91.46000000089407,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 3,
+      "text": "How can I speed up a selective lookup without reading every row?",
+      "ranked": [
+        "index",
+        "spacedrepetition",
+        "modelcache",
+        "fulltext",
+        "passwords"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.980000000447035,
+      "dbMs": 6.06590000000142,
+      "e2eMs": 94.38000000268221,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 4,
+      "text": "How can retrieval understand meaning while keeping exact product names?",
+      "ranked": [
+        "hybrid",
+        "citations",
+        "chunking",
+        "quantization",
+        "fulltext"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 12.769999999552965,
+      "dbMs": 5.539000000000669,
+      "e2eMs": 92.21499999985099,
+      "recall": 1,
+      "ndcg": 0.9680147827042069
+    },
+    {
+      "repeat": 2,
+      "index": 5,
+      "text": "How do I shrink a browser model while checking answer retrieval quality?",
+      "ranked": [
+        "quantization",
+        "chunking",
+        "hybrid",
+        "wasm",
+        "webgpu"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.535000000149012,
+      "dbMs": 5.636500000000524,
+      "e2eMs": 92.85000000149012,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 6,
+      "text": "How can a web application use the graphics chip for half precision inference?",
+      "ranked": [
+        "webgpu",
+        "modelcache",
+        "quantization",
+        "wasm",
+        "batching"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.224999997764826,
+      "dbMs": 5.424900000001799,
+      "e2eMs": 92.16499999910593,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 7,
+      "text": "What should happen if the browser cannot provide a GPU adapter?",
+      "ranked": [
+        "webgpu",
+        "wasm",
+        "modelcache",
+        "transactions",
+        "meetings"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.700000002980232,
+      "dbMs": 5.598699999998644,
+      "e2eMs": 92.25,
+      "recall": 1,
+      "ndcg": 0.7098097413968655
+    },
+    {
+      "repeat": 2,
+      "index": 8,
+      "text": "Why can processing four documents together be faster than one at a time?",
+      "ranked": [
+        "batching",
+        "fulltext",
+        "webgpu",
+        "spacedrepetition",
+        "modelcache"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 15.025000002235174,
+      "dbMs": 5.3783000000003085,
+      "e2eMs": 93.07000000029802,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 9,
+      "text": "How do I handle a long document without losing information at passage boundaries?",
+      "ranked": [
+        "chunking",
+        "citations",
+        "meetings",
+        "fulltext",
+        "spacedrepetition"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 14.535000000149012,
+      "dbMs": 11.428800000001502,
+      "e2eMs": 100.74500000104308,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 10,
+      "text": "How can I avoid reloading model weights for every request?",
+      "ranked": [
+        "modelcache",
+        "quantization",
+        "passwords",
+        "wasm",
+        "ratelimit"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.760000001639128,
+      "dbMs": 5.236700000001292,
+      "e2eMs": 84.92500000074506,
+      "recall": 1,
+      "ndcg": 1
+    },
+    {
+      "repeat": 2,
+      "index": 11,
+      "text": "How should a team turn meeting decisions into trackable work?",
+      "ranked": [
+        "meetings",
+        "timeblocking",
+        "citations",
+        "transactions",
+        "index"
+      ],
+      "engine": "seekdb DBMS_HYBRID_SEARCH (RRF)",
+      "queryEmbeddingMs": 13.714999999850988,
+      "dbMs": 7.241000000001804,
+      "e2eMs": 95.48999999836087,
+      "recall": 1,
+      "ndcg": 1
+    }
+  ],
+  "embeddingSamples": [
+    {
+      "repeat": 0,
+      "ms": 1180.085000000894,
+      "batches": [
+        {
+          "offset": 0,
+          "count": 1,
+          "ms": 51.16499999910593
+        },
+        {
+          "offset": 1,
+          "count": 1,
+          "ms": 48.80499999970198
+        },
+        {
+          "offset": 2,
+          "count": 1,
+          "ms": 42.855000000447035
+        },
+        {
+          "offset": 3,
+          "count": 1,
+          "ms": 54.350000001490116
+        },
+        {
+          "offset": 4,
+          "count": 1,
+          "ms": 49.93000000342727
+        },
+        {
+          "offset": 5,
+          "count": 1,
+          "ms": 51.32000000029802
+        },
+        {
+          "offset": 6,
+          "count": 1,
+          "ms": 49.76500000059605
+        },
+        {
+          "offset": 7,
+          "count": 1,
+          "ms": 53.67999999970198
+        },
+        {
+          "offset": 8,
+          "count": 1,
+          "ms": 57.25999999791384
+        },
+        {
+          "offset": 9,
+          "count": 1,
+          "ms": 56.91499999910593
+        },
+        {
+          "offset": 10,
+          "count": 1,
+          "ms": 46.19999999925494
+        },
+        {
+          "offset": 11,
+          "count": 1,
+          "ms": 47.850000001490116
+        },
+        {
+          "offset": 12,
+          "count": 1,
+          "ms": 46.980000000447035
+        },
+        {
+          "offset": 13,
+          "count": 1,
+          "ms": 45.76000000163913
+        },
+        {
+          "offset": 14,
+          "count": 1,
+          "ms": 55.519999999552965
+        },
+        {
+          "offset": 15,
+          "count": 1,
+          "ms": 46.69500000029802
+        },
+        {
+          "offset": 16,
+          "count": 1,
+          "ms": 49.105000000447035
+        },
+        {
+          "offset": 17,
+          "count": 1,
+          "ms": 51.98499999940395
+        },
+        {
+          "offset": 18,
+          "count": 1,
+          "ms": 45.850000001490116
+        },
+        {
+          "offset": 19,
+          "count": 1,
+          "ms": 44.225000001490116
+        },
+        {
+          "offset": 20,
+          "count": 1,
+          "ms": 44.024999998509884
+        },
+        {
+          "offset": 21,
+          "count": 1,
+          "ms": 46.66499999910593
+        },
+        {
+          "offset": 22,
+          "count": 1,
+          "ms": 43.41000000014901
+        },
+        {
+          "offset": 23,
+          "count": 1,
+          "ms": 49.2200000025332
+        }
+      ],
+      "device": "wasm",
+      "dtype": "fp32"
+    },
+    {
+      "repeat": 1,
+      "ms": 1170.059999998659,
+      "batches": [
+        {
+          "offset": 0,
+          "count": 1,
+          "ms": 48.51500000059605
+        },
+        {
+          "offset": 1,
+          "count": 1,
+          "ms": 50.87999999895692
+        },
+        {
+          "offset": 2,
+          "count": 1,
+          "ms": 44.87000000104308
+        },
+        {
+          "offset": 3,
+          "count": 1,
+          "ms": 52.55499999970198
+        },
+        {
+          "offset": 4,
+          "count": 1,
+          "ms": 48.45000000298023
+        },
+        {
+          "offset": 5,
+          "count": 1,
+          "ms": 50.30000000074506
+        },
+        {
+          "offset": 6,
+          "count": 1,
+          "ms": 48.88500000163913
+        },
+        {
+          "offset": 7,
+          "count": 1,
+          "ms": 52.88499999791384
+        },
+        {
+          "offset": 8,
+          "count": 1,
+          "ms": 52.270000003278255
+        },
+        {
+          "offset": 9,
+          "count": 1,
+          "ms": 56.75499999895692
+        },
+        {
+          "offset": 10,
+          "count": 1,
+          "ms": 45.105000000447035
+        },
+        {
+          "offset": 11,
+          "count": 1,
+          "ms": 47.38000000268221
+        },
+        {
+          "offset": 12,
+          "count": 1,
+          "ms": 47.605000000447035
+        },
+        {
+          "offset": 13,
+          "count": 1,
+          "ms": 45.67999999970198
+        },
+        {
+          "offset": 14,
+          "count": 1,
+          "ms": 54.50499999895692
+        },
+        {
+          "offset": 15,
+          "count": 1,
+          "ms": 48.025000002235174
+        },
+        {
+          "offset": 16,
+          "count": 1,
+          "ms": 51.19999999925494
+        },
+        {
+          "offset": 17,
+          "count": 1,
+          "ms": 51.96499999985099
+        },
+        {
+          "offset": 18,
+          "count": 1,
+          "ms": 45.974999997764826
+        },
+        {
+          "offset": 19,
+          "count": 1,
+          "ms": 45.125
+        },
+        {
+          "offset": 20,
+          "count": 1,
+          "ms": 44.475000001490116
+        },
+        {
+          "offset": 21,
+          "count": 1,
+          "ms": 47.350000001490116
+        },
+        {
+          "offset": 22,
+          "count": 1,
+          "ms": 41.96499999985099
+        },
+        {
+          "offset": 23,
+          "count": 1,
+          "ms": 46.774999998509884
+        }
+      ],
+      "device": "wasm",
+      "dtype": "fp32"
+    },
+    {
+      "repeat": 2,
+      "ms": 1113.434999998659,
+      "batches": [
+        {
+          "offset": 0,
+          "count": 1,
+          "ms": 47.67000000178814
+        },
+        {
+          "offset": 1,
+          "count": 1,
+          "ms": 48.29500000178814
+        },
+        {
+          "offset": 2,
+          "count": 1,
+          "ms": 40.019999999552965
+        },
+        {
+          "offset": 3,
+          "count": 1,
+          "ms": 49.100000001490116
+        },
+        {
+          "offset": 4,
+          "count": 1,
+          "ms": 46.62000000104308
+        },
+        {
+          "offset": 5,
+          "count": 1,
+          "ms": 49.61499999836087
+        },
+        {
+          "offset": 6,
+          "count": 1,
+          "ms": 46.62999999895692
+        },
+        {
+          "offset": 7,
+          "count": 1,
+          "ms": 50.17500000074506
+        },
+        {
+          "offset": 8,
+          "count": 1,
+          "ms": 51.105000000447035
+        },
+        {
+          "offset": 9,
+          "count": 1,
+          "ms": 54.565000001341105
+        },
+        {
+          "offset": 10,
+          "count": 1,
+          "ms": 42.44999999925494
+        },
+        {
+          "offset": 11,
+          "count": 1,
+          "ms": 44.51000000163913
+        },
+        {
+          "offset": 12,
+          "count": 1,
+          "ms": 45.894999999552965
+        },
+        {
+          "offset": 13,
+          "count": 1,
+          "ms": 43.315000001341105
+        },
+        {
+          "offset": 14,
+          "count": 1,
+          "ms": 51.08500000089407
+        },
+        {
+          "offset": 15,
+          "count": 1,
+          "ms": 44.30000000074506
+        },
+        {
+          "offset": 16,
+          "count": 1,
+          "ms": 47.32000000029802
+        },
+        {
+          "offset": 17,
+          "count": 1,
+          "ms": 51.07000000029802
+        },
+        {
+          "offset": 18,
+          "count": 1,
+          "ms": 43.99000000208616
+        },
+        {
+          "offset": 19,
+          "count": 1,
+          "ms": 42.15500000119209
+        },
+        {
+          "offset": 20,
+          "count": 1,
+          "ms": 42.03000000119209
+        },
+        {
+          "offset": 21,
+          "count": 1,
+          "ms": 44.600000001490116
+        },
+        {
+          "offset": 22,
+          "count": 1,
+          "ms": 40.83500000089407
+        },
+        {
+          "offset": 23,
+          "count": 1,
+          "ms": 45.54000000283122
+        }
+      ],
+      "device": "wasm",
+      "dtype": "fp32"
+    }
+  ],
+  "database": {
+    "status": "ok",
+    "version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "embedding": "browser only",
+    "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+    "cacheHandles": false
+  },
+  "collection": "sf_6f31fe1ae975477ab3e8e6d1c1d1499c",
+  "state": {
+    "device": "wasm",
+    "dtype": "fp32",
+    "reason": "",
+    "model": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+    "dimension": 384,
+    "loadMs": 1367.8649999983609,
+    "threads": 1,
+    "reused": false,
+    "assetEvents": [
+      {
+        "status": "initiate",
+        "file": "config.json",
+        "ms": 95.29499999806285
+      },
+      {
+        "status": "initiate",
+        "file": "tokenizer.json",
+        "ms": 95.54499999806285
+      },
+      {
+        "status": "initiate",
+        "file": "tokenizer_config.json",
+        "ms": 95.58499999716878
+      },
+      {
+        "status": "download",
+        "file": "config.json",
+        "ms": 96.00499999895692
+      },
+      {
+        "status": "done",
+        "file": "config.json",
+        "ms": 96.86499999836087
+      },
+      {
+        "status": "initiate",
+        "file": "onnx/model.onnx",
+        "ms": 97.41999999806285
+      },
+      {
+        "status": "download",
+        "file": "tokenizer.json",
+        "ms": 99.86999999731779
+      },
+      {
+        "status": "download",
+        "file": "tokenizer_config.json",
+        "ms": 100.07499999925494
+      },
+      {
+        "status": "done",
+        "file": "tokenizer.json",
+        "ms": 106.99499999731779
+      },
+      {
+        "status": "done",
+        "file": "tokenizer_config.json",
+        "ms": 118.52499999850988
+      },
+      {
+        "status": "download",
+        "file": "onnx/model.onnx",
+        "ms": 255.19999999925494
+      },
+      {
+        "status": "done",
+        "file": "onnx/model.onnx",
+        "ms": 628.5849999971688
+      }
+    ],
+    "assetReadyMs": 628.5849999971688,
+    "postAssetsInitializationMs": 739.2900000028312,
+    "resources": [
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/config.json",
+        "durationMs": 2.0899999998509884,
+        "transferBytes": 950,
+        "bodyBytes": 650
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+        "durationMs": 1.6000000014901161,
+        "transferBytes": 666,
+        "bodyBytes": 366
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+        "durationMs": 5.08500000089407,
+        "transferBytes": 711961,
+        "bodyBytes": 711661
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+        "durationMs": 1.2349999994039536,
+        "transferBytes": 0,
+        "bodyBytes": 711661
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+        "durationMs": 1.3949999995529652,
+        "transferBytes": 0,
+        "bodyBytes": 366
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/onnx/model.onnx",
+        "durationMs": 267.1200000010431,
+        "transferBytes": 90387906,
+        "bodyBytes": 90387606
+      },
+      {
+        "name": "http://localhost:18381/vendor/ort-wasm-simd-threaded.asyncify.mjs",
+        "durationMs": 2.244999997317791,
+        "transferBytes": 53357,
+        "bodyBytes": 53057
+      },
+      {
+        "name": "http://localhost:18381/vendor/ort-wasm-simd-threaded.asyncify.wasm",
+        "durationMs": 75.70500000193715,
+        "transferBytes": 26862077,
+        "bodyBytes": 26861777
+      }
+    ],
+    "adapter": null
+  },
+  "loadMs": 1367.8649999983609,
+  "sessionReused": false,
+  "initialization": {
+    "device": "wasm",
+    "dtype": "fp32",
+    "reason": "",
+    "model": "Xenova/all-MiniLM-L6-v2",
+    "revision": "751bff37182d3f1213fa05d7196b954e230abad9",
+    "protocol": "Xenova/all-MiniLM-L6-v2@751bff37182d3f1213fa05d7196b954e230abad9:mean:l2:256:384",
+    "dimension": 384,
+    "loadMs": 1367.8649999983609,
+    "threads": 1,
+    "reused": false,
+    "assetEvents": [
+      {
+        "status": "initiate",
+        "file": "config.json",
+        "ms": 95.29499999806285
+      },
+      {
+        "status": "initiate",
+        "file": "tokenizer.json",
+        "ms": 95.54499999806285
+      },
+      {
+        "status": "initiate",
+        "file": "tokenizer_config.json",
+        "ms": 95.58499999716878
+      },
+      {
+        "status": "download",
+        "file": "config.json",
+        "ms": 96.00499999895692
+      },
+      {
+        "status": "done",
+        "file": "config.json",
+        "ms": 96.86499999836087
+      },
+      {
+        "status": "initiate",
+        "file": "onnx/model.onnx",
+        "ms": 97.41999999806285
+      },
+      {
+        "status": "download",
+        "file": "tokenizer.json",
+        "ms": 99.86999999731779
+      },
+      {
+        "status": "download",
+        "file": "tokenizer_config.json",
+        "ms": 100.07499999925494
+      },
+      {
+        "status": "done",
+        "file": "tokenizer.json",
+        "ms": 106.99499999731779
+      },
+      {
+        "status": "done",
+        "file": "tokenizer_config.json",
+        "ms": 118.52499999850988
+      },
+      {
+        "status": "download",
+        "file": "onnx/model.onnx",
+        "ms": 255.19999999925494
+      },
+      {
+        "status": "done",
+        "file": "onnx/model.onnx",
+        "ms": 628.5849999971688
+      }
+    ],
+    "assetReadyMs": 628.5849999971688,
+    "postAssetsInitializationMs": 739.2900000028312,
+    "resources": [
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/config.json",
+        "durationMs": 2.0899999998509884,
+        "transferBytes": 950,
+        "bodyBytes": 650
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+        "durationMs": 1.6000000014901161,
+        "transferBytes": 666,
+        "bodyBytes": 366
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+        "durationMs": 5.08500000089407,
+        "transferBytes": 711961,
+        "bodyBytes": 711661
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+        "durationMs": 1.2349999994039536,
+        "transferBytes": 0,
+        "bodyBytes": 711661
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+        "durationMs": 1.3949999995529652,
+        "transferBytes": 0,
+        "bodyBytes": 366
+      },
+      {
+        "name": "http://localhost:18381/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/onnx/model.onnx",
+        "durationMs": 267.1200000010431,
+        "transferBytes": 90387906,
+        "bodyBytes": 90387606
+      },
+      {
+        "name": "http://localhost:18381/vendor/ort-wasm-simd-threaded.asyncify.mjs",
+        "durationMs": 2.244999997317791,
+        "transferBytes": 53357,
+        "bodyBytes": 53057
+      },
+      {
+        "name": "http://localhost:18381/vendor/ort-wasm-simd-threaded.asyncify.wasm",
+        "durationMs": 75.70500000193715,
+        "transferBytes": 26862077,
+        "bodyBytes": 26861777
+      }
+    ],
+    "adapter": null
+  },
+  "firstEmbeddingMs": 1261.3649999983609,
+  "writeMs": 48.27969999999914,
+  "refreshMs": 1295.9658000000018,
+  "importE2eMs": 5963.265000000596,
+  "firstQuery": {
+    "embeddingMs": 11.304999999701977,
+    "dbMs": 28.157900000001973,
+    "e2eMs": 105.86499999836087
+  },
+  "modelBytes": 91331916,
+  "baselineBytes": 91331916,
+  "compressionRatio": 1,
+  "summary": {
+    "embeddingMs": 1170.059999998659,
+    "docsPerSecond": 20.511768627273394,
+    "queryEmbeddingMs": 14.10249999910593,
+    "dbMs": 6.3180000000011205,
+    "e2eMs": 92.4550000000745,
+    "recallAt5": 0.9583333333333334,
+    "ndcgAt5": 0.9662619947345021
+  },
+  "finishedAt": "2026-11-03T13:51:23.715Z"
+}

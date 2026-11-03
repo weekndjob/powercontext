@@ -1,0 +1,282 @@
+[
+  {
+    "url": "http://localhost:18380/benchmark.js",
+    "method": "GET",
+    "type": "script"
+  },
+  {
+    "url": "http://localhost:18380/dataset.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/health",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/embedding-worker.js",
+    "method": "GET",
+    "type": "script"
+  },
+  {
+    "url": "http://localhost:18380/vendor/transformers.js?v=4.3.2-bundle",
+    "method": "GET",
+    "type": "script"
+  },
+  {
+    "url": "http://localhost:18380/model-info.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/config.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/onnx/model_quantized.onnx",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/models/751bff37182d3f1213fa05d7196b954e230abad9/Xenova/all-MiniLM-L6-v2/onnx/model_quantized.onnx",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/vendor/ort-wasm-simd-threaded.asyncify.mjs",
+    "method": "GET",
+    "type": "script"
+  },
+  {
+    "url": "http://localhost:18380/vendor/ort-wasm-simd-threaded.asyncify.wasm",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/import",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs",
+    "method": "GET",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  },
+  {
+    "url": "http://localhost:18380/api/kbs/sf_57b417612d0f4bfa9404959e224e40e9/search",
+    "method": "POST",
+    "type": "fetch"
+  }
+]

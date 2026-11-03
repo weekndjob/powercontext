@@ -1,0 +1,21 @@
+{
+  "transformers": "4.3.2",
+  "onnxruntimeWeb": "1.31.0-dev.20260914-8d85527a0",
+  "assets": {
+    "transformers.js": {
+      "url": "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2/dist/transformers.js",
+      "bytes": 1352822,
+      "sha256": "f9e04d8c2f7839e32b0b6cf8f63ae1d0e13b06b453fddffdb9a1f595a4c733b1"
+    },
+    "ort-wasm-simd-threaded.asyncify.mjs": {
+      "url": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.0-dev.20260914-8d85527a0/dist/ort-wasm-simd-threaded.asyncify.mjs",
+      "bytes": 53057,
+      "sha256": "0966b6105cd936744498aa60df7a22cbd47af3374dbc64a9ab561c08a71e3611"
+    },
+    "ort-wasm-simd-threaded.asyncify.wasm": {
+      "url": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.0-dev.20260914-8d85527a0/dist/ort-wasm-simd-threaded.asyncify.wasm",
+      "bytes": 26861777,
+      "sha256": "49871f5a4409519797e127440868a6d1923339d9185907f301a5b2a1d90af082"
+    }
+  }
+}
