@@ -1,0 +1,12 @@
+services:
+  seekdb:
+    image: oceanbase/seekdb:1.4.0-100000172026082615
+    ports:
+      - "127.0.0.1:2881:2881"
+    environment:
+      MEMORY_LIMIT: 4G
+      SEEKDB_DATABASE: stepfun
+    volumes:
+      - stepfun_seekdb:/var/lib/seekdb
+volumes:
+  stepfun_seekdb:

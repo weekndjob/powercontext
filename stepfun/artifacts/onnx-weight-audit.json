@@ -1,0 +1,36 @@
+{
+  "model.onnx": {
+    "initializerRawBytesByDataType": {
+      "7": 4096,
+      "1": 90261504
+    },
+    "exampleInitializerByType": {
+      "7": "embeddings.position_ids",
+      "1": "embeddings.word_embeddings.weight"
+    }
+  },
+  "model_fp16.onnx": {
+    "initializerRawBytesByDataType": {
+      "7": 4096,
+      "10": 45130752
+    },
+    "exampleInitializerByType": {
+      "7": "embeddings.position_ids",
+      "10": "embeddings.word_embeddings.weight"
+    }
+  },
+  "model_quantized.onnx": {
+    "initializerRawBytesByDataType": {
+      "7": 4096,
+      "1": 122880,
+      "2": 11917824,
+      "3": 10616832
+    },
+    "exampleInitializerByType": {
+      "7": "embeddings.position_ids",
+      "1": "embeddings.LayerNorm.weight",
+      "2": "embeddings.word_embeddings.weight_zero_point",
+      "3": "onnx::MatMul_787_zero_point"
+    }
+  }
+}

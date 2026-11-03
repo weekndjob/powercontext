@@ -1,0 +1,65 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { writeFile, mkdir } from 'node:fs/promises';
+const url = process.env.APP_URL || 'http://127.0.0.1:4173';
+await mkdir('artifacts', { recursive: true });
+const browser = await chromium.launch({ headless: true, ...(process.platform === 'win32' ? { channel: 'msedge' } : {}) });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+const audit = { requests: [], errors: [] };
+page.on('pageerror', e => audit.errors.push(e.message));
+page.on('console', m => { if (m.type() === 'error') console.log('browser error:', m.text()); });
+page.on('request', r => audit.requests.push({ method: r.method(), url: r.url() }));
+try {
+  await page.goto(url);
+  await page.waitForFunction(() => window.stepfun);
+  console.log('Importing demo with browser model');
+  await page.click('#import-demo');
+  await page.waitForFunction(() => document.querySelector('#notice').textContent.includes('索引刷新完成') || document.querySelector('#notice').classList.contains('error'), { timeout: 240000 });
+  assert.equal(await page.locator('#notice').evaluate(el => el.classList.contains('error')), false, await page.locator('#notice').textContent());
+  await page.locator('#files').setInputFiles({ name: 'browser-file.txt', mimeType: 'text/plain', buffer: Buffer.from('The lantern meadow token verifies browser file upload and local document embedding.') });
+  await page.waitForFunction(() => !document.querySelector('#files').disabled && (document.querySelector('#notice').textContent.includes('索引刷新完成') || document.querySelector('#notice').classList.contains('error')), { timeout: 120000 });
+  assert.equal(await page.locator('#notice').evaluate(el => el.classList.contains('error')), false, await page.locator('#notice').textContent());
+  await page.fill('#query', 'What happens if the browser cannot access a GPU?');
+  await page.locator('#search-form').evaluate(form => form.requestSubmit());
+  await page.waitForFunction(() => document.querySelector('#results-label').textContent.includes('相关原文'), { timeout: 120000 });
+  const response = await page.evaluate(async () => {
+    const app = window.stepfun, first = app.getState();
+    const fileResult = await app.search('lantern meadow token');
+    if (fileResult.results[0]?.metadata?.source !== 'browser-file.txt') throw new Error('File upload retrieval failed');
+    const oldId = first.selected, oldCount = Number(first.kbs.find(x => x.id === oldId).chunk_count);
+    const corpus = await (await fetch('/data/evaluation.json')).json();
+    await app.importDocuments(corpus.documents.map(x => ({ ...x, source: x.title, chunk: 0 })));
+    const deduplicatedCount = Number(app.getState().kbs.find(x => x.id === oldId).chunk_count);
+    const extra = await app.prepare('incremental.txt', 'The starisland zephyr protocol is a unique marker for testing newly imported document visibility.');
+    await app.importDocuments(extra);
+    const fresh = await app.search('starisland zephyr protocol');
+    const second = await app.api('/kbs', { method: 'POST', body: { title: '集合隔离验证' } });
+    await app.reloadKbs(); app.selectKb(second.id);
+    try {
+      await app.importDocuments(await app.prepare('isolated.txt', 'This isolated library describes a red mountain bicycle with hydraulic brakes.'));
+      app.selectKb(oldId);
+      const pending = app.search('WebGPU WASM fallback');
+      app.selectKb(second.id);
+      const stale = await pending;
+      if (!stale.ignored) throw new Error('A stale response was not ignored after switching collections');
+      const isolated = await app.search('red mountain bicycle');
+      app.selectKb(oldId);
+      const restored = await app.search('WebGPU WASM fallback');
+      return { oldId, oldCount, deduplicatedCount, fresh, isolated, restored, backend: app.getState().backend };
+    } finally { await app.api(`/kbs/${second.id}`, { method: 'DELETE' }); await app.reloadKbs(); }
+  });
+  assert.equal(response.deduplicatedCount, response.oldCount);
+  assert.equal(response.fresh.results[0]?.metadata?.source, 'incremental.txt');
+  assert.equal(response.isolated.results.length, 1);
+  assert.equal(response.isolated.results[0]?.metadata?.source, 'isolated.txt');
+  assert.ok(response.restored.results.every(x => x.metadata?.source !== 'isolated.txt'));
+  await page.reload(); await page.waitForFunction(id => window.stepfun?.getState().selected === id && window.stepfun?.getState().kbs.length, response.oldId);
+  await page.fill('#query', 'How can browser inference run without a GPU?');
+  await page.locator('#search-form').evaluate(form => form.requestSubmit());
+  await page.waitForFunction(() => document.querySelector('#results-label').textContent.includes('相关原文'), { timeout: 120000 });
+  await page.screenshot({ path: 'artifacts/application.png', fullPage: true });
+  assert.equal(audit.errors.length, 0);
+  assert.ok(audit.requests.every(r => new URL(r.url).origin === new URL(url).origin));
+  await writeFile('artifacts/smoke.json', JSON.stringify({ ...response, audit, browserVersion: browser.version() }, null, 2));
+  console.log('Browser inference, seekdb hybrid search, incremental visibility, deduplication, collection isolation, reload persistence: PASS');
+} finally { await browser.close(); }

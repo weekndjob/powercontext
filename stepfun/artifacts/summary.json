@@ -1,0 +1,202 @@
+{
+  "summary": [
+    {
+      "configuration": "FP32 · WASM · batch 1",
+      "backend": "wasm",
+      "dtype": "fp32",
+      "loadMs": 39609.28499984741,
+      "firstEncodingMs": 1037.6050000190735,
+      "documentEmbeddingMs": 780.1349999904633,
+      "docsPerSecond": 41.01854166316238,
+      "writeMs": 73.72355000000971,
+      "refreshMs": 510.1627739999967,
+      "queryEmbeddingMs": 13.68750011920929,
+      "dbMs": 2.2678685000064434,
+      "queryDisplayedMs": 57.55250012874603,
+      "vectorRecall5": 0.7760416666666665,
+      "vectorNdcg5": 0.8266426405873424,
+      "hybridRecall5": 0.703125,
+      "hybridNdcg5": 0.8049071244128574
+    },
+    {
+      "configuration": "FP32 · WASM · batch 8",
+      "backend": "wasm",
+      "dtype": "fp32",
+      "loadMs": 395.0750000476837,
+      "firstEncodingMs": 557.6099998950958,
+      "documentEmbeddingMs": 565.4400000572205,
+      "docsPerSecond": 56.593095636604616,
+      "writeMs": 69.81783400000131,
+      "refreshMs": 505.9245340000052,
+      "queryEmbeddingMs": 13.06249988079071,
+      "dbMs": 2.2631020000044373,
+      "queryDisplayedMs": 59.66000008583069,
+      "vectorRecall5": 0.7760416666666665,
+      "vectorNdcg5": 0.8266426405873424,
+      "hybridRecall5": 0.703125,
+      "hybridNdcg5": 0.8049071244128574
+    },
+    {
+      "configuration": "INT8 · WASM · batch 1",
+      "backend": "wasm",
+      "dtype": "q8",
+      "loadMs": 8368.264999866486,
+      "firstEncodingMs": 598.0549998283386,
+      "documentEmbeddingMs": 598.0549998283386,
+      "docsPerSecond": 53.506784508423216,
+      "writeMs": 67.63841099999263,
+      "refreshMs": 605.4456289999944,
+      "queryEmbeddingMs": 9.600000023841858,
+      "dbMs": 2.355131499993149,
+      "queryDisplayedMs": 70.27499997615814,
+      "vectorRecall5": 0.7760416666666665,
+      "vectorNdcg5": 0.8562348650517727,
+      "hybridRecall5": 0.703125,
+      "hybridNdcg5": 0.8184604363066463
+    },
+    {
+      "configuration": "INT8 · WASM · batch 8",
+      "backend": "wasm",
+      "dtype": "q8",
+      "loadMs": 112.39000010490417,
+      "firstEncodingMs": 236.40000009536743,
+      "documentEmbeddingMs": 234.0550000667572,
+      "docsPerSecond": 136.72000167000473,
+      "writeMs": 70.96788499999093,
+      "refreshMs": 605.4844519999751,
+      "queryEmbeddingMs": 8.264999985694885,
+      "dbMs": 2.174434000000474,
+      "queryDisplayedMs": 50.5550000667572,
+      "vectorRecall5": 0.7760416666666665,
+      "vectorNdcg5": 0.8507474667964211,
+      "hybridRecall5": 0.703125,
+      "hybridNdcg5": 0.8359426998475433
+    },
+    {
+      "configuration": "FP32 · WebGPU · batch 8",
+      "backend": "webgpu",
+      "dtype": "fp32",
+      "loadMs": 309.9150002002716,
+      "firstEncodingMs": 633.8049998283386,
+      "documentEmbeddingMs": 159.01500010490417,
+      "docsPerSecond": 201.23887670275886,
+      "writeMs": 62.61118499998702,
+      "refreshMs": 604.575754999998,
+      "queryEmbeddingMs": 26.737499952316284,
+      "dbMs": 2.0597094999975525,
+      "queryDisplayedMs": 70.64249992370605,
+      "vectorRecall5": 0.7760416666666665,
+      "vectorNdcg5": 0.8266426405873424,
+      "hybridRecall5": 0.703125,
+      "hybridNdcg5": 0.8049071244128574
+    },
+    {
+      "configuration": "FP16 · WebGPU · batch 8",
+      "backend": "webgpu",
+      "dtype": "fp16",
+      "loadMs": 16714.05999994278,
+      "firstEncodingMs": 1065.460000038147,
+      "documentEmbeddingMs": 250.8549997806549,
+      "docsPerSecond": 127.56373214797584,
+      "writeMs": 70.56965700001456,
+      "refreshMs": 505.2942299999995,
+      "queryEmbeddingMs": 27.170000076293945,
+      "dbMs": 2.5080445000057807,
+      "queryDisplayedMs": 95.1525000333786,
+      "vectorRecall5": 0.7760416666666665,
+      "vectorNdcg5": 0.8266426405873424,
+      "hybridRecall5": 0.703125,
+      "hybridNdcg5": 0.8049071244128574
+    }
+  ],
+  "index": [
+    {
+      "configuration": {
+        "name": "逐条写入并刷新",
+        "writeBatchSize": 1,
+        "refreshEveryBatch": true
+      },
+      "observations": [
+        {
+          "repeat": 0,
+          "writeMs": 111.85820199997397,
+          "refreshMs": 19468.72703999994,
+          "totalMs": 19583.268419,
+          "count": 32,
+          "revision": 1,
+          "indexed": true,
+          "requestMs": 20875.95999979973
+        },
+        {
+          "repeat": 1,
+          "writeMs": 114.08087800003705,
+          "refreshMs": 20874.10437399996,
+          "totalMs": 20990.73638399999,
+          "count": 32,
+          "revision": 1,
+          "indexed": true,
+          "requestMs": 21509.215000152588
+        },
+        {
+          "repeat": 2,
+          "writeMs": 97.78717000014149,
+          "refreshMs": 21062.06123300013,
+          "totalMs": 21161.954360000032,
+          "count": 32,
+          "revision": 1,
+          "indexed": true,
+          "requestMs": 21491.19000005722
+        }
+      ],
+      "medianWriteMs": 111.85820199997397,
+      "medianRefreshMs": 20874.10437399996,
+      "medianTotalMs": 20990.73638399999
+    },
+    {
+      "configuration": {
+        "name": "64 条批写，末尾刷新",
+        "writeBatchSize": 64,
+        "refreshEveryBatch": false
+      },
+      "observations": [
+        {
+          "repeat": 0,
+          "writeMs": 69.07387299998663,
+          "refreshMs": 804.7709519999917,
+          "totalMs": 875.8918859999976,
+          "count": 32,
+          "revision": 1,
+          "indexed": true,
+          "requestMs": 1255.1899998188019
+        },
+        {
+          "repeat": 1,
+          "writeMs": 60.40066399995703,
+          "refreshMs": 504.9945000000298,
+          "totalMs": 567.5953950000112,
+          "count": 32,
+          "revision": 1,
+          "indexed": true,
+          "requestMs": 989.7550001144409
+        },
+        {
+          "repeat": 2,
+          "writeMs": 69.29265199997462,
+          "refreshMs": 604.9161609999719,
+          "totalMs": 676.5763390000211,
+          "count": 32,
+          "revision": 1,
+          "indexed": true,
+          "requestMs": 1016.8949999809265
+        }
+      ],
+      "medianWriteMs": 69.07387299998663,
+      "medianRefreshMs": 604.9161609999719,
+      "medianTotalMs": 676.5763390000211
+    }
+  ],
+  "errors": {
+    "externalRequests": [],
+    "pageErrors": []
+  }
+}

@@ -1,0 +1,467 @@
+{
+  "oldId": "kb_7b7607df5ce74a89abe5193c15b9b007",
+  "oldCount": 34,
+  "deduplicatedCount": 34,
+  "fresh": {
+    "dbMs": 2.3206829999689944,
+    "revision": 10,
+    "mode": "hybrid",
+    "results": [
+      {
+        "id": "950539fb2956d4e22d3b2302e5444eedf0b4826a256fb73dce390f5573fd444a",
+        "text": "The starisland zephyr protocol is a unique marker for testing newly imported document visibility.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "incremental.txt",
+          "source": "incremental.txt",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0328
+      },
+      {
+        "id": "13982cc898c6073b06bf400811ab8f22e58453dd611f68c1b77a27eb1a245b1a",
+        "text": "The lantern meadow token verifies browser file upload and local document embedding.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "browser-file.txt",
+          "source": "browser-file.txt",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0161
+      },
+      {
+        "id": "d18",
+        "text": "The first browser request includes model file transfer, session creation, and runtime initialization. Later requests can reuse downloaded weights and a warm inference session. Report first-load and warm-request timings separately.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "Cold and warm runs",
+          "source": "Cold and warm runs",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0159
+      },
+      {
+        "id": "d24",
+        "text": "A reproducible performance experiment records device, browser version, model precision, backend, batch size, corpus, query set, and database configuration. Save all raw observations and report medians rather than selecting the fastest run.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "Reproducible experiments",
+          "source": "Reproducible experiments",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0156
+      },
+      {
+        "id": "d30",
+        "text": "WASM threads can speed CPU inference when the page is cross-origin isolated. COOP and COEP headers enable SharedArrayBuffer in compatible browsers. Thread count should be recorded because it affects fair performance comparisons.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "CPU parallelism",
+          "source": "CPU parallelism",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0154
+      }
+    ],
+    "embeddingMs": 26.264999866485596,
+    "displayedMs": 472.47500014305115
+  },
+  "isolated": {
+    "dbMs": 4.1323190000257455,
+    "revision": 1,
+    "mode": "hybrid",
+    "results": [
+      {
+        "id": "4fa62db8797e4cbbed6898753aa02d471a1762cd2d38566c7402556058149f7e",
+        "text": "This isolated library describes a red mountain bicycle with hydraulic brakes.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "isolated.txt",
+          "source": "isolated.txt",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0328
+      }
+    ],
+    "embeddingMs": 32.1800000667572,
+    "displayedMs": 69.24000000953674
+  },
+  "restored": {
+    "dbMs": 2.0587300000479445,
+    "revision": 10,
+    "mode": "hybrid",
+    "results": [
+      {
+        "id": "d02",
+        "text": "WebGPU exposes the device GPU for browser computation. An embedding application should request a GPU adapter and explicitly select the webgpu execution provider. FP16 operations require the shader-f16 adapter feature.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "WebGPU acceleration",
+          "source": "WebGPU acceleration",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0325
+      },
+      {
+        "id": "d31",
+        "text": "ONNX is a model interchange format. ONNX Runtime Web executes exported networks in browsers using WebGPU or WASM providers. Exported operator support must be checked on both backends before shipping an application.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "ONNX portability",
+          "source": "ONNX portability",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.032
+      },
+      {
+        "id": "d03",
+        "text": "When no GPU adapter is available, an embedding application can use WebAssembly on the CPU. The interface should clearly show WASM as the active inference backend. INT8 models reduce download and memory cost.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "WASM fallback",
+          "source": "WASM fallback",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.032
+      },
+      {
+        "id": "d30",
+        "text": "WASM threads can speed CPU inference when the page is cross-origin isolated. COOP and COEP headers enable SharedArrayBuffer in compatible browsers. Thread count should be recorded because it affects fair performance comparisons.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "CPU parallelism",
+          "source": "CPU parallelism",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0315
+      },
+      {
+        "id": "d23",
+        "text": "Browser caches avoid downloading model weights on every visit. Cache keys should include a pinned model revision to prevent stale artifacts from being mixed with new tokenizers. Clearing the browser cache makes a fresh download experiment reproducible.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "Cache management",
+          "source": "Cache management",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0154
+      }
+    ],
+    "embeddingMs": 25.514999866485596,
+    "displayedMs": 82.85999989509583
+  },
+  "backend": {
+    "device": "webgpu",
+    "dtype": "fp16",
+    "adapter": {
+      "vendor": "intel",
+      "architecture": "xe-lpg",
+      "device": "",
+      "description": ""
+    },
+    "reason": "",
+    "model": "Xenova/all-MiniLM-L6-v2",
+    "threads": 4,
+    "key": "webgpu/fp16",
+    "loadMs": 0,
+    "reused": true,
+    "resources": [
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+        "durationMs": 343.93499994277954,
+        "startTime": 688.1400001049042,
+        "responseEnd": 1032.0750000476837,
+        "transferBytes": 711961,
+        "encodedBytes": 711661,
+        "decodedBytes": 711661
+      },
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+        "durationMs": 356.6400001049042,
+        "startTime": 688.4349999427795,
+        "responseEnd": 1045.0750000476837,
+        "transferBytes": 666,
+        "encodedBytes": 366,
+        "decodedBytes": 366
+      },
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/config.json",
+        "durationMs": 356.6300001144409,
+        "startTime": 688.8849999904633,
+        "responseEnd": 1045.5150001049042,
+        "transferBytes": 950,
+        "encodedBytes": 650,
+        "decodedBytes": 650
+      },
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/onnx/model_fp16.onnx",
+        "durationMs": 15992.599999904633,
+        "startTime": 1092.0950000286102,
+        "responseEnd": 17084.694999933243,
+        "transferBytes": 45298125,
+        "encodedBytes": 45297825,
+        "decodedBytes": 45297825
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": 25.730000019073486,
+        "startTime": 17401.349999904633,
+        "responseEnd": 17427.079999923706,
+        "transferBytes": 44784,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.wasm",
+        "durationMs": 8255.72000002861,
+        "startTime": 17448.210000038147,
+        "responseEnd": 25703.930000066757,
+        "transferBytes": 21596319,
+        "encodedBytes": 21596019,
+        "decodedBytes": 21596019
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": -15.629999876022339,
+        "startTime": 17472.384999990463,
+        "responseEnd": 17456.75500011444,
+        "transferBytes": 300,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": -14.53000020980835,
+        "startTime": 17481.275000095367,
+        "responseEnd": 17466.74499988556,
+        "transferBytes": 300,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": -18.34500002861023,
+        "startTime": 18042.305000066757,
+        "responseEnd": 18023.960000038147,
+        "transferBytes": 300,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      }
+    ],
+    "modelTransferBytes": 46011702,
+    "modelTransferMs": 16396.55499982834
+  },
+  "audit": {
+    "requests": [
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/assets/index-DbB5eivy.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/assets/index-DU3ud8MC.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/assets/embedding-worker-D3Kh9-7y.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/health"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/data/evaluation.json"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/tokenizer.json"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/tokenizer_config.json"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/config.json"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/onnx/model_fp16.onnx"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.wasm"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/import"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/import"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/search"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/search"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/data/evaluation.json"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/import"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/import"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/search"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_965631ccb65240379dcfdd18f7efcef4/import"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/search"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_965631ccb65240379dcfdd18f7efcef4/search"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/search"
+      },
+      {
+        "method": "DELETE",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_965631ccb65240379dcfdd18f7efcef4"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/assets/index-DbB5eivy.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/assets/index-DU3ud8MC.css"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/assets/embedding-worker-D3Kh9-7y.js"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/health"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/api/kbs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs"
+      },
+      {
+        "method": "GET",
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.wasm"
+      },
+      {
+        "method": "POST",
+        "url": "http://127.0.0.1:14173/api/kbs/kb_7b7607df5ce74a89abe5193c15b9b007/search"
+      }
+    ],
+    "errors": []
+  },
+  "browserVersion": "156.0.4314.58"
+}

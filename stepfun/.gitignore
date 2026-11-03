@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/models/
+public/ort/
+.env
+.data/
+*.log
+artifacts/*.png

@@ -1,0 +1,131 @@
+{
+  "adapterAvailable": false,
+  "backend": {
+    "device": "wasm",
+    "dtype": "q8",
+    "adapter": null,
+    "reason": "WebGPU 不可用，已自动切换 WASM INT8",
+    "model": "Xenova/all-MiniLM-L6-v2",
+    "threads": 4,
+    "key": "wasm/q8",
+    "loadMs": 0,
+    "reused": true,
+    "resources": [
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/tokenizer.json",
+        "durationMs": 268.75999999046326,
+        "startTime": 448.9100000858307,
+        "responseEnd": 717.670000076294,
+        "transferBytes": 711961,
+        "encodedBytes": 711661,
+        "decodedBytes": 711661
+      },
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/tokenizer_config.json",
+        "durationMs": 27.50499987602234,
+        "startTime": 449.5050001144409,
+        "responseEnd": 477.00999999046326,
+        "transferBytes": 666,
+        "encodedBytes": 366,
+        "decodedBytes": 366
+      },
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/config.json",
+        "durationMs": 26.244999885559082,
+        "startTime": 449.72500014305115,
+        "responseEnd": 475.97000002861023,
+        "transferBytes": 950,
+        "encodedBytes": 650,
+        "decodedBytes": 650
+      },
+      {
+        "url": "http://127.0.0.1:14173/models/Xenova/all-MiniLM-L6-v2/onnx/model_quantized.onnx",
+        "durationMs": 8733.94000005722,
+        "startTime": 486.47000002861023,
+        "responseEnd": 9220.41000008583,
+        "transferBytes": 22972670,
+        "encodedBytes": 22972370,
+        "decodedBytes": 22972370
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": 27.15999984741211,
+        "startTime": 9353.925000190735,
+        "responseEnd": 9381.085000038147,
+        "transferBytes": 44784,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.wasm",
+        "durationMs": 7936.445000171661,
+        "startTime": 9396.394999980927,
+        "responseEnd": 17332.840000152588,
+        "transferBytes": 21596319,
+        "encodedBytes": 21596019,
+        "decodedBytes": 21596019
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": -13.170000076293945,
+        "startTime": 9766.81500005722,
+        "responseEnd": 9753.644999980927,
+        "transferBytes": 44784,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": 4.81000018119812,
+        "startTime": 10349.375,
+        "responseEnd": 10354.185000181198,
+        "transferBytes": 44784,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      },
+      {
+        "url": "http://127.0.0.1:14173/ort/ort-wasm-simd-threaded.jsep.mjs",
+        "durationMs": 2.865000009536743,
+        "startTime": 10351.810000181198,
+        "responseEnd": 10354.675000190735,
+        "transferBytes": 44784,
+        "encodedBytes": 44484,
+        "decodedBytes": 44484
+      }
+    ],
+    "modelTransferBytes": 23686247,
+    "modelTransferMs": 8771.5
+  },
+  "imported": {
+    "writeMs": 12.448705999995582,
+    "refreshMs": 506.29197299998486,
+    "totalMs": 521.6941910000169,
+    "count": 1,
+    "revision": 1,
+    "indexed": true
+  },
+  "response": {
+    "dbMs": 19.52188999997452,
+    "revision": 1,
+    "mode": "hybrid",
+    "results": [
+      {
+        "id": "d4bee27e12a5edd9fffb662fa60de5e05fa6c6215071fab45eae706fab0dd9e3",
+        "text": "The browser runs local embedding inference using WebAssembly when WebGPU is unavailable.",
+        "metadata": {
+          "chunk": 0,
+          "model": "Xenova/all-MiniLM-L6-v2",
+          "title": "fallback.txt",
+          "source": "fallback.txt",
+          "revision": "751bff37182d3f1213fa05d7196b954e230abad9"
+        },
+        "score": 0.0328
+      }
+    ],
+    "embeddingMs": 19.75,
+    "displayedMs": 94.94000005722046
+  },
+  "backendLabel": "WASM · INT8",
+  "externalRequests": [],
+  "errors": []
+}
