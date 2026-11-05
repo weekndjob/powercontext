@@ -458,8 +458,9 @@ class OceanBaseMemoryVectorIndex:
     ) -> MemorySearchChannels:
         if request.embedding_profile != self.profile or request.query_vector is None:
             raise CapabilityNotSupportedError("embedding-profile")
-        if not await self.vector_complete(connection, scope_id, request.memories, self.profile):
-            raise CapabilityNotSupportedError("vector")
+        # Memory.search already checks vector completeness while selecting hybrid
+        # mode. Repeating that full projection scan here doubles its cost for
+        # every query in the measured search path.
         rows = (
             await connection.execute(
                 self._hybrid_sql[request.tag_filter is not None],
