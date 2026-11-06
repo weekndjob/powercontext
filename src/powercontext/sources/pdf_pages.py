@@ -1,0 +1,232 @@
+"""Complete physical-page PDF evidence and scoped Memory retrieval."""
+
+from __future__ import annotations
+
+import asyncio
+import hashlib
+import io
+import json
+import re
+from collections import defaultdict
+
+from pydantic import BaseModel, Field, field_validator
+from pypdf import PdfReader
+
+from powercontext.artifacts import MemoryCitation
+from powercontext.sources import (
+    TEXT_EVIDENCE_PROJECTION_KEY,
+    AdapterSourceDefinition,
+    Source,
+    SourceDefinition,
+    SourceMaterialization,
+    TextEvidence,
+)
+
+
+class PDFDocumentInput(BaseModel):
+    document_id: str
+    content: bytes
+
+
+class PDFPageInput(BaseModel):
+    document_id: str
+    document_sha256: str
+    page_number: int = Field(ge=1)
+    text: str
+
+    @field_validator("document_id")
+    @classmethod
+    def validate_document_id(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("document_id must not be blank")
+        return value
+
+
+class PDFPageSource(Source):
+    source_id: str
+    page: PDFPageInput
+
+
+def _page_identity(page: PDFPageInput) -> str:
+    encoded = json.dumps(
+        [page.document_id, page.document_sha256, page.page_number], ensure_ascii=False, separators=(",", ":")
+    )
+    return "pdf:" + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+
+
+def parse_pdf_document(value: PDFDocumentInput) -> tuple[PDFPageInput, ...]:
+    """Parse every physical page before returning any page result."""
+    if not value.document_id.strip() or not value.content.startswith(b"%PDF-"):
+        raise ValueError("invalid PDF document")
+    digest = hashlib.sha256(value.content).hexdigest()
+    try:
+        reader = PdfReader(io.BytesIO(value.content), strict=True)
+        if reader.is_encrypted and not reader.decrypt(""):
+            raise ValueError("PDF requires a password")
+        pages = tuple(
+            PDFPageInput(
+                document_id=value.document_id,
+                document_sha256=digest,
+                page_number=number,
+                text=page.extract_text() or "",
+            )
+            for number, page in enumerate(reader.pages, start=1)
+        )
+        if not pages:
+            raise ValueError("PDF has no pages")
+    except Exception as error:
+        raise ValueError("PDF could not be fully parsed") from error
+    return pages
+
+
+class PDFPageSourceAdapter:
+    input_class = PDFPageInput
+    name = "pdf-page"
+    source_class = PDFPageSource
+
+    async def resolve(self, value: PDFPageInput, /) -> PDFPageSource:
+        identity = _page_identity(value)
+        return PDFPageSource(name=identity, source_id=identity, materialization=SourceMaterialization.CAPTURED, page=value)
+
+    async def read(self, source: PDFPageSource, /) -> PDFPageInput:
+        return source.page
+
+
+class PDFPageTextEvidenceProjection:
+    name = TEXT_EVIDENCE_PROJECTION_KEY.name
+    version = TEXT_EVIDENCE_PROJECTION_KEY.version
+    source_class = PDFPageSource
+    output_class = TextEvidence
+
+    def project(self, source: PDFPageSource, /) -> TextEvidence:
+        page = source.page
+        return TextEvidence(
+            source_type="pdf-page",
+            source_id=source.source_id,
+            content=f"{page.document_id}\n{page.text}",
+            metadata={
+                "document_id": page.document_id,
+                "document_sha256": page.document_sha256,
+                "page_number": page.page_number,
+            },
+        )
+
+
+PDF_PAGE_SOURCE_DEFINITION: SourceDefinition[PDFPageInput, PDFPageSource, PDFPageInput] = AdapterSourceDefinition(
+    PDFPageSourceAdapter(), projections=(PDFPageTextEvidenceProjection(),)
+)
+
+
+_QUESTION_WORDS = frozenset(
+    "a an and are as at be by can could did do does for from has have how if in into is it its of on or our per "
+    "that the their there these this to was were what when where which who why will with would year years fiscal "
+    "company companies financial report reported according based using use calculate answer question shown statement "
+    "fy fy2020 fy2021 fy2022 fy2023".split()
+)
+_FINANCIAL_EXPANSIONS = (
+    (("income statement", "p&l", "profit and loss"), "consolidated statement of income"),
+    (("cash flow", "cash flows"), "consolidated statement of cash flows"),
+    (("legal battle", "legal proceedings", "litigation"), "legal proceedings"),
+    (("restructuring",), "restructuring charges"),
+    (("capex", "capital expenditure"), "capital expenditures"),
+    (("geograph", "geographi"), "geographic areas"),
+    (("geograph", "geographi", "operat"), "our operations"),
+    (("geograph", "geographi"), "reportable segments"),
+)
+
+
+def _search_queries(question: str) -> tuple[str, ...]:
+    terms = [
+        term for term in re.findall(r"[a-z]+|\d+", question.casefold())
+        if len(term) > 2 and term not in _QUESTION_WORDS and not (term.isdigit() and len(term) == 4)
+    ]
+    lowered = question.casefold()
+    queries = [question]
+    queries.extend(expanded for triggers, expanded in _FINANCIAL_EXPANSIONS if any(trigger in lowered for trigger in triggers))
+    queries.extend(" ".join(terms[index : index + 3]) for index in range(len(terms) - 2))
+    queries.extend(" ".join(terms[index : index + 2]) for index in range(len(terms) - 1))
+    # A company name can be the only shared term when a question uses a
+    # different inflection from the report (for example revenue/revenues).
+    queries.extend(terms)
+    # The Memory analyzer does not stem English words. Search common singular
+    # and plural forms as separate queries without changing the saved evidence.
+    queries.extend(
+        term[:-1] if term.endswith("s") and not term.endswith("ss") else term + "s"
+        for term in terms if term.isalpha() and len(term) >= 4
+    )
+    return tuple(dict.fromkeys(queries))
+
+
+async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[MemoryCitation, ...]:
+    """Fuse several lexical views of a question, preserving real Memory citations."""
+    from powercontext.builtin.runtime import SearchMemoryRequest
+
+    if limit < 1:
+        return ()
+    scores: dict[tuple[str, str, int, str, str], float] = defaultdict(float)
+    citations: dict[tuple[str, str, int, str, str], MemoryCitation] = {}
+    matching_documents: set[tuple[str, str, int, str, str]] = set()
+    document_ids: set[str] = set()
+    focus_groups: list[list[tuple[str, str, int, str, str]]] = []
+    focused_queries = {expanded for _, expanded in _FINANCIAL_EXPANSIONS}
+    question_terms = re.findall(r"[a-z0-9]+", question.casefold())
+    company_mentions = {
+        "".join(question_terms[start:end])
+        for start in range(len(question_terms))
+        for end in range(start + 1, min(start + 6, len(question_terms)) + 1)
+    }
+    queries = list(_search_queries(question))
+    initial_count = len(queries)
+
+    async def search(query: str):
+        pool_size = max(limit * (10 if len(query.split()) == 1 else 2), 30)
+        return await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=pool_size))
+
+    # Independent lexical views can be fetched together. Consume their results
+    # in query order below so ranking and document follow-up order stay stable.
+    prefetched = []
+    for start in range(0, initial_count, 4):
+        prefetched.extend(await asyncio.gather(*(search(query) for query in queries[start : start + 4])))
+    for query_index, query in enumerate(queries):
+        page = prefetched[query_index] if query_index < initial_count else await search(query)
+        weight = 1.0 if query_index == 0 else 2.5 if query.startswith("consolidated statement") else 1.5 if len(query.split()) == 3 else 1.0
+        focus: list[tuple[str, str, int, str, str]] = []
+        headed: list[tuple[str, str, int, str, str]] = []
+        for rank, hit in enumerate(page.hits):
+            citation = MemoryCitation(memory_ref=hit.memory_ref, entry_id=hit.entry_id,
+                                      entry_version_id=hit.entry_version_id)
+            identity = (hit.memory_ref.family, hit.memory_ref.artifact_id, hit.memory_ref.revision,
+                        hit.entry_id, hit.entry_version_id)
+            citations[identity] = citation
+            document_id = hit.text.partition("\n")[0]
+            company = re.split(r"[_\W]+\d{4}(?:[_\W]|$)", document_id.casefold(), maxsplit=1)[0]
+            company_key = "".join(re.findall(r"[a-z0-9]+", company))
+            matches_company = (
+                len(company_key) >= 2 and company_key not in _QUESTION_WORDS and company_key in company_mentions
+            )
+            if matches_company:
+                matching_documents.add(identity)
+                if document_id not in document_ids:
+                    document_ids.add(document_id)
+                    # An underscore-delimited document ID is indexed as one
+                    # token, so use the actual observed ID in a follow-up query.
+                    queries.append(f"{document_id} {question}")
+            scores[identity] += weight / (rank + 8)
+            focus.append(identity)
+            if query in focused_queries and any(line.strip().casefold() == query for line in hit.text.splitlines()):
+                headed.append(identity)
+        if query in focused_queries:
+            focus_groups.append(headed + [identity for identity in focus if identity not in headed])
+    ranked = sorted(scores, key=lambda identity: (identity not in matching_documents, -scores[identity], identity))
+    selected: list[tuple[str, str, int, str, str]] = []
+    for group in focus_groups:
+        if matching_documents:
+            group = [identity for identity in group if identity in matching_documents]
+        for identity in group[: min(2, limit)]:
+            if identity not in selected and len(selected) < limit:
+                selected.append(identity)
+    selected.extend(identity for identity in ranked if identity not in selected and len(selected) < limit)
+    return tuple(citations[identity] for identity in selected)
+
+
+__all__ = ["PDFDocumentInput", "PDFPageInput", "PDFPageSource", "parse_pdf_document", "PDF_PAGE_SOURCE_DEFINITION", "search_pdf_pages"]
