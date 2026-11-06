@@ -130,6 +130,8 @@ _FINANCIAL_EXPANSIONS = (
     (("restructuring",), "restructuring charges"),
     (("capex", "capital expenditure"), "capital expenditures"),
     (("geograph", "geographi"), "geographic areas"),
+    (("geograph", "geographi", "operat"), "our operations"),
+    (("geograph", "geographi"), "reportable segments"),
 )
 
 
@@ -184,6 +186,7 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
         page = prefetched[query_index] if query_index < initial_count else await search(query)
         weight = 1.0 if query_index == 0 else 2.5 if query.startswith("consolidated statement") else 1.5 if len(query.split()) == 3 else 1.0
         focus: list[tuple[str, str, int, str, str]] = []
+        headed: list[tuple[str, str, int, str, str]] = []
         for rank, hit in enumerate(page.hits):
             citation = MemoryCitation(memory_ref=hit.memory_ref, entry_id=hit.entry_id,
                                       entry_version_id=hit.entry_version_id)
@@ -201,14 +204,16 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
                     queries.append(f"{document_id} {question}")
             scores[identity] += weight / (rank + 8)
             focus.append(identity)
+            if query in focused_queries and any(line.strip().casefold() == query for line in hit.text.splitlines()):
+                headed.append(identity)
         if query in focused_queries:
-            focus_groups.append(focus)
+            focus_groups.append(headed + [identity for identity in focus if identity not in headed])
     ranked = sorted(scores, key=lambda identity: (identity not in matching_documents, -scores[identity], identity))
     selected: list[tuple[str, str, int, str, str]] = []
     for group in focus_groups:
         if matching_documents:
             group = [identity for identity in group if identity in matching_documents]
-        for identity in group[: max(3, min(6, limit // 3))]:
+        for identity in group[: min(2, limit)]:
             if identity not in selected and len(selected) < limit:
                 selected.append(identity)
     selected.extend(identity for identity in ranked if identity not in selected and len(selected) < limit)
