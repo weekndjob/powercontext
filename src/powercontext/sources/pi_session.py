@@ -47,16 +47,25 @@ def _identity(session_id: str, event_id: str) -> str:
     return "pi:" + hashlib.sha256(payload.encode()).hexdigest()
 
 
+def _reject_nonfinite(value: str) -> None:
+    raise ValueError(f"invalid JSON value: {value}")
+
+
 def _parse_records(content: bytes) -> tuple[str, dict[str, dict[str, Any]], str | None]:
     try:
-        lines = [json.loads(line) for line in content.decode("utf-8-sig").splitlines() if line.strip()]
-    except (UnicodeError, json.JSONDecodeError) as error:
+        lines = [
+            json.loads(line, parse_constant=_reject_nonfinite)
+            for line in content.decode("utf-8-sig").splitlines()
+            if line.strip()
+        ]
+    except (UnicodeError, json.JSONDecodeError, ValueError) as error:
         raise ValueError("invalid Pi JSONL") from error
     if not lines or not isinstance(lines[0], dict):
         raise ValueError("missing Pi session header")
     header = lines[0]
     session_id = header.get("id")
-    if header.get("type") != "session" or header.get("version") != 3 or not isinstance(session_id, str) or not session_id:
+    if (header.get("type") != "session" or type(header.get("version")) is not int
+            or header["version"] != 3 or not isinstance(session_id, str) or not session_id.strip()):
         raise ValueError("invalid Pi session header")
     records: dict[str, dict[str, Any]] = {}
     last: str | None = None
@@ -64,8 +73,10 @@ def _parse_records(content: bytes) -> tuple[str, dict[str, dict[str, Any]], str 
         if not isinstance(record, dict):
             raise ValueError("invalid Pi event")
         event_id, parent = record.get("id"), record.get("parentId")
-        if not isinstance(event_id, str) or not event_id or event_id in records:
+        if not isinstance(event_id, str) or not event_id.strip() or event_id in records:
             raise ValueError("duplicate or invalid Pi event ID")
+        if "parentId" not in record or not isinstance(record.get("type"), str) or not record["type"]:
+            raise ValueError("Pi event must declare type and parentId")
         if parent is not None and (not isinstance(parent, str) or parent not in records):
             raise ValueError("Pi parent must precede its child")
         records[event_id] = record
@@ -89,7 +100,7 @@ def _visible_text(value: object) -> str:
             name, call_id = block.get("name", ""), block.get("id", "")
             arguments = json.dumps(block.get("arguments", {}), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
             parts.append(f"[tool_call {name} {call_id}] {arguments}")
-    return "\n".join(part for part in parts if part)
+    return "\n".join(parts)
 
 
 def _event_content(record: dict[str, Any]) -> tuple[str, str] | None:
@@ -102,9 +113,15 @@ def _event_content(record: dict[str, Any]) -> tuple[str, str] | None:
         message = record["message"]
         role = message.get("role")
         if role == "toolResult":
-            body = f"[tool_result {message.get('toolName', '')} {message.get('toolCallId', '')}] {_visible_text(message.get('content'))}"
+            result = _visible_text(message.get("content"))
+            if not result.strip():
+                return None
+            body = f"[tool_result {message.get('toolName', '')} {message.get('toolCallId', '')}] {result}"
         elif role == "bashExecution":
-            body = f"$ {message.get('command', '')}\n{message.get('output', '')}"
+            command, output = message.get("command", ""), message.get("output", "")
+            if not isinstance(command, str) or not isinstance(output, str) or not (command.strip() or output.strip()):
+                return None
+            body = f"$ {command}\n{output}"
         else:
             body = _visible_text(message.get("content"))
     else:
@@ -119,7 +136,7 @@ def parse_pi_session(value: PiSessionInput) -> tuple[PiEventInput, ...]:
     session_id, records, last = _parse_records(value.content)
     leaf = value.leaf_id if value.leaf_id is not None else last
     if leaf is None:
-        return ()
+        raise ValueError("Pi session has no leaf")
     if leaf not in records:
         raise ValueError("Pi leaf does not exist")
     path: list[dict[str, Any]] = []
