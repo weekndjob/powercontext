@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import io
 import json
@@ -168,11 +169,19 @@ async def search_pdf_pages(memory, question: str, limit: int = 10) -> tuple[Memo
     focused_queries = {expanded for _, expanded in _FINANCIAL_EXPANSIONS}
     question_terms = set(re.findall(r"[a-z0-9]+", question.casefold()))
     queries = list(_search_queries(question))
-    for query_index, query in enumerate(queries):
-        # Single-term discovery needs a wider pool when several reports use the
-        # same financial vocabulary; the final result is still bounded by limit.
+    initial_count = len(queries)
+
+    async def search(query: str):
         pool_size = max(limit * (10 if len(query.split()) == 1 else 2), 30)
-        page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=pool_size))
+        return await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=pool_size))
+
+    # Independent lexical views can be fetched together. Consume their results
+    # in query order below so ranking and document follow-up order stay stable.
+    prefetched = []
+    for start in range(0, initial_count, 4):
+        prefetched.extend(await asyncio.gather(*(search(query) for query in queries[start : start + 4])))
+    for query_index, query in enumerate(queries):
+        page = prefetched[query_index] if query_index < initial_count else await search(query)
         weight = 1.0 if query_index == 0 else 2.5 if query.startswith("consolidated statement") else 1.5 if len(query.split()) == 3 else 1.0
         focus: list[tuple[str, str, int, str, str]] = []
         for rank, hit in enumerate(page.hits):
